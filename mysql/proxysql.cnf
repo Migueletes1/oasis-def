@@ -1,0 +1,43 @@
+datadir="/var/lib/proxysql"
+
+admin_variables=
+{
+  admin_credentials="admin:admin"
+  mysql_ifaces="0.0.0.0:6032"
+}
+
+mysql_variables=
+{
+  threads=4
+  max_connections=2048
+  default_query_delay=0
+  default_query_timeout=36000000
+  have_compress=true
+  poll_timeout=2000
+  interfaces="0.0.0.0:3306"
+  default_schema="oasis"
+  server_version="8.0"
+  connect_timeout_server=3000
+  monitor_username="proxysql_monitor"
+  monitor_password="proxysql_monitor_pass"
+  monitor_history=600000
+  monitor_connect_interval=20000
+  monitor_ping_interval=10000
+  monitor_read_only_interval=1500
+}
+
+mysql_servers =
+(
+  { address="mysql-primary" , port=3306 , hostgroup=10 , max_connections=512 },
+  { address="mysql-replica" , port=3306 , hostgroup=20 , max_connections=512 }
+)
+
+mysql_replication_hostgroups=
+(
+  { writer_hostgroup=10 , reader_hostgroup=20 , comment="oasis" }
+)
+
+mysql_users =
+(
+  { username="oasis_user" , password="secure_oasis_pass" , default_hostgroup=10 , active=1 }
+)

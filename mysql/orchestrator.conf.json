@@ -1,0 +1,23 @@
+{
+  "Debug": false,
+  "ListenAddress": ":3000",
+  "BackendDB": "sqlite",
+  "SQLite3DataFile": "/var/lib/orchestrator/orchestrator.sqlite3",
+  "MySQLTopologyUser": "orchestrator",
+  "MySQLTopologyPassword": "orchestrator_pass",
+  "DefaultInstancePort": 3306,
+  "DiscoverByShowSlaveHosts": true,
+  "InstancePollSeconds": 5,
+  "FailureDetectionPeriodBlockMinutes": 1,
+  "RecoveryPeriodBlockSeconds": 30,
+  "RecoverMasterClusterFilters": [".*"],
+  "RecoverIntermediateMasterClusterFilters": [".*"],
+  "ApplyMySQLPromotionAfterMasterFailover": true,
+  "ApplyMySQLPromotionAfterMasterFailoverWaitSeconds": 5,
+  "AutoRecoverMaster": true,
+  "AutoRecoverIntermediateMaster": true,
+  "AutoPseudoGTID": false,
+  "ReadOnly": false,
+  "StatusEndpoint": "/api/status",
+  "StatusSimpleHealth": true
+}

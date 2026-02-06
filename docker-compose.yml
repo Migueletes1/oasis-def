@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    volumes:
+      - .:/app
+      - static_volume:/app/static
+      - logs_volume:/app/logs
+    depends_on:
+      - db
+    environment:
+      - DB_NAME=oasis
+      - DB_USER=oasis_user
+      - DB_PASSWORD=secure_oasis_pass
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DEBUG=0
+    deploy:
+      replicas: 3
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+  
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_DATABASE=oasis
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_USER=oasis_user
+      - MYSQL_PASSWORD=secure_oasis_pass
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  redis:
+    image: redis:alpine
+    restart: always
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - static_volume:/app/static
+      - logs_volume:/var/log/nginx
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
+  static_volume:
+  logs_volume:

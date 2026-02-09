@@ -1,0 +1,30 @@
+ERROR 2026-02-07 17:08:36,707 log Internal Server Error: /auth/dashboard/
+Traceback (most recent call last):
+  File "C:\Users\tecno\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\tecno\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\tecno\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "c:\Users\tecno\oasis-def\usuarios\views.py", line 110, in dashboard_view
+    context = _build_admin_context(user)
+  File "c:\Users\tecno\oasis-def\usuarios\views.py", line 155, in _build_admin_context
+    growth_proyectos = _calc_growth(proyectos_this_month, proyectos_last_month)
+                       ^^^^^^^^^^^^
+NameError: name '_calc_growth' is not defined
+ERROR 2026-02-07 17:08:36,711 basehttp "GET /auth/dashboard/ HTTP/1.1" 500 101590
+ERROR 2026-02-07 17:08:40,358 log Internal Server Error: /auth/dashboard/
+Traceback (most recent call last):
+  File "C:\Users\tecno\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\tecno\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\tecno\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "c:\Users\tecno\oasis-def\usuarios\views.py", line 110, in dashboard_view
+    context = _build_admin_context(user)
+  File "c:\Users\tecno\oasis-def\usuarios\views.py", line 155, in _build_admin_context
+    growth_proyectos = _calc_growth(proyectos_this_month, proyectos_last_month)
+                       ^^^^^^^^^^^^
+NameError: name '_calc_growth' is not defined
+ERROR 2026-02-07 17:08:40,359 basehttp "GET /auth/dashboard/ HTTP/1.1" 500 101453

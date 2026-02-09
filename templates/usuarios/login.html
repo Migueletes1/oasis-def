@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Iniciar Sesion — OASIS{% endblock %}
+
+{% block navbar %}
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 scrolled">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 lg:h-20">
+            <a href="{% url 'index' %}" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-oasis-600 to-oasis-700
+                            flex items-center justify-center shadow-lg shadow-oasis-600/20
+                            group-hover:shadow-oasis-600/40 transition-all duration-300
+                            group-hover:scale-110">
+                    <i class="fa-solid fa-seedling text-white text-lg"></i>
+                </div>
+                <span class="text-xl font-black text-oasis-900 tracking-tight">OASIS</span>
+            </a>
+            <a href="{% url 'index' %}" class="text-sm text-dark-500 hover:text-oasis-600 transition-colors">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Volver al inicio
+            </a>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="relative min-h-screen flex items-center justify-center py-20 auth-section">
+    <div class="absolute inset-0">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-oasis-100/30 rounded-full blur-[120px]"></div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-md mx-auto px-4">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4
+                        bg-oasis-50 border border-oasis-200">
+                <i class="fa-solid fa-right-to-bracket text-2xl text-oasis-600"></i>
+            </div>
+            <h1 class="text-3xl font-black text-dark-900 mb-2">Iniciar Sesion</h1>
+            <p class="text-dark-500">Accede a tu cuenta de OASIS</p>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+        <div class="mb-6 space-y-2">
+            {% for message in messages %}
+            <div class="px-4 py-3 rounded-xl text-sm font-medium
+                        {% if message.tags == 'error' %}bg-red-50 border border-red-200 text-red-700
+                        {% elif message.tags == 'success' %}bg-oasis-50 border border-oasis-200 text-oasis-700
+                        {% else %}bg-blue-50 border border-blue-200 text-blue-700{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Form -->
+        <form method="post" class="bg-white rounded-2xl p-8 space-y-6 shadow-lg shadow-dark-100/50 border border-dark-100" novalidate>
+            {% csrf_token %}
+
+            <div>
+                <label for="id_username" class="block text-sm font-semibold text-dark-700 mb-2">
+                    <i class="fa-solid fa-user mr-1 text-oasis-600"></i> Usuario o Email
+                </label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                <p class="mt-1 text-xs text-red-600">{{ form.username.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_password" class="block text-sm font-semibold text-dark-700 mb-2">
+                    <i class="fa-solid fa-lock mr-1 text-oasis-600"></i> Contrasena
+                </label>
+                <div class="relative">
+                    {{ form.password }}
+                    <button type="button" onclick="togglePassword('id_password', this)"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg
+                                   text-dark-400 hover:text-accent-500 transition-colors"
+                            title="Mostrar contrasena">
+                        <i class="fa-solid fa-eye text-sm"></i>
+                    </button>
+                </div>
+                {% if form.password.errors %}
+                <p class="mt-1 text-xs text-red-600">{{ form.password.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            {% if form.non_field_errors %}
+            <div class="px-4 py-3 rounded-xl bg-red-50 border border-red-200">
+                {% for error in form.non_field_errors %}
+                <p class="text-sm text-red-700">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Naranja 10%: boton principal -->
+            <button type="submit"
+                    class="w-full py-3.5 rounded-xl font-bold text-white
+                           bg-accent-500 hover:bg-accent-600
+                           shadow-lg shadow-accent-500/20 hover:shadow-accent-500/40
+                           hover:-translate-y-0.5 transition-all duration-300">
+                Ingresar
+            </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="flex items-center gap-4 my-8">
+            <div class="flex-1 h-px bg-dark-200"></div>
+            <span class="text-xs text-dark-400 font-semibold uppercase tracking-wider">O tambien</span>
+            <div class="flex-1 h-px bg-dark-200"></div>
+        </div>
+
+        <!-- Register CTA -->
+        <div class="bg-white rounded-2xl p-6 text-center shadow-sm border border-dark-100">
+            <p class="text-sm text-dark-500 mb-3">
+                <i class="fa-solid fa-building mr-1 text-oasis-600"></i>
+                <strong class="text-dark-800">Eres una empresa</strong> buscando talento?
+            </p>
+            <a href="{% url 'registro_empresa' %}"
+               class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold
+                      border border-accent-300 text-accent-600
+                      hover:bg-accent-50 hover:border-accent-400
+                      transition-all duration-300">
+                <i class="fa-solid fa-paper-plane text-xs"></i>
+                Solicitar Registro
+            </a>
+        </div>
+
+        <!-- Info box -->
+        <div class="mt-6 px-4 py-3 rounded-xl bg-oasis-50 border border-oasis-100">
+            <p class="text-xs text-dark-500 text-center leading-relaxed">
+                <i class="fa-solid fa-info-circle text-oasis-500 mr-1"></i>
+                Si eres <strong class="text-dark-700">Aprendiz</strong> o
+                <strong class="text-dark-700">Instructor</strong>,
+                tus credenciales fueron enviadas a tu correo institucional.
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fa-solid fa-eye-slash text-sm';
+        btn.title = 'Ocultar contrasena';
+    } else {
+        input.type = 'password';
+        icon.className = 'fa-solid fa-eye text-sm';
+        btn.title = 'Mostrar contrasena';
+    }
+}
+</script>
+{% endblock %}

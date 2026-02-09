@@ -1,33 +1,28 @@
-# Python
-__pycache__/
-*.py[cod]
-*.so
-*.egg-info/
-dist/
-build/
+# Dispositivos reservados Windows
+nul
 
-# Virtual environment
-venv/
-.venv/
-env/
-
-# Environment variables
+# Entornos
 .env
+.env.*
+venv/
 
 # Logs
 logs/
 *.log
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
+# Media y archivos generados
+media/
+backups/
+staticfiles/
 
-# Django
-*.sqlite3
-static/
+# Herramientas IA
+.claude/
 
-# OS
-.DS_Store
-Thumbs.db
+# Archivos basura
+cookies.txt
+dashboard_output.html
+
+# Python
+__pycache__/
+*.pyc
+

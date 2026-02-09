@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registro de Empresa — OASIS{% endblock %}
+
+{% block navbar %}
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 scrolled">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 lg:h-20">
+            <a href="{% url 'index' %}" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-oasis-600 to-oasis-700
+                            flex items-center justify-center shadow-lg shadow-oasis-600/20
+                            group-hover:shadow-oasis-600/40 transition-all duration-300
+                            group-hover:scale-110">
+                    <i class="fa-solid fa-seedling text-white text-lg"></i>
+                </div>
+                <span class="text-xl font-black text-oasis-900 tracking-tight">OASIS</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <a href="{% url 'login' %}" class="text-sm text-dark-500 hover:text-oasis-600 transition-colors">
+                    Ya tienes cuenta? <strong class="text-oasis-600">Inicia sesion</strong>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="relative min-h-screen flex items-center justify-center py-24 auth-section">
+    <div class="absolute inset-0">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-oasis-100/30 rounded-full blur-[120px]"></div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-lg mx-auto px-4">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4
+                        bg-oasis-50 border border-oasis-200">
+                <i class="fa-solid fa-building text-2xl text-oasis-600"></i>
+            </div>
+            <h1 class="text-3xl font-black text-dark-900 mb-2">Registro de Empresa</h1>
+            <p class="text-dark-500">Solicita acceso al repositorio de talento</p>
+        </div>
+
+        <!-- Warning: Naranja 10% para alertas -->
+        <div class="mb-6 px-4 py-3 rounded-xl bg-accent-50 border border-accent-200">
+            <p class="text-sm text-accent-800">
+                <i class="fa-solid fa-triangle-exclamation mr-1 text-accent-500"></i>
+                <strong>Importante:</strong> Tu cuenta sera revisada por un administrador antes de ser activada.
+                Este proceso puede tomar hasta 48 horas habiles.
+            </p>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+        <div class="mb-6 space-y-2">
+            {% for message in messages %}
+            <div class="px-4 py-3 rounded-xl text-sm font-medium
+                        {% if message.tags == 'error' %}bg-red-50 border border-red-200 text-red-700
+                        {% elif message.tags == 'success' %}bg-oasis-50 border border-oasis-200 text-oasis-700
+                        {% else %}bg-blue-50 border border-blue-200 text-blue-700{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Form -->
+        <form method="post" class="bg-white rounded-2xl p-8 space-y-5 shadow-lg shadow-dark-100/50 border border-dark-100" novalidate>
+            {% csrf_token %}
+
+            <!-- Datos de empresa: Verde 30% -->
+            <div class="pb-4 border-b border-dark-100">
+                <h3 class="text-sm font-bold text-oasis-700 uppercase tracking-wider mb-4">
+                    <i class="fa-solid fa-building mr-1"></i> Datos de la Empresa
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-dark-700 mb-1.5">{{ form.nombre_empresa.label }} *</label>
+                        {{ form.nombre_empresa }}
+                        {% if form.nombre_empresa.errors %}<p class="mt-1 text-xs text-red-600">{{ form.nombre_empresa.errors.0 }}</p>{% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-dark-700 mb-1.5">{{ form.nit_empresa.label }} *</label>
+                        {{ form.nit_empresa }}
+                        {% if form.nit_empresa.errors %}<p class="mt-1 text-xs text-red-600">{{ form.nit_empresa.errors.0 }}</p>{% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-dark-700 mb-1.5">{{ form.email.label }} *</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}<p class="mt-1 text-xs text-red-600">{{ form.email.errors.0 }}</p>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Representante -->
+            <div class="pb-4 border-b border-dark-100">
+                <h3 class="text-sm font-bold text-oasis-600 uppercase tracking-wider mb-4">
+                    <i class="fa-solid fa-user-tie mr-1"></i> Representante Legal
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-dark-700 mb-1.5">{{ form.first_name.label }} *</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}<p class="mt-1 text-xs text-red-600">{{ form.first_name.errors.0 }}</p>{% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-dark-700 mb-1.5">{{ form.last_name.label }} *</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}<p class="mt-1 text-xs text-red-600">{{ form.last_name.errors.0 }}</p>{% endif %}
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label class="block text-sm font-semibold text-dark-700 mb-1.5">{{ form.telefono.label }}</label>
+                    {{ form.telefono }}
+                    {% if form.telefono.errors %}<p class="mt-1 text-xs text-red-600">{{ form.telefono.errors.0 }}</p>{% endif %}
+                </div>
+            </div>
+
+            <!-- Motivo: Naranja 10% para acento -->
+            <div class="pb-4 border-b border-dark-100">
+                <h3 class="text-sm font-bold text-accent-600 uppercase tracking-wider mb-4">
+                    <i class="fa-solid fa-clipboard-question mr-1"></i> Motivo de Registro
+                </h3>
+                <div>
+                    <label class="block text-sm font-semibold text-dark-700 mb-1.5">{{ form.motivo_registro.label }} *</label>
+                    {{ form.motivo_registro }}
+                    {% if form.motivo_registro.errors %}<p class="mt-1 text-xs text-red-600">{{ form.motivo_registro.errors.0 }}</p>{% endif %}
+                </div>
+            </div>
+
+            <!-- Contrasena -->
+            <div>
+                <h3 class="text-sm font-bold text-dark-600 uppercase tracking-wider mb-4">
+                    <i class="fa-solid fa-shield-halved mr-1 text-oasis-600"></i> Seguridad
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-dark-700 mb-1.5">{{ form.password1.label }} *</label>
+                        <div class="relative">
+                            {{ form.password1 }}
+                            <button type="button" onclick="togglePassword('id_password1', this)"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg
+                                           text-dark-400 hover:text-accent-500 transition-colors"
+                                    title="Mostrar contrasena">
+                                <i class="fa-solid fa-eye text-sm"></i>
+                            </button>
+                        </div>
+                        <p class="mt-1 text-xs text-dark-400">Min. 10 caracteres, 1 mayuscula, 1 numero, 1 especial.</p>
+                        {% if form.password1.errors %}<p class="mt-1 text-xs text-red-600">{{ form.password1.errors.0 }}</p>{% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-dark-700 mb-1.5">{{ form.password2.label }} *</label>
+                        <div class="relative">
+                            {{ form.password2 }}
+                            <button type="button" onclick="togglePassword('id_password2', this)"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg
+                                           text-dark-400 hover:text-accent-500 transition-colors"
+                                    title="Mostrar contrasena">
+                                <i class="fa-solid fa-eye text-sm"></i>
+                            </button>
+                        </div>
+                        {% if form.password2.errors %}<p class="mt-1 text-xs text-red-600">{{ form.password2.errors.0 }}</p>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% if form.non_field_errors %}
+            <div class="px-4 py-3 rounded-xl bg-red-50 border border-red-200">
+                {% for error in form.non_field_errors %}
+                <p class="text-sm text-red-700">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Submit: Naranja 10% CTA -->
+            <button type="submit"
+                    class="w-full py-3.5 rounded-xl font-bold text-white
+                           bg-accent-500 hover:bg-accent-600
+                           shadow-lg shadow-accent-500/20 hover:shadow-accent-500/40
+                           hover:-translate-y-0.5 transition-all duration-300">
+                <i class="fa-solid fa-paper-plane mr-2"></i>
+                Enviar Solicitud de Registro
+            </button>
+        </form>
+
+        <!-- Info box -->
+        <div class="mt-6 px-4 py-3 rounded-xl bg-oasis-50 border border-oasis-100">
+            <p class="text-xs text-dark-500 text-center leading-relaxed">
+                <i class="fa-solid fa-info-circle text-oasis-500 mr-1"></i>
+                Si eres <strong class="text-dark-700">Aprendiz</strong> o
+                <strong class="text-dark-700">Instructor</strong>,
+                tus credenciales fueron enviadas a tu correo institucional.
+                <a href="{% url 'login' %}" class="text-oasis-600 hover:underline ml-1">Iniciar sesion</a>
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fa-solid fa-eye-slash text-sm';
+        btn.title = 'Ocultar contrasena';
+    } else {
+        input.type = 'password';
+        icon.className = 'fa-solid fa-eye text-sm';
+        btn.title = 'Mostrar contrasena';
+    }
+}
+</script>
+{% endblock %}

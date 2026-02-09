@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro Pendiente — OASIS{% endblock %}
+
+{% block navbar %}
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 scrolled">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 lg:h-20">
+            <a href="{% url 'index' %}" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-oasis-600 to-oasis-700
+                            flex items-center justify-center shadow-lg shadow-oasis-600/20">
+                    <i class="fa-solid fa-seedling text-white text-lg"></i>
+                </div>
+                <span class="text-xl font-black text-oasis-900 tracking-tight">OASIS</span>
+            </a>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="relative min-h-screen flex items-center justify-center py-20 auth-section">
+    <div class="absolute inset-0">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-oasis-100/40 rounded-full blur-[120px]"></div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-md mx-auto px-4 text-center">
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-3xl mb-6
+                    bg-oasis-50 border border-oasis-200">
+            <i class="fa-solid fa-clock text-4xl text-oasis-600"></i>
+        </div>
+
+        <h1 class="text-3xl font-black text-dark-900 mb-4">Solicitud Enviada</h1>
+
+        <div class="bg-white rounded-2xl p-8 mb-8 shadow-lg shadow-dark-100/50 border border-dark-100">
+            <div class="w-16 h-16 rounded-full bg-oasis-50 border border-oasis-200
+                        flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-check text-2xl text-oasis-600"></i>
+            </div>
+            <p class="text-dark-700 leading-relaxed mb-4">
+                Tu solicitud de registro como <strong class="text-dark-900">Empresa</strong>
+                ha sido recibida exitosamente.
+            </p>
+            <p class="text-dark-500 text-sm leading-relaxed">
+                Un administrador revisara tu informacion y activara tu cuenta.
+                Recibiras una notificacion por correo electronico cuando tu cuenta
+                este lista para usar.
+            </p>
+
+            <div class="mt-6 flex items-center gap-3 justify-center text-xs text-dark-400">
+                <div class="flex items-center gap-1">
+                    <i class="fa-solid fa-shield-halved text-oasis-500"></i>
+                    Revision manual
+                </div>
+                <span class="text-dark-200">|</span>
+                <div class="flex items-center gap-1">
+                    <i class="fa-solid fa-clock text-accent-500"></i>
+                    Hasta 48h habiles
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'index' %}"
+           class="inline-flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-white
+                  bg-oasis-600 hover:bg-oasis-700
+                  shadow-lg shadow-oasis-600/20 hover:shadow-oasis-600/40
+                  hover:-translate-y-0.5 transition-all duration-300">
+            <i class="fa-solid fa-home"></i>
+            Volver al Inicio
+        </a>
+    </div>
+</section>
+{% endblock %}

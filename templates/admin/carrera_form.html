@@ -1,0 +1,329 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ is_edit|yesno:"Editar,Nueva" }} Carrera — OASIS Admin{% endblock %}
+
+{% block three_canvas %}{% endblock %}
+
+{% block navbar %}
+{% include 'partials/navbar_auth.html' %}
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .admin-input {
+        width: 100%;
+        padding: 0.625rem 0.875rem;
+        border-radius: 0.625rem;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        color: #111827;
+        font-size: 0.875rem;
+        transition: all 0.25s ease;
+    }
+    .admin-input::placeholder { color: #9ca3af; }
+    .admin-input:focus {
+        outline: none;
+        border-color: #f97316;
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+    }
+    .admin-input:hover:not(:focus) { border-color: #d1d5db; }
+    textarea.admin-input { resize: vertical; min-height: 80px; }
+    select.admin-input { cursor: pointer; }
+
+    .form-section-title {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #059669;
+        margin-bottom: 1rem;
+    }
+    .form-section-title i { margin-right: 0.375rem; }
+
+    .field-label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.25rem;
+    }
+    .field-label .required { color: #f97316; margin-left: 0.125rem; }
+
+    .field-error {
+        font-size: 0.75rem;
+        color: #ef4444;
+        margin-top: 0.25rem;
+        display: none;
+    }
+    .field-error.active { display: block; }
+    .admin-input.has-error { border-color: #ef4444; }
+    .admin-input.has-error:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1); }
+
+    .icon-preview {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 0.75rem;
+        background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: #059669;
+        border: 1px solid rgba(5, 150, 105, 0.15);
+        transition: all 0.25s;
+    }
+
+    .toggle-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .toggle-track {
+        position: relative;
+        width: 2.75rem;
+        height: 1.5rem;
+        background: #d1d5db;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background 0.25s;
+    }
+    .toggle-track::after {
+        content: '';
+        position: absolute;
+        top: 2px; left: 2px;
+        width: 1.25rem; height: 1.25rem;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        transition: transform 0.25s;
+    }
+    .toggle-track.active { background: #059669; }
+    .toggle-track.active::after { transform: translateX(1.25rem); }
+    .toggle-input { display: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pt-24 pb-16 px-4 sm:px-6 lg:px-8 min-h-screen bg-gradient-to-br from-dark-50 via-white to-oasis-50/30">
+    <div class="max-w-2xl mx-auto">
+
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-sm text-dark-400 mb-6">
+            <a href="{% url 'dashboard' %}" class="hover:text-oasis-600 transition-colors">
+                <i class="fa-solid fa-gauge"></i> Dashboard
+            </a>
+            <i class="fa-solid fa-chevron-right text-xs"></i>
+            <a href="{% url 'admin_carreras_list' %}" class="hover:text-oasis-600 transition-colors">Carreras</a>
+            <i class="fa-solid fa-chevron-right text-xs"></i>
+            <span class="text-dark-600 font-medium">
+                {{ is_edit|yesno:"Editar,Nueva" }}
+            </span>
+        </nav>
+
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="text-2xl font-extrabold text-dark-900">
+                <i class="fa-solid fa-{{ is_edit|yesno:'pen-to-square,plus' }} text-oasis-600 mr-2"></i>
+                {{ is_edit|yesno:"Editar Carrera,Nueva Carrera" }}
+            </h1>
+            <a href="{% url 'admin_carreras_list' %}" class="px-4 py-2 text-sm text-dark-500 hover:text-dark-700 border border-dark-200 rounded-lg hover:bg-dark-50 transition-all">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Volver
+            </a>
+        </div>
+
+        <!-- Form -->
+        <form id="carrera-form" method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="glass-card rounded-2xl p-6 space-y-5">
+                <div class="form-section-title">
+                    <i class="fa-solid fa-graduation-cap"></i>Datos de la Carrera
+                </div>
+
+                <!-- Clave -->
+                <div>
+                    <label class="field-label" for="id_clave">Clave <span class="required">*</span></label>
+                    {{ form.clave }}
+                    <p class="text-xs text-dark-400 mt-1">Solo minusculas, numeros y guion bajo (ej: ciencia_datos)</p>
+                    <div class="field-error" id="error-clave"></div>
+                </div>
+
+                <!-- Nombre -->
+                <div>
+                    <label class="field-label" for="id_nombre">Nombre <span class="required">*</span></label>
+                    {{ form.nombre }}
+                    <div class="field-error" id="error-nombre"></div>
+                </div>
+
+                <!-- Cluster -->
+                <div>
+                    <label class="field-label" for="id_cluster">Cluster <span class="required">*</span></label>
+                    {{ form.cluster }}
+                    <div class="field-error" id="error-cluster"></div>
+                </div>
+
+                <!-- Icono (with live preview) -->
+                <div>
+                    <label class="field-label" for="id_icono">Icono FontAwesome</label>
+                    <div class="flex items-center gap-3">
+                        <div class="icon-preview" id="icon-preview">
+                            <i class="fa-solid {{ form.initial.icono|default:'fa-graduation-cap' }}" id="icon-i"></i>
+                        </div>
+                        <div class="flex-1">
+                            {{ form.icono }}
+                        </div>
+                    </div>
+                    <p class="text-xs text-dark-400 mt-1">Ej: fa-code, fa-robot, fa-chart-line</p>
+                    <div class="field-error" id="error-icono"></div>
+                </div>
+
+                <!-- Descripcion -->
+                <div>
+                    <label class="field-label" for="id_descripcion">Descripcion</label>
+                    {{ form.descripcion }}
+                </div>
+
+                <!-- Activa toggle + Orden -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="field-label">Activa</label>
+                        <div class="toggle-wrap">
+                            <input type="checkbox" name="activa" id="id_activa" class="toggle-input"
+                                   {% if not is_edit or carrera.activa %}checked{% endif %}>
+                            <div class="toggle-track{% if not is_edit or carrera.activa %} active{% endif %}" id="activa-toggle"></div>
+                            <span class="text-sm text-dark-500" id="activa-label">
+                                {% if not is_edit or carrera.activa %}Activa{% else %}Inactiva{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="field-label" for="id_orden">Orden</label>
+                        {{ form.orden }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Bar -->
+            <div class="flex items-center justify-end gap-3 mt-6">
+                {% if is_edit %}
+                <button type="button" id="btn-delete"
+                        class="px-5 py-2.5 text-sm font-medium text-red-500 border border-red-200 rounded-xl
+                               hover:bg-red-50 transition-all mr-auto">
+                    <i class="fa-solid fa-trash-can mr-1"></i> Eliminar
+                </button>
+                {% endif %}
+                <a href="{% url 'admin_carreras_list' %}"
+                   class="px-5 py-2.5 text-sm font-medium text-dark-500 border border-dark-200 rounded-xl
+                          hover:bg-dark-50 transition-all">
+                    Cancelar
+                </a>
+                <button type="submit" id="btn-save"
+                        class="px-6 py-2.5 text-sm font-bold text-white bg-oasis-600 rounded-xl
+                               shadow-lg shadow-oasis-600/20 hover:bg-oasis-700 hover:shadow-oasis-600/30
+                               transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fa-solid fa-floppy-disk mr-1"></i>
+                    {{ is_edit|yesno:"Guardar Cambios,Crear Carrera" }}
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    // ── Live icon preview ──
+    const iconInput = document.getElementById('id_icono');
+    const iconI = document.getElementById('icon-i');
+
+    if (iconInput) {
+        iconInput.addEventListener('input', () => {
+            const val = iconInput.value.trim();
+            iconI.className = `fa-solid ${val || 'fa-graduation-cap'}`;
+        });
+    }
+
+    // ── Activa toggle ──
+    const activaToggle = document.getElementById('activa-toggle');
+    const activaInput = document.getElementById('id_activa');
+    const activaLabel = document.getElementById('activa-label');
+
+    activaToggle.addEventListener('click', () => {
+        activaInput.checked = !activaInput.checked;
+        activaToggle.classList.toggle('active', activaInput.checked);
+        activaLabel.textContent = activaInput.checked ? 'Activa' : 'Inactiva';
+    });
+
+    // ── Clave real-time validation ──
+    const claveInput = document.getElementById('id_clave');
+    if (claveInput) {
+        claveInput.addEventListener('input', () => {
+            claveInput.value = claveInput.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
+        });
+    }
+
+    // ── AJAX Submit ──
+    const form = document.getElementById('carrera-form');
+    const btnSave = document.getElementById('btn-save');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        document.querySelectorAll('.field-error').forEach(el => { el.textContent = ''; el.classList.remove('active'); });
+        document.querySelectorAll('.admin-input.has-error').forEach(el => el.classList.remove('has-error'));
+
+        btnSave.disabled = true;
+        btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Guardando...';
+
+        try {
+            const formData = new FormData(form);
+            const resp = await fetch(form.action || window.location.href, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            });
+
+            const data = await resp.json();
+
+            if (resp.ok && data.ok) {
+                window.location.href = '{% url "admin_carreras_list" %}';
+            } else if (data.errors) {
+                Object.entries(data.errors).forEach(([field, msgs]) => {
+                    const errEl = document.getElementById(`error-${field}`);
+                    const inputEl = document.getElementById(`id_${field}`);
+                    if (errEl) { errEl.textContent = msgs.join(' '); errEl.classList.add('active'); }
+                    if (inputEl) inputEl.classList.add('has-error');
+                });
+            }
+        } catch (err) {
+            console.error('Submit error:', err);
+        } finally {
+            btnSave.disabled = false;
+            btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1"></i> {{ is_edit|yesno:"Guardar Cambios,Crear Carrera" }}';
+        }
+    });
+
+    // ── Delete (edit mode) ──
+    {% if is_edit %}
+    const btnDelete = document.getElementById('btn-delete');
+    btnDelete.addEventListener('click', async () => {
+        if (!confirm('Estas seguro de eliminar esta carrera? Esta accion no se puede deshacer.')) return;
+
+        try {
+            const resp = await fetch('{% url "admin_carrera_eliminar" carrera.pk %}', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrfToken, 'X-Requested-With': 'XMLHttpRequest' },
+            });
+            const data = await resp.json();
+            if (data.ok) window.location.href = '{% url "admin_carreras_list" %}';
+        } catch (err) { console.error('Delete error:', err); }
+    });
+    {% endif %}
+});
+</script>
+{% endblock %}

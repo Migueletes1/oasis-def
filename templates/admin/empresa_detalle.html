@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ empresa.nombre_empresa }} — OASIS Admin{% endblock %}
+
+{% block three_canvas %}{% endblock %}
+
+{% block navbar %}
+{% include 'partials/navbar_auth.html' %}
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .data-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #9ca3af;
+        margin-bottom: 0.25rem;
+    }
+    .data-value {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #111827;
+        word-break: break-word;
+    }
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.375rem 0.75rem;
+        border-radius: 999px;
+    }
+    .status-pending {
+        background: #fef3c7;
+        color: #d97706;
+        border: 1px solid rgba(217, 119, 6, 0.2);
+    }
+    .status-active {
+        background: #d1fae5;
+        color: #059669;
+        border: 1px solid rgba(5, 150, 105, 0.2);
+    }
+    .action-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.875rem 1.5rem;
+        font-size: 0.95rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 0.875rem;
+        cursor: pointer;
+        transition: all 0.25s;
+    }
+    .action-btn:active { transform: scale(0.97); }
+    .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-approve {
+        background: #059669;
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(5, 150, 105, 0.25);
+    }
+    .btn-approve:hover { background: #047857; box-shadow: 0 12px 32px rgba(5, 150, 105, 0.3); }
+    .btn-reject {
+        background: #f97316;
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(249, 115, 22, 0.25);
+    }
+    .btn-reject:hover { background: #ea580c; box-shadow: 0 12px 32px rgba(249, 115, 22, 0.3); }
+    .motivo-box {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        font-size: 0.875rem;
+        color: #374151;
+        line-height: 1.6;
+        white-space: pre-line;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pt-24 pb-16 px-4 sm:px-6 lg:px-8 min-h-screen bg-gradient-to-br from-dark-50 via-white to-oasis-50/30">
+    <div class="max-w-3xl mx-auto">
+
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-sm text-dark-400 mb-6">
+            <a href="{% url 'dashboard' %}" class="hover:text-oasis-600 transition-colors">
+                <i class="fa-solid fa-gauge"></i> Dashboard
+            </a>
+            <i class="fa-solid fa-chevron-right text-xs"></i>
+            <span class="text-dark-400">Moderacion</span>
+            <i class="fa-solid fa-chevron-right text-xs"></i>
+            <span class="text-dark-600 font-medium">{{ empresa.nombre_empresa|truncatechars:30 }}</span>
+        </nav>
+
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent-400 to-accent-600
+                            flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-accent-500/20">
+                    <i class="fa-solid fa-building"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold text-dark-900">{{ empresa.nombre_empresa }}</h1>
+                    <div class="flex items-center gap-2 mt-1">
+                        {% if empresa.is_active %}
+                        <span class="status-badge status-active">
+                            <i class="fa-solid fa-circle-check"></i> Activa
+                        </span>
+                        {% else %}
+                        <span class="status-badge status-pending">
+                            <i class="fa-solid fa-clock"></i> Pendiente de Aprobacion
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <a href="{% url 'dashboard' %}" class="px-4 py-2 text-sm text-dark-500 hover:text-dark-700 border border-dark-200 rounded-lg hover:bg-dark-50 transition-all">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Volver
+            </a>
+        </div>
+
+        <!-- Data Card -->
+        <div class="glass-card rounded-2xl p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Nombre Empresa -->
+                <div>
+                    <div class="data-label">Nombre de la Empresa</div>
+                    <div class="data-value">{{ empresa.nombre_empresa|default:"—" }}</div>
+                </div>
+
+                <!-- NIT -->
+                <div>
+                    <div class="data-label">NIT</div>
+                    <div class="data-value">{{ empresa.nit_empresa|default:"—" }}</div>
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <div class="data-label">Email</div>
+                    <div class="data-value">
+                        <a href="mailto:{{ empresa.email }}" class="text-oasis-600 hover:text-oasis-700 transition-colors">
+                            {{ empresa.email }}
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Representante -->
+                <div>
+                    <div class="data-label">Representante</div>
+                    <div class="data-value">
+                        {{ empresa.get_full_name|default:empresa.username }}
+                    </div>
+                </div>
+
+                <!-- Telefono -->
+                <div>
+                    <div class="data-label">Telefono</div>
+                    <div class="data-value">{{ empresa.telefono|default:"No registrado" }}</div>
+                </div>
+
+                <!-- Fecha de Registro -->
+                <div>
+                    <div class="data-label">Fecha de Registro</div>
+                    <div class="data-value">{{ empresa.date_joined|date:"d M Y, H:i" }}</div>
+                </div>
+            </div>
+
+            <!-- Motivo de Registro -->
+            {% if empresa.motivo_registro %}
+            <div class="mt-6">
+                <div class="data-label">Motivo de Registro</div>
+                <div class="motivo-box">{{ empresa.motivo_registro }}</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Action Buttons -->
+        {% if not empresa.is_active %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="action-buttons">
+            <button type="button" class="action-btn btn-approve" id="btn-approve">
+                <i class="fa-solid fa-circle-check"></i> Aprobar Empresa
+            </button>
+            <button type="button" class="action-btn btn-reject" id="btn-reject">
+                <i class="fa-solid fa-circle-xmark"></i> Rechazar Empresa
+            </button>
+        </div>
+
+        <!-- Success message (hidden) -->
+        <div id="action-result" class="glass-card rounded-2xl p-6 text-center hidden">
+            <div class="text-4xl mb-3" id="result-icon"></div>
+            <div class="text-lg font-bold text-dark-800" id="result-title"></div>
+            <div class="text-sm text-dark-400 mt-1" id="result-msg"></div>
+            <a href="{% url 'dashboard' %}" class="inline-block mt-4 px-5 py-2 text-sm font-medium text-oasis-600 border border-oasis-200 rounded-xl hover:bg-oasis-50 transition-all">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Volver al Dashboard
+            </a>
+        </div>
+        {% else %}
+        <div class="glass-card rounded-2xl p-6 text-center">
+            <i class="fa-solid fa-circle-check text-3xl text-oasis-500 mb-2"></i>
+            <p class="text-sm text-dark-500">Esta empresa ya esta activa y aprobada.</p>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    {% if not empresa.is_active %}
+    const csrfToken = '{{ csrf_token }}';
+    const btnApprove = document.getElementById('btn-approve');
+    const btnReject = document.getElementById('btn-reject');
+    const actionBtns = document.getElementById('action-buttons');
+    const actionResult = document.getElementById('action-result');
+
+    function showResult(icon, title, msg) {
+        actionBtns.classList.add('hidden');
+        actionResult.classList.remove('hidden');
+        document.getElementById('result-icon').textContent = icon;
+        document.getElementById('result-title').textContent = title;
+        document.getElementById('result-msg').textContent = msg;
+    }
+
+    btnApprove.addEventListener('click', async () => {
+        if (!confirm('Aprobar esta empresa? Se activara su cuenta inmediatamente.')) return;
+        btnApprove.disabled = true;
+        btnApprove.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
+
+        try {
+            const resp = await fetch('{% url "admin_aprobar_empresa" empresa.pk %}', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrfToken, 'X-Requested-With': 'XMLHttpRequest' },
+            });
+            const data = await resp.json();
+            if (data.ok) {
+                showResult('✅', 'Empresa Aprobada', `${data.nombre} ha sido activada exitosamente.`);
+            }
+        } catch (err) { console.error('Approve error:', err); }
+    });
+
+    btnReject.addEventListener('click', async () => {
+        if (!confirm('Rechazar esta empresa? Se eliminara permanentemente su cuenta.')) return;
+        btnReject.disabled = true;
+        btnReject.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
+
+        try {
+            const resp = await fetch('{% url "admin_rechazar_empresa" empresa.pk %}', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrfToken, 'X-Requested-With': 'XMLHttpRequest' },
+            });
+            const data = await resp.json();
+            if (data.ok) {
+                showResult('🚫', 'Empresa Rechazada', `${data.nombre} ha sido eliminada del sistema.`);
+            }
+        } catch (err) { console.error('Reject error:', err); }
+    });
+    {% endif %}
+});
+</script>
+{% endblock %}

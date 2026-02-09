@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Perfil — OASIS{% endblock %}
+
+{% block navbar %}
+{% include 'partials/navbar_auth.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="relative min-h-screen py-24 bg-dark-50">
+    <div class="absolute inset-0">
+        <div class="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-oasis-100/30 rounded-full blur-[120px]"></div>
+    </div>
+
+    <div class="relative z-10 max-w-2xl mx-auto px-4">
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full mb-4
+                        bg-gradient-to-br from-oasis-500 to-oasis-700 text-white text-2xl font-black
+                        shadow-lg shadow-oasis-600/20">
+                {{ user.iniciales }}
+            </div>
+            <h1 class="text-3xl font-black text-dark-900">{{ user.get_full_name|default:user.username }}</h1>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mt-2
+                         bg-oasis-50 border border-oasis-200 text-sm font-semibold text-oasis-700">
+                <i class="fa-solid fa-circle text-[6px]"></i>
+                {{ user.get_rol_display }}
+            </span>
+        </div>
+
+        <div class="bg-white rounded-2xl p-8 space-y-6 shadow-lg shadow-dark-100/50 border border-dark-100">
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <p class="text-xs text-dark-400 uppercase tracking-wider mb-1">Email</p>
+                    <p class="text-sm font-semibold text-dark-800">{{ user.email|default:"No registrado" }}</p>
+                </div>
+                <div>
+                    <p class="text-xs text-dark-400 uppercase tracking-wider mb-1">Telefono</p>
+                    <p class="text-sm font-semibold text-dark-800">{{ user.telefono|default:"No registrado" }}</p>
+                </div>
+                <div>
+                    <p class="text-xs text-dark-400 uppercase tracking-wider mb-1">Fecha de registro</p>
+                    <p class="text-sm font-semibold text-dark-800">{{ user.date_joined|date:"d/m/Y" }}</p>
+                </div>
+                <div>
+                    <p class="text-xs text-dark-400 uppercase tracking-wider mb-1">Ultimo acceso</p>
+                    <p class="text-sm font-semibold text-dark-800">{{ user.last_login|date:"d/m/Y H:i"|default:"Nunca" }}</p>
+                </div>
+            </div>
+
+            {% if user.es_empresa %}
+            <div class="pt-6 border-t border-dark-100">
+                <h3 class="text-sm font-bold text-oasis-700 uppercase tracking-wider mb-4">Datos de Empresa</h3>
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <p class="text-xs text-dark-400 uppercase tracking-wider mb-1">Razon Social</p>
+                        <p class="text-sm font-semibold text-dark-800">{{ user.nombre_empresa }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-dark-400 uppercase tracking-wider mb-1">NIT</p>
+                        <p class="text-sm font-semibold text-dark-800">{{ user.nit_empresa }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="flex items-center justify-center gap-4 mt-8">
+            <a href="{% url 'dashboard' %}"
+               class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white
+                      bg-oasis-600 hover:bg-oasis-700
+                      shadow-lg shadow-oasis-600/20 hover:shadow-oasis-600/40
+                      hover:-translate-y-0.5 transition-all duration-300">
+                <i class="fa-solid fa-gauge"></i> Dashboard
+            </a>
+            <a href="{% url 'index' %}"
+               class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold
+                      bg-white border border-dark-200 text-dark-600 hover:text-oasis-600
+                      hover:border-oasis-300 shadow-sm transition-all">
+                <i class="fa-solid fa-home"></i> Inicio
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

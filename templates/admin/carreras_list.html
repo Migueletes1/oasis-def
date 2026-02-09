@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Carreras — OASIS Admin{% endblock %}
+
+{% block three_canvas %}{% endblock %}
+
+{% block navbar %}
+{% include 'partials/navbar_auth.html' %}
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .cluster-badge {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 0.25rem 0.625rem;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+        color: #059669;
+        border: 1px solid rgba(5, 150, 105, 0.15);
+    }
+    .carrera-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.75rem;
+        transition: background 0.15s;
+        border: 1px solid transparent;
+    }
+    .carrera-row:hover {
+        background: #f9fafb;
+        border-color: #e5e7eb;
+    }
+    .carrera-icon {
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.5rem;
+        background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #059669;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+    }
+    .carrera-info { flex: 1; min-width: 0; }
+    .carrera-info .name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #111827;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .carrera-info .meta {
+        font-size: 0.7rem;
+        color: #9ca3af;
+    }
+    .carrera-actions {
+        display: flex;
+        gap: 0.375rem;
+        flex-shrink: 0;
+    }
+    .carrera-actions a, .carrera-actions button {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        transition: all 0.15s;
+        border: none;
+        cursor: pointer;
+    }
+    .btn-edit {
+        background: #f0fdf4;
+        color: #059669;
+    }
+    .btn-edit:hover { background: #d1fae5; }
+    .btn-del {
+        background: #fef2f2;
+        color: #ef4444;
+    }
+    .btn-del:hover { background: #fee2e2; }
+
+    .inactive-badge {
+        font-size: 0.6rem;
+        padding: 0.125rem 0.375rem;
+        border-radius: 999px;
+        background: #fef3c7;
+        color: #d97706;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pt-24 pb-16 px-4 sm:px-6 lg:px-8 min-h-screen bg-gradient-to-br from-dark-50 via-white to-oasis-50/30">
+    <div class="max-w-4xl mx-auto">
+
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-sm text-dark-400 mb-6">
+            <a href="{% url 'dashboard' %}" class="hover:text-oasis-600 transition-colors">
+                <i class="fa-solid fa-gauge"></i> Dashboard
+            </a>
+            <i class="fa-solid fa-chevron-right text-xs"></i>
+            <span class="text-dark-600 font-medium">Carreras</span>
+        </nav>
+
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-2xl font-extrabold text-dark-900">
+                    <i class="fa-solid fa-graduation-cap text-oasis-600 mr-2"></i>
+                    Gestion de Carreras
+                </h1>
+                <p class="text-sm text-dark-400 mt-1">{{ total_carreras }} carreras registradas</p>
+            </div>
+            <a href="{% url 'admin_carrera_nueva' %}"
+               class="px-4 py-2.5 text-sm font-bold text-white bg-oasis-600 rounded-xl
+                      shadow-lg shadow-oasis-600/20 hover:bg-oasis-700 hover:shadow-oasis-600/30
+                      transition-all active:scale-95">
+                <i class="fa-solid fa-plus mr-1"></i> Nueva Carrera
+            </a>
+        </div>
+
+        <!-- Clusters -->
+        {% for cluster_label, carreras in carreras_by_cluster.items %}
+        <div class="glass-card rounded-2xl p-5 mb-4">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="cluster-badge">{{ cluster_label }}</span>
+                <span class="text-xs text-dark-400">{{ carreras|length }} carrera{{ carreras|length|pluralize:"s" }}</span>
+            </div>
+
+            <div class="space-y-1">
+                {% for c in carreras %}
+                <div class="carrera-row">
+                    <div class="carrera-icon">
+                        <i class="fa-solid {{ c.icono }}"></i>
+                    </div>
+                    <div class="carrera-info">
+                        <div class="name">
+                            {{ c.nombre }}
+                            {% if not c.activa %}<span class="inactive-badge ml-2">Inactiva</span>{% endif %}
+                        </div>
+                        <div class="meta">{{ c.clave }} &middot; Orden: {{ c.orden }}</div>
+                    </div>
+                    <div class="carrera-actions">
+                        <a href="{% url 'admin_carrera_editar' c.pk %}" class="btn-edit" title="Editar">
+                            <i class="fa-solid fa-pen"></i>
+                        </a>
+                        <button type="button" class="btn-del btn-delete-carrera" data-pk="{{ c.pk }}" data-name="{{ c.nombre }}" title="Eliminar">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Back -->
+        <div class="text-center mt-6">
+            <a href="{% url 'dashboard' %}" class="text-sm text-dark-400 hover:text-oasis-600 transition-colors">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Volver al Dashboard
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content
+        || '{{ csrf_token }}';
+
+    document.querySelectorAll('.btn-delete-carrera').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const pk = btn.dataset.pk;
+            const name = btn.dataset.name;
+            if (!confirm(`Eliminar la carrera "${name}"? Esta accion no se puede deshacer.`)) return;
+
+            try {
+                const resp = await fetch(`/auth/admin/carrera/${pk}/eliminar/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+                const data = await resp.json();
+                if (data.ok) {
+                    btn.closest('.carrera-row').remove();
+                }
+            } catch (err) { console.error('Delete error:', err); }
+        });
+    });
+});
+</script>
+{% endblock %}

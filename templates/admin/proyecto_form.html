@@ -1,0 +1,780 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ is_edit|yesno:"Editar,Nuevo" }} Proyecto — OASIS Admin{% endblock %}
+
+{% block three_canvas %}{% endblock %}
+
+{% block navbar %}
+{% include 'partials/navbar_auth.html' %}
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* ── Admin Input (orange focus variant) ── */
+    .admin-input {
+        width: 100%;
+        padding: 0.625rem 0.875rem;
+        border-radius: 0.625rem;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        color: #111827;
+        font-size: 0.875rem;
+        transition: all 0.25s ease;
+    }
+    .admin-input::placeholder { color: #9ca3af; }
+    .admin-input:focus {
+        outline: none;
+        border-color: #f97316;
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+    }
+    .admin-input:hover:not(:focus) { border-color: #d1d5db; }
+    textarea.admin-input { resize: vertical; min-height: 80px; }
+    select.admin-input { cursor: pointer; }
+
+    /* ── Section titles ── */
+    .form-section-title {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #059669;
+        margin-bottom: 1rem;
+    }
+    .form-section-title i { margin-right: 0.375rem; }
+
+    /* ── Field label ── */
+    .field-label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.25rem;
+    }
+    .field-label .required { color: #f97316; margin-left: 0.125rem; }
+
+    /* ── Inline errors ── */
+    .field-error {
+        font-size: 0.75rem;
+        color: #ef4444;
+        margin-top: 0.25rem;
+        display: none;
+    }
+    .field-error.active { display: block; }
+    .admin-input.has-error { border-color: #ef4444; }
+    .admin-input.has-error:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1); }
+
+    /* ── Tooltip on data-tooltip ── */
+    [data-tooltip] { position: relative; }
+    [data-tooltip]::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: calc(100% + 6px);
+        left: 0;
+        background: #1f2937;
+        color: #fff;
+        font-size: 0.7rem;
+        padding: 0.35rem 0.625rem;
+        border-radius: 0.375rem;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+        z-index: 30;
+    }
+    [data-tooltip]:focus-within::after,
+    [data-tooltip]:hover::after { opacity: 1; }
+
+    /* ── Cluster carrera dropdown ── */
+    .carrera-dropdown {
+        position: relative;
+    }
+    .carrera-trigger {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .carrera-trigger i.chevron {
+        transition: transform 0.2s;
+        font-size: 0.75rem;
+        color: #9ca3af;
+    }
+    .carrera-dropdown.open .carrera-trigger i.chevron {
+        transform: rotate(180deg);
+    }
+    .carrera-menu {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0; right: 0;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        max-height: 320px;
+        overflow-y: auto;
+        z-index: 50;
+        display: none;
+    }
+    .carrera-dropdown.open .carrera-menu { display: block; }
+    .carrera-cluster-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #059669;
+        padding: 0.5rem 0.75rem 0.25rem;
+        background: #f9fafb;
+        position: sticky;
+        top: 0;
+    }
+    .carrera-option {
+        padding: 0.5rem 0.75rem 0.5rem 1.25rem;
+        font-size: 0.8rem;
+        color: #374151;
+        cursor: pointer;
+        transition: background 0.15s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .carrera-option:hover { background: #f0fdf4; }
+    .carrera-option.selected { background: #ecfdf5; color: #059669; font-weight: 600; }
+    .carrera-option i { font-size: 0.85rem; width: 1.25rem; text-align: center; color: #6b7280; }
+    .carrera-option.selected i { color: #059669; }
+
+    /* ── Autocomplete ── */
+    .autocomplete-wrap { position: relative; }
+    .autocomplete-results {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0; right: 0;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        max-height: 240px;
+        overflow-y: auto;
+        z-index: 50;
+        display: none;
+    }
+    .autocomplete-results.open { display: block; }
+    .autocomplete-item {
+        padding: 0.625rem 0.875rem;
+        cursor: pointer;
+        border-bottom: 1px solid #f3f4f6;
+        transition: background 0.15s;
+    }
+    .autocomplete-item:last-child { border-bottom: none; }
+    .autocomplete-item:hover { background: #f0fdf4; }
+    .autocomplete-item .name { font-size: 0.85rem; font-weight: 600; color: #111827; }
+    .autocomplete-item .meta { font-size: 0.7rem; color: #6b7280; margin-top: 0.125rem; }
+
+    /* ── Thumbnail dropzone ── */
+    .thumb-dropzone {
+        border: 2px dashed #d1d5db;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.25s;
+        background: #fafafa;
+    }
+    .thumb-dropzone:hover,
+    .thumb-dropzone.dragover {
+        border-color: #059669;
+        background: #f0fdf4;
+    }
+    .thumb-dropzone .icon {
+        font-size: 2rem;
+        color: #d1d5db;
+        margin-bottom: 0.5rem;
+        transition: color 0.25s;
+    }
+    .thumb-dropzone:hover .icon,
+    .thumb-dropzone.dragover .icon { color: #059669; }
+    .thumb-dropzone .label { font-size: 0.8rem; color: #6b7280; }
+    .thumb-preview {
+        position: relative;
+        display: none;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        max-height: 200px;
+    }
+    .thumb-preview img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 0.75rem;
+    }
+    .thumb-preview .remove-btn {
+        position: absolute;
+        top: 0.5rem; right: 0.5rem;
+        width: 1.75rem; height: 1.75rem;
+        border-radius: 50%;
+        background: rgba(239, 68, 68, 0.85);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+    }
+
+    /* ── Tags grid ── */
+    .tags-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 0.375rem;
+    }
+    .tags-grid label {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-size: 0.8rem;
+        color: #374151;
+        padding: 0.375rem 0.5rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .tags-grid label:hover { background: #f0fdf4; }
+    .tags-grid input[type="checkbox"] {
+        accent-color: #059669;
+        width: 1rem; height: 1rem;
+    }
+
+    /* ── Toggle switch ── */
+    .toggle-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .toggle-track {
+        position: relative;
+        width: 2.75rem;
+        height: 1.5rem;
+        background: #d1d5db;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background 0.25s;
+    }
+    .toggle-track::after {
+        content: '';
+        position: absolute;
+        top: 2px; left: 2px;
+        width: 1.25rem; height: 1.25rem;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        transition: transform 0.25s;
+    }
+    .toggle-track.active {
+        background: #059669;
+    }
+    .toggle-track.active::after {
+        transform: translateX(1.25rem);
+    }
+    .toggle-input { display: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pt-24 pb-16 px-4 sm:px-6 lg:px-8 min-h-screen bg-gradient-to-br from-dark-50 via-white to-oasis-50/30">
+    <div class="max-w-5xl mx-auto">
+
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-sm text-dark-400 mb-6">
+            <a href="{% url 'dashboard' %}" class="hover:text-oasis-600 transition-colors">
+                <i class="fa-solid fa-gauge"></i> Dashboard
+            </a>
+            <i class="fa-solid fa-chevron-right text-xs"></i>
+            <span class="text-dark-600 font-medium">
+                {{ is_edit|yesno:"Editar Proyecto,Nuevo Proyecto" }}
+            </span>
+        </nav>
+
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-2xl font-extrabold text-dark-900">
+                    <i class="fa-solid fa-{{ is_edit|yesno:'pen-to-square,plus' }} text-oasis-600 mr-2"></i>
+                    {{ is_edit|yesno:"Editar Proyecto,Nuevo Proyecto de Grado" }}
+                </h1>
+                {% if is_edit %}
+                <p class="text-sm text-dark-400 mt-1">{{ proyecto.titulo|truncatechars:60 }}</p>
+                {% endif %}
+            </div>
+            <a href="{% url 'dashboard' %}" class="px-4 py-2 text-sm text-dark-500 hover:text-dark-700 border border-dark-200 rounded-lg hover:bg-dark-50 transition-all">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Volver
+            </a>
+        </div>
+
+        <!-- Form -->
+        <form id="proyecto-form" method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <!-- ═══ Section 1: Info Principal ═══ -->
+                <div class="lg:col-span-2 glass-card rounded-2xl p-6">
+                    <div class="form-section-title">
+                        <i class="fa-solid fa-file-lines"></i>Informacion Principal
+                    </div>
+
+                    <!-- Titulo (full-width) -->
+                    <div class="mb-4" data-tooltip="Titulo oficial del proyecto (min. 5 caracteres)">
+                        <label class="field-label" for="id_titulo">Titulo <span class="required">*</span></label>
+                        {{ form.titulo }}
+                        <div class="field-error" id="error-titulo"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Descripcion -->
+                        <div data-tooltip="Descripcion completa del proyecto (min. 20 caracteres)">
+                            <label class="field-label" for="id_descripcion">Descripcion <span class="required">*</span></label>
+                            {{ form.descripcion }}
+                            <div class="field-error" id="error-descripcion"></div>
+                        </div>
+
+                        <!-- Resumen -->
+                        <div data-tooltip="Resumen ejecutivo que aparecera en la tarjeta del explorador">
+                            <label class="field-label" for="id_resumen">Resumen <span class="text-dark-400 text-xs">(max 500)</span></label>
+                            {{ form.resumen }}
+                            <div class="flex justify-between mt-1">
+                                <div class="field-error" id="error-resumen"></div>
+                                <span class="text-xs text-dark-400" id="resumen-counter">0/500</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <!-- Carrera (custom cluster dropdown) -->
+                        <div>
+                            <label class="field-label">Carrera <span class="required">*</span></label>
+                            {{ form.carrera }}
+                            <div class="carrera-dropdown" id="carrera-dropdown">
+                                <div class="admin-input carrera-trigger" id="carrera-trigger" tabindex="0">
+                                    <span id="carrera-display">
+                                        {% if proyecto %}{{ proyecto.get_carrera_display }}{% else %}Seleccionar carrera...{% endif %}
+                                    </span>
+                                    <i class="fa-solid fa-chevron-down chevron"></i>
+                                </div>
+                                <div class="carrera-menu" id="carrera-menu">
+                                    {% for cluster_label, carreras in carreras_by_cluster.items %}
+                                    <div class="carrera-cluster-label">{{ cluster_label }}</div>
+                                    {% for c in carreras %}
+                                    <div class="carrera-option{% if proyecto and proyecto.carrera == c.clave %} selected{% endif %}"
+                                         data-value="{{ c.clave }}" data-label="{{ c.nombre }}">
+                                        <i class="fa-solid {{ c.icono }}"></i>
+                                        {{ c.nombre }}
+                                    </div>
+                                    {% endfor %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="field-error" id="error-carrera"></div>
+                        </div>
+
+                        <!-- Anio -->
+                        <div>
+                            <label class="field-label" for="id_anio">Ano de Presentacion</label>
+                            {{ form.anio }}
+                            <div class="field-error" id="error-anio"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══ Section 2: Autor y Relaciones ═══ -->
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="form-section-title">
+                        <i class="fa-solid fa-user-graduate"></i>Autor y Relaciones
+                    </div>
+
+                    <!-- Autor (autocomplete) -->
+                    <div class="mb-4 autocomplete-wrap">
+                        <label class="field-label" for="id_autor">Autor <span class="required">*</span></label>
+                        {{ form.autor }}
+                        <div class="autocomplete-results" id="autor-results"></div>
+                        <div class="field-error" id="error-autor"></div>
+                    </div>
+
+                    <!-- Email Autor -->
+                    <div class="mb-4">
+                        <label class="field-label" for="id_email_autor">Email del Autor</label>
+                        {{ form.email_autor }}
+                        <div class="field-error" id="error-email_autor"></div>
+                    </div>
+
+                    <!-- Ficha -->
+                    <div class="mb-4" data-tooltip="Numero de ficha SENA del aprendiz">
+                        <label class="field-label" for="id_ficha">Ficha SENA</label>
+                        {{ form.ficha }}
+                        <div class="field-error" id="error-ficha"></div>
+                    </div>
+
+                    <!-- Instructor Avalador -->
+                    <div>
+                        <label class="field-label" for="id_instructor_avalador">Instructor Avalador</label>
+                        {{ form.instructor_avalador }}
+                        <div class="field-error" id="error-instructor_avalador"></div>
+                    </div>
+                </div>
+
+                <!-- ═══ Section 3: Media y Enlaces ═══ -->
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="form-section-title">
+                        <i class="fa-solid fa-photo-film"></i>Media y Enlaces
+                    </div>
+
+                    <!-- Thumbnail dropzone -->
+                    <div class="mb-4">
+                        <label class="field-label">Thumbnail</label>
+                        <div class="thumb-dropzone" id="thumb-dropzone">
+                            <div class="icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                            <div class="label">Arrastra una imagen o <span class="text-oasis-600 font-semibold">haz clic</span></div>
+                            <div class="text-xs text-dark-300 mt-1">JPG, PNG, WebP — Max 2MB</div>
+                        </div>
+                        <div class="thumb-preview" id="thumb-preview">
+                            <img id="thumb-img" src="{% if proyecto and proyecto.thumbnail %}{{ proyecto.thumbnail.url }}{% endif %}" alt="">
+                            <button type="button" class="remove-btn" id="thumb-remove" title="Quitar imagen">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        {{ form.thumbnail }}
+                        <div class="field-error" id="error-thumbnail"></div>
+                    </div>
+
+                    <!-- Imagen URL -->
+                    <div class="mb-4">
+                        <label class="field-label" for="id_imagen_url">URL de Imagen <span class="text-dark-400 text-xs">(alternativa)</span></label>
+                        {{ form.imagen_url }}
+                    </div>
+
+                    <!-- Enlace Repositorio -->
+                    <div class="mb-4" data-tooltip="Link al repositorio de codigo (GitHub, GitLab, etc.)">
+                        <label class="field-label" for="id_enlace_repositorio">
+                            <i class="fa-brands fa-github text-dark-400 mr-1"></i>Repositorio
+                        </label>
+                        {{ form.enlace_repositorio }}
+                    </div>
+
+                    <!-- Enlace Demo -->
+                    <div data-tooltip="Link a una demo funcional del proyecto">
+                        <label class="field-label" for="id_enlace_demo">
+                            <i class="fa-solid fa-globe text-dark-400 mr-1"></i>Demo en Vivo
+                        </label>
+                        {{ form.enlace_demo }}
+                    </div>
+                </div>
+
+                <!-- ═══ Section 4: Tags y Metadata ═══ -->
+                <div class="lg:col-span-2 glass-card rounded-2xl p-6">
+                    <div class="form-section-title">
+                        <i class="fa-solid fa-tags"></i>Tags y Metadata
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Tags -->
+                        <div>
+                            <label class="field-label">Tags / Habilidades</label>
+                            <div class="tags-grid">
+                                {% for checkbox in form.tags %}
+                                {{ checkbox }}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <!-- Herramientas -->
+                            <div data-tooltip="Lista de herramientas y tecnologias usadas">
+                                <label class="field-label" for="id_herramientas_usadas">Herramientas Usadas</label>
+                                {{ form.herramientas_usadas }}
+                            </div>
+
+                            <!-- Version y Estado -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="field-label" for="id_version_actual">Version</label>
+                                    {{ form.version_actual }}
+                                </div>
+                                <div>
+                                    <label class="field-label" for="id_estado">Estado</label>
+                                    {{ form.estado }}
+                                </div>
+                            </div>
+
+                            <!-- Destacado toggle -->
+                            <div>
+                                <label class="field-label">Destacado</label>
+                                <div class="toggle-wrap">
+                                    <input type="checkbox" name="destacado" id="id_destacado"
+                                           class="toggle-input"
+                                           {% if form.initial.destacado or proyecto and proyecto.destacado %}checked{% endif %}>
+                                    <div class="toggle-track{% if form.initial.destacado or proyecto and proyecto.destacado %} active{% endif %}"
+                                         id="destacado-toggle"></div>
+                                    <span class="text-sm text-dark-500" id="destacado-label">
+                                        {% if proyecto and proyecto.destacado %}Activado{% else %}Desactivado{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ Submit Bar ═══ -->
+            <div class="flex items-center justify-end gap-3 mt-6">
+                {% if is_edit %}
+                <button type="button" id="btn-delete"
+                        class="px-5 py-2.5 text-sm font-medium text-red-500 border border-red-200 rounded-xl
+                               hover:bg-red-50 transition-all mr-auto">
+                    <i class="fa-solid fa-trash-can mr-1"></i> Eliminar
+                </button>
+                {% endif %}
+                <a href="{% url 'dashboard' %}"
+                   class="px-5 py-2.5 text-sm font-medium text-dark-500 border border-dark-200 rounded-xl
+                          hover:bg-dark-50 transition-all">
+                    Cancelar
+                </a>
+                <button type="submit" id="btn-save"
+                        class="px-6 py-2.5 text-sm font-bold text-white bg-oasis-600 rounded-xl
+                               shadow-lg shadow-oasis-600/20 hover:bg-oasis-700 hover:shadow-oasis-600/30
+                               transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fa-solid fa-floppy-disk mr-1"></i>
+                    {{ is_edit|yesno:"Guardar Cambios,Crear Proyecto" }}
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    // ════════════════════════════════════════════════════════════════
+    // Cluster-grouped Carrera Dropdown
+    // ════════════════════════════════════════════════════════════════
+    const dd = document.getElementById('carrera-dropdown');
+    const trigger = document.getElementById('carrera-trigger');
+    const menu = document.getElementById('carrera-menu');
+    const display = document.getElementById('carrera-display');
+    const hiddenInput = document.getElementById('id_carrera');
+
+    trigger.addEventListener('click', () => dd.classList.toggle('open'));
+    trigger.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dd.classList.toggle('open'); }
+    });
+
+    menu.querySelectorAll('.carrera-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+            menu.querySelectorAll('.carrera-option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            hiddenInput.value = opt.dataset.value;
+            display.textContent = opt.dataset.label;
+            dd.classList.remove('open');
+        });
+    });
+
+    document.addEventListener('click', e => {
+        if (!dd.contains(e.target)) dd.classList.remove('open');
+    });
+
+    // ════════════════════════════════════════════════════════════════
+    // Author Autocomplete (debounced)
+    // ════════════════════════════════════════════════════════════════
+    const autorInput = document.getElementById('id_autor');
+    const emailInput = document.getElementById('id_email_autor');
+    const fichaInput = document.getElementById('id_ficha');
+    const resultsDiv = document.getElementById('autor-results');
+    let debounceTimer;
+
+    autorInput.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        const q = autorInput.value.trim();
+        if (q.length < 2) { resultsDiv.classList.remove('open'); resultsDiv.innerHTML = ''; return; }
+
+        debounceTimer = setTimeout(async () => {
+            try {
+                const resp = await fetch(`{% url 'admin_buscar_aprendiz' %}?q=${encodeURIComponent(q)}`);
+                const data = await resp.json();
+                if (!data.results.length) {
+                    resultsDiv.classList.remove('open');
+                    resultsDiv.innerHTML = '';
+                    return;
+                }
+                resultsDiv.innerHTML = data.results.map(a => `
+                    <div class="autocomplete-item" data-nombre="${a.nombre}" data-email="${a.email}" data-doc="${a.documento}">
+                        <div class="name">${a.nombre}</div>
+                        <div class="meta">${a.documento} &middot; ${a.email}</div>
+                    </div>
+                `).join('');
+                resultsDiv.classList.add('open');
+
+                resultsDiv.querySelectorAll('.autocomplete-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        autorInput.value = item.dataset.nombre;
+                        emailInput.value = item.dataset.email;
+                        resultsDiv.classList.remove('open');
+                    });
+                });
+            } catch (err) { console.error('Autocomplete error:', err); }
+        }, 300);
+    });
+
+    document.addEventListener('click', e => {
+        if (!resultsDiv.contains(e.target) && e.target !== autorInput) {
+            resultsDiv.classList.remove('open');
+        }
+    });
+
+    // ════════════════════════════════════════════════════════════════
+    // Thumbnail Dropzone
+    // ════════════════════════════════════════════════════════════════
+    const dropzone = document.getElementById('thumb-dropzone');
+    const preview = document.getElementById('thumb-preview');
+    const thumbImg = document.getElementById('thumb-img');
+    const thumbInput = document.getElementById('id_thumbnail');
+    const removeBtn = document.getElementById('thumb-remove');
+
+    {% if proyecto and proyecto.thumbnail %}
+    dropzone.style.display = 'none';
+    preview.style.display = 'block';
+    {% endif %}
+
+    dropzone.addEventListener('click', () => thumbInput.click());
+
+    ['dragenter', 'dragover'].forEach(ev =>
+        dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('dragover'); })
+    );
+    ['dragleave', 'drop'].forEach(ev =>
+        dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('dragover'); })
+    );
+
+    dropzone.addEventListener('drop', e => {
+        const files = e.dataTransfer.files;
+        if (files.length && files[0].type.startsWith('image/')) {
+            thumbInput.files = files;
+            showPreview(files[0]);
+        }
+    });
+
+    thumbInput.addEventListener('change', () => {
+        if (thumbInput.files.length) showPreview(thumbInput.files[0]);
+    });
+
+    function showPreview(file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            thumbImg.src = e.target.result;
+            dropzone.style.display = 'none';
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    removeBtn.addEventListener('click', () => {
+        thumbImg.src = '';
+        thumbInput.value = '';
+        preview.style.display = 'none';
+        dropzone.style.display = '';
+    });
+
+    // ════════════════════════════════════════════════════════════════
+    // Destacado Toggle
+    // ════════════════════════════════════════════════════════════════
+    const toggleTrack = document.getElementById('destacado-toggle');
+    const toggleInput = document.getElementById('id_destacado');
+    const toggleLabel = document.getElementById('destacado-label');
+
+    toggleTrack.addEventListener('click', () => {
+        toggleInput.checked = !toggleInput.checked;
+        toggleTrack.classList.toggle('active', toggleInput.checked);
+        toggleLabel.textContent = toggleInput.checked ? 'Activado' : 'Desactivado';
+    });
+
+    // ════════════════════════════════════════════════════════════════
+    // Resumen character counter
+    // ════════════════════════════════════════════════════════════════
+    const resumenField = document.getElementById('id_resumen');
+    const counter = document.getElementById('resumen-counter');
+    if (resumenField) {
+        const updateCounter = () => {
+            const len = resumenField.value.length;
+            counter.textContent = `${len}/500`;
+            counter.classList.toggle('text-red-500', len > 500);
+        };
+        resumenField.addEventListener('input', updateCounter);
+        updateCounter();
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    // AJAX Form Submit
+    // ════════════════════════════════════════════════════════════════
+    const form = document.getElementById('proyecto-form');
+    const btnSave = document.getElementById('btn-save');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Clear previous errors
+        document.querySelectorAll('.field-error').forEach(el => { el.textContent = ''; el.classList.remove('active'); });
+        document.querySelectorAll('.admin-input.has-error').forEach(el => el.classList.remove('has-error'));
+
+        btnSave.disabled = true;
+        btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Guardando...';
+
+        try {
+            const formData = new FormData(form);
+            const resp = await fetch(form.action || window.location.href, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            });
+
+            const data = await resp.json();
+
+            if (resp.ok && data.ok) {
+                window.location.href = '{% url "dashboard" %}';
+            } else if (data.errors) {
+                Object.entries(data.errors).forEach(([field, msgs]) => {
+                    const errEl = document.getElementById(`error-${field}`);
+                    const inputEl = document.getElementById(`id_${field}`);
+                    if (errEl) { errEl.textContent = msgs.join(' '); errEl.classList.add('active'); }
+                    if (inputEl) inputEl.classList.add('has-error');
+                });
+            }
+        } catch (err) {
+            console.error('Submit error:', err);
+        } finally {
+            btnSave.disabled = false;
+            btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1"></i> {{ is_edit|yesno:"Guardar Cambios,Crear Proyecto" }}';
+        }
+    });
+
+    // ════════════════════════════════════════════════════════════════
+    // Delete (edit mode)
+    // ════════════════════════════════════════════════════════════════
+    {% if is_edit %}
+    const btnDelete = document.getElementById('btn-delete');
+    btnDelete.addEventListener('click', async () => {
+        if (!confirm('Estas seguro de eliminar este proyecto? Esta accion no se puede deshacer.')) return;
+
+        try {
+            const resp = await fetch('{% url "admin_proyecto_eliminar" proyecto.pk %}', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrfToken, 'X-Requested-With': 'XMLHttpRequest' },
+            });
+            const data = await resp.json();
+            if (data.ok) window.location.href = '{% url "dashboard" %}';
+        } catch (err) { console.error('Delete error:', err); }
+    });
+    {% endif %}
+});
+</script>
+{% endblock %}

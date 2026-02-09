@@ -1,0 +1,1872 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Command Center — OASIS{% endblock %}
+
+{% block three_canvas %}{% endblock %}
+
+{% block extra_head %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+    /* ─── Admin Layout ────────────────────────────────── */
+    .admin-sidebar {
+        width: 16rem;
+        position: fixed;
+        top: 0; left: 0; bottom: 0;
+        background: linear-gradient(180deg, #064e3b 0%, #065f46 50%, #047857 100%);
+        z-index: 40;
+        overflow-y: auto;
+        transition: transform 0.3s;
+    }
+    .admin-main { margin-left: 16rem; min-height: 100vh; }
+    .admin-topbar {
+        height: 4rem;
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid #f3f4f6;
+        position: sticky; top: 0; z-index: 30;
+    }
+    /* Sidebar nav items */
+    .nav-item {
+        display: flex; align-items: center; gap: 0.75rem;
+        padding: 0.6rem 1rem; border-radius: 0.5rem;
+        color: rgba(255,255,255,0.65); font-size: 0.8125rem; font-weight: 500;
+        cursor: pointer; transition: all 0.2s; text-decoration: none;
+    }
+    .nav-item:hover { color: #fff; background: rgba(255,255,255,0.1); }
+    .nav-item.active { color: #fff; background: rgba(255,255,255,0.15); font-weight: 600; }
+    .nav-item i { width: 1.25rem; text-align: center; font-size: 0.85rem; }
+    .nav-section { font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+                   letter-spacing: 0.1em; color: rgba(255,255,255,0.35);
+                   padding: 1rem 1rem 0.4rem; }
+    /* ─── Hero KPI Cards (Glassmorphism) ──────────────── */
+    .hero-kpi {
+        position: relative;
+        background: rgba(255,255,255,0.7);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255,255,255,0.6);
+        border-radius: 1.25rem;
+        padding: 1.5rem;
+        transition: all 0.35s cubic-bezier(.4,0,.2,1);
+        overflow: hidden;
+    }
+    .hero-kpi::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        border-radius: 1.25rem 1.25rem 0 0;
+    }
+    .hero-kpi.kpi-green::before { background: linear-gradient(90deg, #059669, #10B981); }
+    .hero-kpi.kpi-blue::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+    .hero-kpi.kpi-orange::before { background: linear-gradient(90deg, #f97316, #fb923c); }
+    .hero-kpi.kpi-purple::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+    .hero-kpi:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        border-color: rgba(5,150,105,0.2);
+    }
+    .hero-kpi .kpi-icon-wrap {
+        width: 3rem; height: 3rem; border-radius: 0.875rem;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.15rem;
+    }
+    .hero-kpi .kpi-value { font-size: 2rem; font-weight: 800; color: #111827; line-height: 1; }
+    .hero-kpi .kpi-label { font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem; font-weight: 500; }
+    .hero-kpi .kpi-growth {
+        display: inline-flex; align-items: center; gap: 0.25rem;
+        font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem;
+        border-radius: 9999px;
+    }
+    .kpi-growth.up { background: #ecfdf5; color: #059669; }
+    .kpi-growth.down { background: #fef2f2; color: #ef4444; }
+    .kpi-growth.neutral { background: #f3f4f6; color: #6b7280; }
+    .hero-kpi .kpi-sparkline { position: absolute; bottom: 0; left: 0; right: 0; height: 40px; opacity: 0.15; }
+    /* KPI Cards (legacy) */
+    .kpi-card {
+        background: #fff; border: 1px solid #f3f4f6; border-radius: 1rem;
+        padding: 1.25rem; transition: all 0.3s;
+    }
+    .kpi-card:hover { border-color: rgba(5,150,105,0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+    .kpi-icon { width: 2.75rem; height: 2.75rem; border-radius: 0.75rem;
+                display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .kpi-value { font-size: 1.75rem; font-weight: 800; color: #111827; line-height: 1; }
+    .kpi-label { font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem; }
+    /* Admin table */
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+    .admin-table th { text-align: left; font-weight: 600; color: #6b7280;
+                      padding: 0.75rem 1rem; border-bottom: 2px solid #f3f4f6;
+                      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .admin-table td { padding: 0.75rem 1rem; border-bottom: 1px solid #f9fafb; color: #374151; }
+    .admin-table tr:hover td { background: #f9fafb; }
+    /* Section cards */
+    .section-card {
+        background: #fff; border: 1px solid #f3f4f6; border-radius: 1rem;
+        overflow: hidden;
+    }
+    .section-card-header {
+        padding: 1rem 1.25rem; border-bottom: 1px solid #f3f4f6;
+        display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .section-card-body { padding: 1rem 1.25rem; }
+    /* Badge */
+    .badge-pending { background: #fff7ed; color: #ea580c; font-size: 0.7rem;
+                     font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 9999px; }
+    .badge-active { background: #ecfdf5; color: #059669; font-size: 0.7rem;
+                    font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 9999px; }
+    .badge-cluster { background: #f3f4f6; color: #374151; font-size: 0.65rem;
+                     font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 0.375rem; }
+    /* Btn small */
+    .btn-sm { padding: 0.35rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem;
+              font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; }
+    .btn-green { background: #059669; color: #fff; }
+    .btn-green:hover { background: #047857; }
+    .btn-orange { background: #f97316; color: #fff; }
+    .btn-orange:hover { background: #ea580c; }
+    .btn-red { background: #ef4444; color: #fff; }
+    .btn-red:hover { background: #dc2626; }
+    .btn-ghost { background: transparent; border: 1px solid #e5e7eb; color: #6b7280; }
+    .btn-ghost:hover { border-color: #059669; color: #059669; }
+    /* Cluster card */
+    .cluster-card { border: 1px solid #f3f4f6; border-radius: 0.75rem; overflow: hidden; }
+    .cluster-card-header { padding: 0.75rem 1rem; background: #f9fafb;
+                           font-weight: 700; font-size: 0.8125rem; color: #059669;
+                           display: flex; align-items: center; justify-content: space-between; }
+    .cluster-career { padding: 0.5rem 1rem; display: flex; align-items: center;
+                      justify-content: space-between; border-top: 1px solid #f9fafb;
+                      font-size: 0.8rem; color: #374151; }
+    .cluster-career:hover { background: #f9fafb; }
+    /* Search input */
+    .admin-search { padding: 0.5rem 1rem 0.5rem 2.5rem; border-radius: 0.5rem;
+                    border: 1px solid #e5e7eb; font-size: 0.8125rem; width: 100%;
+                    max-width: 20rem; transition: border-color 0.2s; background: #f9fafb; }
+    .admin-search:focus { outline: none; border-color: #059669; background: #fff; }
+    /* Log colors */
+    .log-action-create { color: #059669; }
+    .log-action-update { color: #f97316; }
+    .log-action-delete { color: #ef4444; }
+    /* ─── Heatmap ─────────────────────────────────────── */
+    .heatmap-grid {
+        display: grid;
+        grid-template-columns: 2.5rem repeat(24, 1fr);
+        gap: 2px;
+        font-size: 0.6rem;
+    }
+    .heatmap-cell {
+        aspect-ratio: 1;
+        border-radius: 3px;
+        transition: all 0.2s;
+        cursor: default;
+        position: relative;
+        min-width: 0;
+    }
+    .heatmap-cell:hover { transform: scale(1.3); z-index: 5; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    .heatmap-label {
+        display: flex; align-items: center; justify-content: flex-end;
+        padding-right: 0.35rem; font-size: 0.6rem; font-weight: 600; color: #9ca3af;
+    }
+    .heatmap-hour {
+        text-align: center; font-size: 0.55rem; color: #9ca3af; font-weight: 500;
+    }
+    /* ─── Timeline ────────────────────────────────────── */
+    .timeline-item {
+        display: flex; gap: 0.75rem; padding: 0.75rem 0;
+        border-bottom: 1px solid #f9fafb;
+        font-size: 0.8125rem;
+    }
+    .timeline-item:last-child { border-bottom: none; }
+    .timeline-dot {
+        width: 2rem; height: 2rem; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.65rem; flex-shrink: 0; margin-top: 0.1rem;
+    }
+    .timeline-dot.create { background: #ecfdf5; color: #059669; }
+    .timeline-dot.update { background: #fff7ed; color: #f97316; }
+    .timeline-dot.delete { background: #fef2f2; color: #ef4444; }
+    /* ─── Network Status ──────────────────────────────── */
+    .status-indicator {
+        width: 0.5rem; height: 0.5rem; border-radius: 50%;
+        display: inline-block; margin-right: 0.4rem;
+    }
+    .status-indicator.online { background: #059669; box-shadow: 0 0 6px rgba(5,150,105,0.5); }
+    .status-indicator.warning { background: #f97316; box-shadow: 0 0 6px rgba(249,115,22,0.5); }
+    .status-indicator.danger { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,0.5); }
+    /* ─── Presentation Mode ───────────────────────────── */
+    body.presentation-mode .kpi-value,
+    body.presentation-mode .hero-kpi .kpi-value,
+    body.presentation-mode .admin-table td,
+    body.presentation-mode .timeline-item { filter: blur(6px); user-select: none; }
+    body.presentation-mode .kpi-growth { visibility: hidden; }
+    /* ─── Skeleton loading ────────────────────────────── */
+    .skeleton {
+        background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+        background-size: 200% 100%;
+        animation: skeletonShimmer 1.5s infinite;
+        border-radius: 0.5rem;
+    }
+    @keyframes skeletonShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    /* Mobile sidebar */
+    @media (max-width: 1023px) {
+        .admin-sidebar { transform: translateX(-100%); }
+        .admin-sidebar.open { transform: translateX(0); }
+        .admin-main { margin-left: 0; }
+    }
+    /* Section visibility */
+    .admin-section { display: none; }
+    .admin-section.active { display: block; }
+</style>
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="flex">
+
+    <!-- ═══ SIDEBAR ═══════════════════════════════════════════════════════ -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+        <div class="p-4 pb-2">
+            <a href="{% url 'index' %}" class="flex items-center gap-2.5 mb-6">
+                <div class="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center">
+                    <i class="fa-solid fa-seedling text-white text-sm"></i>
+                </div>
+                <span class="text-white font-black text-lg tracking-tight">OASIS</span>
+            </a>
+        </div>
+
+        <nav class="px-3 pb-6 space-y-0.5">
+            <div class="nav-section">Principal</div>
+            <a class="nav-item active" data-section="dashboard">
+                <i class="fa-solid fa-chart-pie"></i> Dashboard Global
+            </a>
+            <a class="nav-item" data-section="moderacion">
+                <i class="fa-solid fa-shield-halved"></i> Moderacion
+                {% if empresas_pendientes_count %}
+                <span class="ml-auto badge-pending">{{ empresas_pendientes_count }}</span>
+                {% endif %}
+            </a>
+
+            <div class="nav-section">Gestion</div>
+            <a class="nav-item" data-section="repositorio">
+                <i class="fa-solid fa-folder-open"></i> Repositorio
+            </a>
+            <a class="nav-item" data-section="carreras">
+                <i class="fa-solid fa-graduation-cap"></i> Carreras
+            </a>
+
+            <div class="nav-section">Seguridad</div>
+            <a class="nav-item" data-section="auditoria">
+                <i class="fa-solid fa-file-shield"></i> Auditoria
+            </a>
+            <a class="nav-item" data-section="backups">
+                <i class="fa-solid fa-shield-heart"></i> Backups
+                {% if backup_warning %}
+                <span class="ml-auto badge-pending">!</span>
+                {% endif %}
+            </a>
+
+            <div class="nav-section">Sistema</div>
+            <a class="nav-item" href="/admin/" target="_blank">
+                <i class="fa-solid fa-gauge"></i> Django Admin
+            </a>
+            <a class="nav-item" href="/api/v1/" target="_blank">
+                <i class="fa-solid fa-code"></i> API REST
+            </a>
+            <a class="nav-item" href="/health/" target="_blank">
+                <i class="fa-solid fa-heart-pulse"></i> Health Check
+            </a>
+        </nav>
+    </aside>
+
+    <!-- ═══ MAIN CONTENT ══════════════════════════════════════════════════ -->
+    <div class="admin-main flex-1">
+
+        <!-- Topbar -->
+        <header class="admin-topbar flex items-center justify-between px-4 sm:px-6">
+            <div class="flex items-center gap-3">
+                <button id="sidebar-toggle" class="lg:hidden p-2 rounded-lg hover:bg-dark-100 text-dark-500">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="relative hidden sm:block">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-dark-400 text-xs"></i>
+                    <input type="text" id="global-search" class="admin-search" placeholder="Buscar en el dashboard...">
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                {% if empresas_pendientes_count %}
+                <a data-section="moderacion" class="nav-item-topbar relative p-2 rounded-lg hover:bg-accent-50 cursor-pointer" title="Empresas pendientes">
+                    <i class="fa-solid fa-bell text-dark-400"></i>
+                    <span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-accent-500 text-white text-[0.6rem] font-bold rounded-full flex items-center justify-center">{{ empresas_pendientes_count }}</span>
+                </a>
+                {% endif %}
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-oasis-500 to-oasis-700 flex items-center justify-center text-white text-xs font-bold">
+                        {{ usuario.iniciales }}
+                    </div>
+                    <div class="hidden sm:block">
+                        <p class="text-xs font-semibold text-dark-800">{{ usuario.get_full_name|default:usuario.username }}</p>
+                        <p class="text-[0.65rem] text-dark-400">Administrador</p>
+                    </div>
+                </div>
+                <form method="post" action="{% url 'logout' %}" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="p-2 rounded-lg hover:bg-red-50 text-dark-400 hover:text-red-500 transition-colors" title="Cerrar sesion">
+                        <i class="fa-solid fa-right-from-bracket text-sm"></i>
+                    </button>
+                </form>
+            </div>
+        </header>
+
+        <div class="p-4 sm:p-6 bg-dark-50 min-h-[calc(100vh-4rem)]">
+
+            <!-- ═══ SECTION: Dashboard Global ═════════════════════════════ -->
+            <section id="section-dashboard" class="admin-section active">
+
+                <!-- Header with toolbar -->
+                <div class="mb-6 flex items-center justify-between flex-wrap gap-3">
+                    <div>
+                        <h1 class="text-2xl font-black text-dark-900">Dashboard Global</h1>
+                        <p class="text-sm text-dark-400 mt-0.5">Centro de comando — Metricas en tiempo real</p>
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <!-- Presentation Mode -->
+                        <button id="btn-presentation" class="btn-sm btn-ghost" title="Modo presentacion">
+                            <i class="fa-solid fa-eye-slash mr-1"></i>Presentacion
+                        </button>
+                        <!-- Export -->
+                        <button id="btn-export" class="btn-sm btn-green" title="Exportar datos">
+                            <i class="fa-solid fa-download mr-1"></i>Exportar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ── Hero KPI Cards ──────────────────────────────── -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+                    <!-- Proyectos de Grado -->
+                    <div class="hero-kpi kpi-green">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="kpi-icon-wrap bg-oasis-50 text-oasis-600">
+                                <i class="fa-solid fa-folder-open"></i>
+                            </div>
+                            <span class="kpi-growth {% if growth_proyectos > 0 %}up{% elif growth_proyectos < 0 %}down{% else %}neutral{% endif %}">
+                                <i class="fa-solid fa-arrow-{% if growth_proyectos >= 0 %}up{% else %}down{% endif %} text-[0.55rem]"></i>
+                                {{ growth_proyectos }}%
+                            </span>
+                        </div>
+                        <div class="kpi-value">{{ total_proyectos_grado }}</div>
+                        <div class="kpi-label">Proyectos de Grado</div>
+                        <p class="text-[0.65rem] text-dark-300 mt-1">+{{ proyectos_this_month }} este mes</p>
+                    </div>
+                    <!-- Empresas Activas -->
+                    <div class="hero-kpi kpi-blue">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="kpi-icon-wrap bg-blue-50 text-blue-600">
+                                <i class="fa-solid fa-building"></i>
+                            </div>
+                            <span class="kpi-growth {% if growth_empresas > 0 %}up{% elif growth_empresas < 0 %}down{% else %}neutral{% endif %}">
+                                <i class="fa-solid fa-arrow-{% if growth_empresas >= 0 %}up{% else %}down{% endif %} text-[0.55rem]"></i>
+                                {{ growth_empresas }}%
+                            </span>
+                        </div>
+                        <div class="kpi-value">{{ empresas_activas }}</div>
+                        <div class="kpi-label">Empresas Activas</div>
+                        <p class="text-[0.65rem] text-dark-300 mt-1">+{{ empresas_this_month }} este mes</p>
+                    </div>
+                    <!-- Usuarios Totales -->
+                    <div class="hero-kpi kpi-purple">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="kpi-icon-wrap bg-purple-50 text-purple-600">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <span class="kpi-growth {% if growth_usuarios > 0 %}up{% elif growth_usuarios < 0 %}down{% else %}neutral{% endif %}">
+                                <i class="fa-solid fa-arrow-{% if growth_usuarios >= 0 %}up{% else %}down{% endif %} text-[0.55rem]"></i>
+                                {{ growth_usuarios }}%
+                            </span>
+                        </div>
+                        <div class="kpi-value">{{ total_usuarios }}</div>
+                        <div class="kpi-label">Usuarios Totales</div>
+                        <p class="text-[0.65rem] text-dark-300 mt-1">{{ total_instructores }} instructores</p>
+                    </div>
+                    <!-- Carrera Lider -->
+                    <div class="hero-kpi kpi-orange">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="kpi-icon-wrap bg-accent-50 text-accent-600">
+                                <i class="fa-solid fa-trophy"></i>
+                            </div>
+                            <span class="kpi-growth neutral">
+                                <i class="fa-solid fa-crown text-[0.55rem]"></i> Lider
+                            </span>
+                        </div>
+                        <div class="kpi-value text-lg">{{ carrera_lider_count }}</div>
+                        <div class="kpi-label">Carrera Lider</div>
+                        <p class="text-[0.65rem] text-dark-300 mt-1 truncate" title="{{ carrera_lider }}">{{ carrera_lider }}</p>
+                    </div>
+                </div>
+
+                <!-- ── Charts Row 1: Bar + Radar ───────────────────── -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+                    <div class="section-card lg:col-span-2">
+                        <div class="section-card-header">
+                            <h3 class="font-bold text-sm text-dark-800">
+                                <i class="fa-solid fa-chart-bar text-oasis-600 mr-1.5"></i>
+                                Proyectos por Mes
+                            </h3>
+                            <span class="text-[0.65rem] text-dark-400">Ultimos 12 meses</span>
+                        </div>
+                        <div class="section-card-body" style="height:280px;">
+                            <canvas id="chart-monthly"></canvas>
+                        </div>
+                    </div>
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <h3 class="font-bold text-sm text-dark-800">
+                                <i class="fa-solid fa-diagram-project text-oasis-600 mr-1.5"></i>
+                                Radar por Facultad
+                            </h3>
+                        </div>
+                        <div class="section-card-body" style="height:280px;">
+                            <canvas id="chart-radar"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Charts Row 2: Line + Doughnut ───────────────── -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <h3 class="font-bold text-sm text-dark-800">
+                                <i class="fa-solid fa-chart-line text-blue-500 mr-1.5"></i>
+                                Registro de Empresas
+                            </h3>
+                            <span class="text-[0.65rem] text-dark-400">Ultimos 6 meses</span>
+                        </div>
+                        <div class="section-card-body" style="height:250px;">
+                            <canvas id="chart-empresas-line"></canvas>
+                        </div>
+                    </div>
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <h3 class="font-bold text-sm text-dark-800">
+                                <i class="fa-solid fa-chart-pie text-oasis-600 mr-1.5"></i>
+                                Distribucion por Facultad
+                            </h3>
+                        </div>
+                        <div class="section-card-body" style="height:250px;">
+                            <canvas id="chart-clusters"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Heatmap ─────────────────────────────────────── -->
+                <div class="section-card mb-4">
+                    <div class="section-card-header">
+                        <h3 class="font-bold text-sm text-dark-800">
+                            <i class="fa-solid fa-fire text-accent-500 mr-1.5"></i>
+                            Mapa de Calor — Actividad por Hora
+                        </h3>
+                        <span class="text-[0.65rem] text-dark-400">Ultimos 30 dias</span>
+                    </div>
+                    <div class="section-card-body">
+                        <div id="heatmap-container" class="heatmap-grid"></div>
+                        <div class="flex items-center justify-end gap-2 mt-2">
+                            <span class="text-[0.6rem] text-dark-400">Menos</span>
+                            <div style="width:12px;height:12px;border-radius:2px;background:#ecfdf5;"></div>
+                            <div style="width:12px;height:12px;border-radius:2px;background:#6ee7b7;"></div>
+                            <div style="width:12px;height:12px;border-radius:2px;background:#10b981;"></div>
+                            <div style="width:12px;height:12px;border-radius:2px;background:#059669;"></div>
+                            <div style="width:12px;height:12px;border-radius:2px;background:#064e3b;"></div>
+                            <span class="text-[0.6rem] text-dark-400">Mas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Network Status + Timeline ───────────────────── -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+                    <!-- Network Status Monitor -->
+                    <div class="section-card">
+                        <div class="section-card-header">
+                            <h3 class="font-bold text-sm text-dark-800">
+                                <i class="fa-solid fa-shield-halved text-oasis-600 mr-1.5"></i>
+                                Estado de la Red
+                            </h3>
+                        </div>
+                        <div class="section-card-body space-y-3">
+                            <!-- Server Status -->
+                            <div class="flex items-center justify-between py-2 border-b border-dark-50">
+                                <div class="flex items-center">
+                                    <span class="status-indicator online"></span>
+                                    <span class="text-sm font-medium text-dark-700">Servidor Django</span>
+                                </div>
+                                <span class="badge-active">Online</span>
+                            </div>
+                            <!-- Failed Logins -->
+                            <div class="flex items-center justify-between py-2 border-b border-dark-50">
+                                <div class="flex items-center">
+                                    <span class="status-indicator {% if failed_logins_7d > 10 %}danger{% elif failed_logins_7d > 3 %}warning{% else %}online{% endif %}"></span>
+                                    <span class="text-sm font-medium text-dark-700">Intentos Fallidos (7d)</span>
+                                </div>
+                                <span class="text-sm font-bold {% if failed_logins_7d > 10 %}text-red-500{% elif failed_logins_7d > 3 %}text-accent-500{% else %}text-oasis-600{% endif %}">{{ failed_logins_7d }}</span>
+                            </div>
+                            <!-- Pending Companies -->
+                            <div class="flex items-center justify-between py-2 border-b border-dark-50">
+                                <div class="flex items-center">
+                                    <span class="status-indicator {% if empresas_pendientes_count > 5 %}warning{% else %}online{% endif %}"></span>
+                                    <span class="text-sm font-medium text-dark-700">Empresas Pendientes</span>
+                                </div>
+                                <span class="text-sm font-bold {% if empresas_pendientes_count > 0 %}text-accent-500{% else %}text-oasis-600{% endif %}">{{ empresas_pendientes_count }}</span>
+                            </div>
+                            <!-- Users by role -->
+                            <div class="pt-2">
+                                <p class="text-[0.65rem] font-semibold text-dark-400 uppercase tracking-wider mb-2">Usuarios por Rol</p>
+                                <div class="space-y-1.5" id="role-bars"></div>
+                            </div>
+                            <!-- Recent Failed Logins -->
+                            {% if failed_logins_7d > 0 %}
+                            <div class="pt-2">
+                                <p class="text-[0.65rem] font-semibold text-dark-400 uppercase tracking-wider mb-2">Ultimos Intentos Fallidos</p>
+                                <div id="failed-logins-list" class="space-y-1 max-h-[120px] overflow-y-auto"></div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Activity Timeline -->
+                    <div class="section-card lg:col-span-2">
+                        <div class="section-card-header">
+                            <h3 class="font-bold text-sm text-dark-800">
+                                <i class="fa-solid fa-clock-rotate-left text-oasis-600 mr-1.5"></i>
+                                Actividad Reciente
+                            </h3>
+                            <span class="text-[0.65rem] text-dark-400">Timeline en vivo</span>
+                        </div>
+                        <div class="section-card-body p-0">
+                            <div id="activity-timeline" class="px-4 py-2 max-h-[380px] overflow-y-auto"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Quick Stats Row ─────────────────────────────── -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="kpi-card text-center">
+                        <div class="text-2xl font-black text-oasis-600">{{ total_instructores }}</div>
+                        <div class="kpi-label">Instructores</div>
+                    </div>
+                    <div class="kpi-card text-center">
+                        <div class="text-2xl font-black text-oasis-600">{{ total_proyectos }}</div>
+                        <div class="kpi-label">Proyectos Empresa</div>
+                    </div>
+                    <div class="kpi-card text-center">
+                        <div class="text-2xl font-black text-accent-500">{{ empresas_pendientes_count }}</div>
+                        <div class="kpi-label">Pendientes</div>
+                    </div>
+                    <div class="kpi-card text-center">
+                        <div class="text-2xl font-black text-oasis-600">{{ carreras_by_cluster|length }}</div>
+                        <div class="kpi-label">Clusters</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ SECTION: Moderacion ═══════════════════════════════════ -->
+            <section id="section-moderacion" class="admin-section">
+                <div class="mb-6">
+                    <h1 class="text-2xl font-black text-dark-900">Moderacion</h1>
+                    <p class="text-sm text-dark-400 mt-0.5">Validar empresas y revisar proyectos</p>
+                </div>
+
+                <!-- Empresas Pendientes -->
+                <div class="section-card mb-6">
+                    <div class="section-card-header">
+                        <h3 class="font-bold text-sm text-dark-800">
+                            <i class="fa-solid fa-clock text-accent-500 mr-1.5"></i>
+                            Empresas Pendientes de Validacion
+                            {% if empresas_pendientes_count %}<span class="badge-pending ml-2">{{ empresas_pendientes_count }}</span>{% endif %}
+                        </h3>
+                    </div>
+                    <div class="section-card-body p-0">
+                        {% if empresas_pendientes %}
+                        <div class="overflow-x-auto">
+                            <table class="admin-table" id="table-empresas">
+                                <thead>
+                                    <tr>
+                                        <th>Empresa</th>
+                                        <th>NIT</th>
+                                        <th>Representante</th>
+                                        <th>Email</th>
+                                        <th>Fecha</th>
+                                        <th class="text-right">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for emp in empresas_pendientes %}
+                                    <tr id="empresa-row-{{ emp.pk }}">
+                                        <td class="font-semibold">{{ emp.nombre_empresa }}</td>
+                                        <td><code class="text-xs bg-dark-50 px-1.5 py-0.5 rounded">{{ emp.nit_empresa }}</code></td>
+                                        <td>{{ emp.get_full_name }}</td>
+                                        <td class="text-dark-500">{{ emp.email }}</td>
+                                        <td class="text-dark-400 text-xs">{{ emp.date_joined|date:"d/m/Y H:i" }}</td>
+                                        <td class="text-right">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <a href="{% url 'admin_empresa_detalle' emp.pk %}" class="btn-sm btn-ghost" title="Ver detalle">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </a>
+                                                <button class="btn-sm btn-green" onclick="aprobarEmpresa({{ emp.pk }}, this)" title="Aprobar">
+                                                    <i class="fa-solid fa-check mr-1"></i>Aprobar
+                                                </button>
+                                                <button class="btn-sm btn-red" onclick="rechazarEmpresa({{ emp.pk }}, this)" title="Rechazar">
+                                                    <i class="fa-solid fa-xmark"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="p-8 text-center text-dark-400">
+                            <i class="fa-solid fa-circle-check text-3xl text-oasis-300 mb-2"></i>
+                            <p class="text-sm">No hay empresas pendientes de validacion</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Proyectos Recientes -->
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h3 class="font-bold text-sm text-dark-800">
+                            <i class="fa-solid fa-file-lines text-oasis-600 mr-1.5"></i>
+                            Proyectos de Grado Recientes
+                        </h3>
+                        <input type="text" id="search-proyectos" class="admin-search" style="max-width:14rem;"
+                               placeholder="Filtrar proyectos...">
+                    </div>
+                    <div class="section-card-body p-0">
+                        {% if proyectos_recientes %}
+                        <div class="overflow-x-auto">
+                            <table class="admin-table" id="table-proyectos">
+                                <thead>
+                                    <tr>
+                                        <th>Titulo</th>
+                                        <th>Autor</th>
+                                        <th>Carrera</th>
+                                        <th>Votos</th>
+                                        <th>Destacado</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for p in proyectos_recientes %}
+                                    <tr>
+                                        <td class="font-semibold max-w-[200px] truncate">{{ p.titulo }}</td>
+                                        <td>{{ p.autor }}</td>
+                                        <td><span class="badge-cluster">{{ p.get_carrera_display }}</span></td>
+                                        <td><span class="text-oasis-600 font-bold">{{ p.votos }}</span></td>
+                                        <td>
+                                            <button class="btn-sm {% if p.destacado %}btn-orange{% else %}btn-ghost{% endif %}"
+                                                    onclick="toggleDestacado({{ p.pk }}, this)">
+                                                <i class="fa-solid fa-star"></i>
+                                            </button>
+                                        </td>
+                                        <td class="text-dark-400 text-xs">{{ p.fecha_publicacion|date:"d/m/Y" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="p-8 text-center text-dark-400">
+                            <i class="fa-solid fa-inbox text-3xl text-dark-200 mb-2"></i>
+                            <p class="text-sm">No hay proyectos aun</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ SECTION: Repositorio ══════════════════════════════════ -->
+            <section id="section-repositorio" class="admin-section">
+                <div class="mb-6">
+                    <h1 class="text-2xl font-black text-dark-900">Repositorio</h1>
+                    <p class="text-sm text-dark-400 mt-0.5">Todos los proyectos de grado publicados</p>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h3 class="font-bold text-sm text-dark-800">
+                            <i class="fa-solid fa-folder-open text-oasis-600 mr-1.5"></i>
+                            {{ total_proyectos_grado }} Proyectos
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <input type="text" id="search-repo" class="admin-search" style="max-width:14rem;"
+                                   placeholder="Buscar proyecto...">
+                            <a href="{% url 'admin_proyecto_nuevo' %}" class="btn-sm btn-green">
+                                <i class="fa-solid fa-plus mr-1"></i>Nuevo
+                            </a>
+                        </div>
+                    </div>
+                    <div class="section-card-body p-0">
+                        {% if proyectos_recientes %}
+                        <div class="overflow-x-auto">
+                            <table class="admin-table" id="table-repo">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Titulo</th>
+                                        <th>Autor</th>
+                                        <th>Carrera</th>
+                                        <th>Cluster</th>
+                                        <th>Votos</th>
+                                        <th>Destacado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for p in proyectos_recientes %}
+                                    <tr>
+                                        <td class="text-dark-400 text-xs">#{{ p.pk }}</td>
+                                        <td class="font-semibold max-w-[180px] truncate">{{ p.titulo }}</td>
+                                        <td>{{ p.autor }}</td>
+                                        <td class="text-xs">{{ p.get_carrera_display }}</td>
+                                        <td><span class="badge-cluster">{{ p.cluster_display }}</span></td>
+                                        <td class="text-oasis-600 font-bold">{{ p.votos }}</td>
+                                        <td>
+                                            <button class="btn-sm {% if p.destacado %}btn-orange{% else %}btn-ghost{% endif %}"
+                                                    onclick="toggleDestacado({{ p.pk }}, this)">
+                                                <i class="fa-solid fa-star"></i>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'admin_proyecto_editar' p.pk %}"
+                                               class="btn-sm btn-ghost"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ SECTION: Carreras (Clusters) ══════════════════════════ -->
+            <section id="section-carreras" class="admin-section">
+                <div class="mb-6 flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h1 class="text-2xl font-black text-dark-900">Gestion de Carreras</h1>
+                        <p class="text-sm text-dark-400 mt-0.5">{{ carreras_by_cluster|length }} clusters — agrupacion por facultad</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-dark-400 text-xs"></i>
+                            <input type="text" id="search-carreras" class="admin-search" placeholder="Buscar carrera...">
+                        </div>
+                        <a href="{% url 'admin_carreras_list' %}" class="btn-sm btn-ghost" title="Ver todas">
+                            <i class="fa-solid fa-list"></i>
+                        </a>
+                        <a href="{% url 'admin_carrera_nueva' %}" class="btn-sm btn-green">
+                            <i class="fa-solid fa-plus mr-1"></i>Nueva
+                        </a>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" id="clusters-grid">
+                    {% for cluster_name, carreras in carreras_by_cluster.items %}
+                    <div class="cluster-card">
+                        <div class="cluster-card-header">
+                            <span>{{ cluster_name }}</span>
+                            <span class="badge-cluster">{{ carreras|length }} carreras</span>
+                        </div>
+                        {% for c in carreras %}
+                        <div class="cluster-career" data-carrera="{{ c.label|lower }}">
+                            <span>{{ c.label }}</span>
+                            <span class="text-xs font-semibold {% if c.count > 0 %}text-oasis-600{% else %}text-dark-300{% endif %}">
+                                {{ c.count }} proyecto{{ c.count|pluralize:"s" }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- ═══ SECTION: Auditoria ════════════════════════════════════ -->
+            <section id="section-auditoria" class="admin-section">
+                <div class="mb-6">
+                    <h1 class="text-2xl font-black text-dark-900">Auditoria de Seguridad</h1>
+                    <p class="text-sm text-dark-400 mt-0.5">Registro de actividad y cambios criticos</p>
+                </div>
+
+                <!-- Logins recientes -->
+                <div class="section-card mb-6">
+                    <div class="section-card-header">
+                        <h3 class="font-bold text-sm text-dark-800">
+                            <i class="fa-solid fa-right-to-bracket text-oasis-600 mr-1.5"></i>
+                            Ultimos Inicios de Sesion
+                        </h3>
+                    </div>
+                    <div class="section-card-body p-0">
+                        <div class="overflow-x-auto">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Usuario</th>
+                                        <th>Rol</th>
+                                        <th>Email</th>
+                                        <th>Ultimo Login</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for u in logins_recientes %}
+                                    <tr>
+                                        <td class="font-semibold">{{ u.get_full_name|default:u.username }}</td>
+                                        <td><span class="badge-cluster">{{ u.get_rol_display }}</span></td>
+                                        <td class="text-dark-500 text-xs">{{ u.email }}</td>
+                                        <td class="text-dark-400 text-xs">{{ u.last_login|date:"d/m/Y H:i" }}</td>
+                                        <td>
+                                            {% if u.is_active %}
+                                            <span class="badge-active">Activo</span>
+                                            {% else %}
+                                            <span class="badge-pending">Inactivo</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logs de cambios -->
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h3 class="font-bold text-sm text-dark-800">
+                            <i class="fa-solid fa-file-shield text-oasis-600 mr-1.5"></i>
+                            Registro de Cambios
+                        </h3>
+                        <input type="text" id="search-logs" class="admin-search" style="max-width:14rem;"
+                               placeholder="Filtrar logs...">
+                    </div>
+                    <div class="section-card-body p-0">
+                        {% if logs_recientes %}
+                        <div class="overflow-x-auto">
+                            <table class="admin-table" id="table-logs">
+                                <thead>
+                                    <tr>
+                                        <th>Accion</th>
+                                        <th>Modelo</th>
+                                        <th>ID Registro</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for log in logs_recientes %}
+                                    <tr>
+                                        <td>
+                                            <span class="font-semibold
+                                                {% if log.accion == 'CREATE' %}log-action-create
+                                                {% elif log.accion == 'UPDATE' %}log-action-update
+                                                {% else %}log-action-delete{% endif %}">
+                                                {{ log.accion }}
+                                            </span>
+                                        </td>
+                                        <td><span class="badge-cluster">{{ log.tabla }}</span></td>
+                                        <td class="text-dark-400">#{{ log.registro_id }}</td>
+                                        <td class="text-dark-400 text-xs">{{ log.fecha|date:"d/m/Y H:i:s" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="p-8 text-center text-dark-400">
+                            <i class="fa-solid fa-shield-halved text-3xl text-dark-200 mb-2"></i>
+                            <p class="text-sm">No hay registros de auditoria</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ SECTION: Backups (Data Guardian) ═══════════════════════ -->
+            <section id="section-backups" class="admin-section">
+                <div class="mb-6 flex items-center justify-between flex-wrap gap-3">
+                    <div>
+                        <h1 class="text-2xl font-black text-dark-900">
+                            <i class="fa-solid fa-shield-heart text-oasis-600 mr-2"></i>Data Guardian
+                        </h1>
+                        <p class="text-sm text-dark-400 mt-0.5">Sistema de respaldos y recuperacion de OASIS</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        {% if backup_warning %}
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent-50 text-accent-600 text-xs font-bold">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            Ultimo backup hace +24h
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-oasis-50 text-oasis-600 text-xs font-bold">
+                            <i class="fa-solid fa-shield-check"></i>
+                            Sistema Protegido
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- ── Status Cards ──────────────────────────────── -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="hero-kpi kpi-green">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="kpi-icon-wrap bg-oasis-50 text-oasis-600">
+                                <i class="fa-solid fa-database"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value">{{ backup_stats.total_backups }}</div>
+                        <div class="kpi-label">Backups Totales</div>
+                    </div>
+                    <div class="hero-kpi kpi-blue">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="kpi-icon-wrap bg-blue-50 text-blue-600">
+                                <i class="fa-solid fa-hard-drive"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value text-lg">{{ backup_stats.total_size_display }}</div>
+                        <div class="kpi-label">Almacenamiento Usado</div>
+                    </div>
+                    <div class="hero-kpi kpi-purple">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="kpi-icon-wrap bg-purple-50 text-purple-600">
+                                <i class="fa-solid fa-server"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value text-lg">{{ backup_stats.disk_free_display }}</div>
+                        <div class="kpi-label">Espacio Libre en Disco</div>
+                        <p class="text-[0.65rem] text-dark-300 mt-1">{{ backup_stats.disk_used_pct }}% usado</p>
+                    </div>
+                    <div class="hero-kpi {% if backup_warning %}kpi-orange{% else %}kpi-green{% endif %}">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="kpi-icon-wrap {% if backup_warning %}bg-accent-50 text-accent-600{% else %}bg-oasis-50 text-oasis-600{% endif %}">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value text-sm">
+                            {% if backup_stats.last_backup %}
+                                {{ backup_stats.last_backup.created_at|date:"d/m/Y H:i" }}
+                            {% else %}
+                                Nunca
+                            {% endif %}
+                        </div>
+                        <div class="kpi-label">Ultimo Backup</div>
+                    </div>
+                </div>
+
+                <!-- ── Quick Actions ─────────────────────────────── -->
+                <div class="section-card mb-6">
+                    <div class="section-card-header">
+                        <h3 class="font-bold text-sm text-dark-800">
+                            <i class="fa-solid fa-bolt text-accent-500 mr-1.5"></i>
+                            Acciones Rapidas
+                        </h3>
+                    </div>
+                    <div class="section-card-body">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            <!-- Full Backup -->
+                            <button id="btn-backup-full" class="flex items-center gap-3 p-4 rounded-xl border-2 border-oasis-200 bg-oasis-50/50 hover:bg-oasis-50 hover:border-oasis-400 transition-all group cursor-pointer text-left" onclick="createBackup('full', false)">
+                                <div class="w-10 h-10 rounded-lg bg-oasis-100 text-oasis-600 flex items-center justify-center group-hover:bg-oasis-600 group-hover:text-white transition-colors">
+                                    <i class="fa-solid fa-download text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-sm text-dark-800">Backup Completo</p>
+                                    <p class="text-[0.7rem] text-dark-400">BD + Media</p>
+                                </div>
+                            </button>
+                            <!-- DB Only Backup -->
+                            <button id="btn-backup-db" class="flex items-center gap-3 p-4 rounded-xl border-2 border-blue-200 bg-blue-50/50 hover:bg-blue-50 hover:border-blue-400 transition-all group cursor-pointer text-left" onclick="createBackup('database', false)">
+                                <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                    <i class="fa-solid fa-database text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-sm text-dark-800">Solo Base de Datos</p>
+                                    <p class="text-[0.7rem] text-dark-400">Rapido y ligero</p>
+                                </div>
+                            </button>
+                            <!-- Encrypted Backup -->
+                            <button id="btn-backup-encrypted" class="flex items-center gap-3 p-4 rounded-xl border-2 border-purple-200 bg-purple-50/50 hover:bg-purple-50 hover:border-purple-400 transition-all group cursor-pointer text-left" onclick="createBackup('full', true)">
+                                <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                                    <i class="fa-solid fa-lock text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-sm text-dark-800">Backup Cifrado</p>
+                                    <p class="text-[0.7rem] text-dark-400">AES-256 + SHA-256</p>
+                                </div>
+                            </button>
+                            <!-- Emergency Script -->
+                            <button class="flex items-center gap-3 p-4 rounded-xl border-2 border-red-200 bg-red-50/50 hover:bg-red-50 hover:border-red-400 transition-all group cursor-pointer text-left" onclick="showEmergencyGuide()">
+                                <div class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-colors">
+                                    <i class="fa-solid fa-life-ring text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-sm text-dark-800">Guia Emergencia</p>
+                                    <p class="text-[0.7rem] text-dark-400">Regla 3-2-1</p>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- Progress bar (hidden by default) -->
+                        <div id="backup-progress" class="mt-4 hidden">
+                            <div class="flex items-center gap-3">
+                                <div class="flex-1 h-2 bg-dark-100 rounded-full overflow-hidden">
+                                    <div id="backup-progress-bar" class="h-full bg-oasis-500 rounded-full transition-all" style="width: 0%;"></div>
+                                </div>
+                                <span id="backup-progress-text" class="text-xs font-semibold text-dark-500">Preparando...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Backup History Table ──────────────────────── -->
+                <div class="section-card mb-6">
+                    <div class="section-card-header">
+                        <h3 class="font-bold text-sm text-dark-800">
+                            <i class="fa-solid fa-clock-rotate-left text-oasis-600 mr-1.5"></i>
+                            Historial de Respaldos
+                        </h3>
+                        <input type="text" id="search-backups" class="admin-search" style="max-width:14rem;"
+                               placeholder="Filtrar backups...">
+                    </div>
+                    <div class="section-card-body p-0">
+                        {% if backup_records %}
+                        <div class="overflow-x-auto">
+                            <table class="admin-table" id="table-backups">
+                                <thead>
+                                    <tr>
+                                        <th>Archivo</th>
+                                        <th>Tipo</th>
+                                        <th>Contenido</th>
+                                        <th>Tamano</th>
+                                        <th>Hash SHA-256</th>
+                                        <th>Cifrado</th>
+                                        <th>Fecha</th>
+                                        <th class="text-right">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="backup-table-body">
+                                    {% for b in backup_records %}
+                                    <tr id="backup-row-{{ b.pk }}">
+                                        <td class="font-semibold text-xs">
+                                            <i class="fa-solid fa-file-zipper text-oasis-500 mr-1"></i>
+                                            {{ b.filename|truncatechars:30 }}
+                                        </td>
+                                        <td>
+                                            {% if b.tipo == 'manual' %}
+                                            <span class="badge-active">Manual</span>
+                                            {% else %}
+                                            <span class="badge-cluster">Auto</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if b.contenido == 'full' %}
+                                            <span class="badge-cluster"><i class="fa-solid fa-layer-group mr-0.5"></i>Completo</span>
+                                            {% elif b.contenido == 'database' %}
+                                            <span class="badge-cluster"><i class="fa-solid fa-database mr-0.5"></i>BD</span>
+                                            {% else %}
+                                            <span class="badge-cluster"><i class="fa-solid fa-photo-film mr-0.5"></i>Media</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-xs text-dark-500">{{ b.size_display }}</td>
+                                        <td>
+                                            <code class="text-[0.6rem] bg-dark-50 px-1.5 py-0.5 rounded text-dark-500" title="{{ b.hash_sha256 }}">
+                                                {{ b.hash_sha256|truncatechars:16 }}
+                                            </code>
+                                        </td>
+                                        <td class="text-center">
+                                            {% if b.encrypted %}
+                                            <i class="fa-solid fa-lock text-purple-500" title="Cifrado AES-256"></i>
+                                            {% else %}
+                                            <i class="fa-solid fa-lock-open text-dark-300" title="Sin cifrar"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-dark-400 text-xs">{{ b.created_at|date:"d/m/Y H:i" }}</td>
+                                        <td>
+                                            <div class="flex items-center justify-end gap-1">
+                                                <button class="btn-sm btn-ghost" onclick="verifyBackup({{ b.pk }})" title="Verificar integridad">
+                                                    <i class="fa-solid fa-fingerprint"></i>
+                                                </button>
+                                                <a href="/auth/admin/backup/download/{{ b.pk }}/" class="btn-sm btn-green" title="Descargar">
+                                                    <i class="fa-solid fa-download"></i>
+                                                </a>
+                                                <button class="btn-sm btn-orange" onclick="restoreBackup({{ b.pk }}, '{{ b.filename|escapejs }}')" title="Restaurar">
+                                                    <i class="fa-solid fa-rotate-left"></i>
+                                                </button>
+                                                <button class="btn-sm btn-red" onclick="deleteBackup({{ b.pk }}, '{{ b.filename|escapejs }}')" title="Eliminar">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="p-8 text-center text-dark-400" id="no-backups-msg">
+                            <i class="fa-solid fa-shield-halved text-3xl text-dark-200 mb-2"></i>
+                            <p class="text-sm">No hay backups registrados. Crea tu primer respaldo.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- ── Security Guide (Regla 3-2-1) ──────────────── -->
+                <div class="section-card" id="emergency-guide" style="display:none;">
+                    <div class="section-card-header bg-red-50">
+                        <h3 class="font-bold text-sm text-red-700">
+                            <i class="fa-solid fa-life-ring mr-1.5"></i>
+                            Guia de Emergencia y Regla 3-2-1
+                        </h3>
+                        <button class="btn-sm btn-ghost" onclick="document.getElementById('emergency-guide').style.display='none'">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="section-card-body">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+                            <div class="p-4 rounded-xl bg-oasis-50 border border-oasis-200">
+                                <div class="text-2xl font-black text-oasis-600 mb-1">3</div>
+                                <p class="font-bold text-sm text-dark-800">Copias del dato</p>
+                                <p class="text-[0.75rem] text-dark-500 mt-1">
+                                    Mantener al menos 3 copias: la original en produccion,
+                                    un backup local, y un backup en la nube.
+                                </p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-blue-50 border border-blue-200">
+                                <div class="text-2xl font-black text-blue-600 mb-1">2</div>
+                                <p class="font-bold text-sm text-dark-800">Medios distintos</p>
+                                <p class="text-[0.75rem] text-dark-500 mt-1">
+                                    Usar 2 tipos de almacenamiento diferentes: disco local SSD +
+                                    almacenamiento en nube (AWS S3, Google Drive).
+                                </p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-accent-50 border border-accent-200">
+                                <div class="text-2xl font-black text-accent-600 mb-1">1</div>
+                                <p class="font-bold text-sm text-dark-800">Copia fuera del sitio</p>
+                                <p class="text-[0.75rem] text-dark-500 mt-1">
+                                    Al menos 1 copia debe estar en una ubicacion geografica
+                                    diferente al servidor principal (offsite).
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-dark-50 border border-dark-200">
+                            <h4 class="font-bold text-sm text-dark-800 mb-2">
+                                <i class="fa-solid fa-terminal text-oasis-600 mr-1"></i>
+                                Script de Recuperacion de Emergencia
+                            </h4>
+                            <pre class="text-[0.7rem] text-dark-600 bg-dark-900 text-green-400 p-3 rounded-lg overflow-x-auto"><code># 1. Detener el servidor
+sudo systemctl stop gunicorn nginx
+
+# 2. Ir al directorio del proyecto
+cd /home/deploy/oasis-def
+
+# 3. Activar entorno virtual
+source venv/bin/activate
+
+# 4. Restaurar la base de datos desde backup
+python manage.py shell -c "
+from auditoria.models import BackupRecord
+from usuarios.backup_utils import restore_database
+backup = BackupRecord.objects.first()
+restore_database(backup)
+"
+
+# 5. Verificar integridad
+python manage.py check
+python manage.py migrate --check
+
+# 6. Reiniciar servicios
+sudo systemctl start gunicorn nginx
+
+# 7. Verificar que el sitio responde
+curl -s -o /dev/null -w '%{http_code}' http://localhost/health/</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>
+
+<!-- ═══ Modal: Restore Confirmation ═══════════════════════════════════ -->
+<div id="restore-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeRestoreModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md">
+        <div class="text-center mb-4">
+            <div class="w-14 h-14 rounded-full bg-accent-50 flex items-center justify-center mx-auto mb-3">
+                <i class="fa-solid fa-triangle-exclamation text-accent-500 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-black text-dark-900">Confirmar Restauracion</h3>
+            <p class="text-sm text-dark-400 mt-1">
+                Esta accion reemplazara la base de datos actual con:
+            </p>
+            <p class="text-sm font-bold text-dark-800 mt-1" id="restore-filename"></p>
+        </div>
+        <div class="mb-4">
+            <label class="block text-xs font-semibold text-dark-500 mb-1.5">
+                <i class="fa-solid fa-key mr-1"></i>Ingresa tu contrasena para confirmar
+            </label>
+            <input type="password" id="restore-password" class="w-full px-3 py-2 rounded-lg border border-dark-200 focus:border-oasis-500 focus:outline-none text-sm" placeholder="Tu contrasena de administrador">
+        </div>
+        <div class="flex gap-2">
+            <button class="flex-1 btn-sm btn-ghost py-2.5" onclick="closeRestoreModal()">
+                Cancelar
+            </button>
+            <button id="btn-confirm-restore" class="flex-1 btn-sm btn-orange py-2.5" onclick="confirmRestore()">
+                <i class="fa-solid fa-rotate-left mr-1"></i>Restaurar
+            </button>
+        </div>
+        <div id="restore-error" class="hidden mt-3 p-2 rounded-lg bg-red-50 text-red-600 text-xs font-medium text-center"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+    'use strict';
+
+    // ─── CSRF Token ────────────────────────────────────────────────────
+    function getCookie(name) {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var c = cookies[i].trim();
+            if (c.indexOf(name + '=') === 0) return decodeURIComponent(c.substring(name.length + 1));
+        }
+        return null;
+    }
+    var csrftoken = getCookie('csrftoken');
+
+    // ─── Sidebar Navigation (SPA sections) ─────────────────────────────
+    var navItems = document.querySelectorAll('[data-section]');
+    var sections = document.querySelectorAll('.admin-section');
+
+    function showSection(sectionId) {
+        sections.forEach(function(s) { s.classList.remove('active'); });
+        navItems.forEach(function(n) { n.classList.remove('active'); });
+        var target = document.getElementById('section-' + sectionId);
+        if (target) target.classList.add('active');
+        document.querySelectorAll('[data-section="' + sectionId + '"]').forEach(function(n) {
+            n.classList.add('active');
+        });
+    }
+
+    navItems.forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            var section = this.getAttribute('data-section');
+            if (section) {
+                e.preventDefault();
+                showSection(section);
+                document.getElementById('admin-sidebar').classList.remove('open');
+            }
+        });
+    });
+
+    // ─── Mobile Sidebar Toggle ─────────────────────────────────────────
+    var toggle = document.getElementById('sidebar-toggle');
+    if (toggle) {
+        toggle.addEventListener('click', function() {
+            document.getElementById('admin-sidebar').classList.toggle('open');
+        });
+    }
+
+    // ─── Table Search (reutilizable) ───────────────────────────────────
+    function bindSearch(inputId, tableId) {
+        var input = document.getElementById(inputId);
+        var table = document.getElementById(tableId);
+        if (!input || !table) return;
+        input.addEventListener('input', function() {
+            var f = this.value.toLowerCase();
+            table.querySelectorAll('tbody tr').forEach(function(row) {
+                row.style.display = row.textContent.toLowerCase().indexOf(f) > -1 ? '' : 'none';
+            });
+        });
+    }
+    bindSearch('search-proyectos', 'table-proyectos');
+    bindSearch('search-repo', 'table-repo');
+    bindSearch('search-logs', 'table-logs');
+
+    // ─── Career Search ─────────────────────────────────────────────────
+    var cs = document.getElementById('search-carreras');
+    if (cs) {
+        cs.addEventListener('input', function() {
+            var f = this.value.toLowerCase();
+            document.querySelectorAll('.cluster-career').forEach(function(el) {
+                el.style.display = (el.getAttribute('data-carrera') || '').indexOf(f) > -1 ? '' : 'none';
+            });
+        });
+    }
+
+    // ─── Global Search ─────────────────────────────────────────────────
+    var gs = document.getElementById('global-search');
+    if (gs) {
+        gs.addEventListener('keydown', function(e) {
+            if (e.key !== 'Enter') return;
+            var q = this.value.toLowerCase().trim();
+            if (!q) return;
+            var found = false;
+            sections.forEach(function(s) {
+                if (!found && s.textContent.toLowerCase().indexOf(q) > -1) {
+                    showSection(s.id.replace('section-', ''));
+                    found = true;
+                }
+            });
+        });
+    }
+
+    // ─── AJAX: Aprobar Empresa ─────────────────────────────────────────
+    window.aprobarEmpresa = function(pk, btn) {
+        if (!confirm('Aprobar esta empresa?')) return;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        fetch('/auth/admin/aprobar-empresa/' + pk + '/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrftoken },
+        }).then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (d.ok) {
+                var row = document.getElementById('empresa-row-' + pk);
+                if (row) { row.style.opacity = '0'; row.style.transition = 'opacity 0.3s'; setTimeout(function(){ row.remove(); }, 300); }
+            }
+        }).catch(function() { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i>Aprobar'; });
+    };
+
+    // ─── AJAX: Rechazar Empresa ────────────────────────────────────────
+    window.rechazarEmpresa = function(pk, btn) {
+        if (!confirm('Rechazar y eliminar esta empresa? No se puede deshacer.')) return;
+        btn.disabled = true;
+        fetch('/auth/admin/rechazar-empresa/' + pk + '/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrftoken },
+        }).then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (d.ok) {
+                var row = document.getElementById('empresa-row-' + pk);
+                if (row) { row.style.opacity = '0'; row.style.transition = 'opacity 0.3s'; setTimeout(function(){ row.remove(); }, 300); }
+            }
+        }).catch(function() { btn.disabled = false; });
+    };
+
+    // ─── AJAX: Toggle Destacado ────────────────────────────────────────
+    window.toggleDestacado = function(pk, btn) {
+        fetch('/auth/admin/toggle-destacado/' + pk + '/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrftoken },
+        }).then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (d.ok) {
+                btn.className = d.destacado ? 'btn-sm btn-orange' : 'btn-sm btn-ghost';
+            }
+        });
+    };
+
+    // ═══════════════════════════════════════════════════════════════════
+    // CHART.JS — Dashboard Global Charts
+    // ═══════════════════════════════════════════════════════════════════
+
+    var meses = {{ chart_meses|safe }};
+    var totales = {{ chart_totales|safe }};
+    var clusters = {{ chart_clusters|safe }};
+    var clusterTotales = {{ chart_cluster_totales|safe }};
+    var empresasMeses = {{ chart_empresas_meses|safe }};
+    var empresasTotales = {{ chart_empresas_totales|safe }};
+    var rolesLabels = {{ chart_roles|safe }};
+    var rolesTotales = {{ chart_roles_totales|safe }};
+    var heatmapData = {{ heatmap_json|safe }};
+    var failedLoginsList = {{ failed_logins_list|safe }};
+    var timelineData = {{ timeline_json|safe }};
+    var clusterColors = ['#059669','#3b82f6','#f43f5e','#f59e0b','#8b5cf6','#84cc16','#f97316'];
+
+    // ─── Chart 1: Proyectos por Mes (Bar gradient) ─────────────────────
+    if (document.getElementById('chart-monthly') && meses.length > 0) {
+        var ctxM = document.getElementById('chart-monthly').getContext('2d');
+        var gradM = ctxM.createLinearGradient(0, 0, 0, 280);
+        gradM.addColorStop(0, 'rgba(5, 150, 105, 0.8)');
+        gradM.addColorStop(1, 'rgba(5, 150, 105, 0.2)');
+        new Chart(ctxM, {
+            type: 'bar',
+            data: {
+                labels: meses,
+                datasets: [{
+                    label: 'Proyectos',
+                    data: totales,
+                    backgroundColor: gradM,
+                    borderColor: '#059669',
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    maxBarThickness: 36,
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } }, grid: { color: '#f3f4f6' } },
+                    x: { ticks: { font: { size: 10 } }, grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    // ─── Chart 2: Radar por Facultad ───────────────────────────────────
+    if (document.getElementById('chart-radar') && clusters.length > 0) {
+        new Chart(document.getElementById('chart-radar'), {
+            type: 'radar',
+            data: {
+                labels: clusters,
+                datasets: [{
+                    label: 'Proyectos',
+                    data: clusterTotales,
+                    backgroundColor: 'rgba(5, 150, 105, 0.15)',
+                    borderColor: '#059669',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#059669',
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        ticks: { font: { size: 9 }, backdropColor: 'transparent', stepSize: 1 },
+                        pointLabels: { font: { size: 9, weight: '600' }, color: '#374151' },
+                        grid: { color: 'rgba(0,0,0,0.06)' },
+                        angleLines: { color: 'rgba(0,0,0,0.06)' }
+                    }
+                }
+            }
+        });
+    }
+
+    // ─── Chart 3: Empresas Line Chart ──────────────────────────────────
+    if (document.getElementById('chart-empresas-line') && empresasMeses.length > 0) {
+        var ctxE = document.getElementById('chart-empresas-line').getContext('2d');
+        var gradE = ctxE.createLinearGradient(0, 0, 0, 250);
+        gradE.addColorStop(0, 'rgba(59, 130, 246, 0.25)');
+        gradE.addColorStop(1, 'rgba(59, 130, 246, 0.02)');
+        new Chart(ctxE, {
+            type: 'line',
+            data: {
+                labels: empresasMeses,
+                datasets: [{
+                    label: 'Empresas',
+                    data: empresasTotales,
+                    borderColor: '#3b82f6',
+                    backgroundColor: gradE,
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#3b82f6',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 } }, grid: { color: '#f3f4f6' } },
+                    x: { ticks: { font: { size: 10 } }, grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    // ─── Chart 4: Doughnut por Cluster ─────────────────────────────────
+    if (document.getElementById('chart-clusters') && clusters.length > 0) {
+        new Chart(document.getElementById('chart-clusters'), {
+            type: 'doughnut',
+            data: {
+                labels: clusters,
+                datasets: [{
+                    data: clusterTotales,
+                    backgroundColor: clusterColors.slice(0, clusters.length),
+                    borderWidth: 2, borderColor: '#fff',
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { font: { size: 10 }, padding: 10, usePointStyle: true, pointStyleWidth: 8 }
+                    }
+                }
+            }
+        });
+    }
+
+    // ─── Heatmap Rendering ─────────────────────────────────────────────
+    var heatmapContainer = document.getElementById('heatmap-container');
+    if (heatmapContainer && heatmapData) {
+        var dayLabels = ['Lun','Mar','Mie','Jue','Vie','Sab','Dom'];
+        var maxVal = 0;
+        for (var d = 0; d < 7; d++) {
+            for (var h = 0; h < 24; h++) {
+                if (heatmapData[d][h] > maxVal) maxVal = heatmapData[d][h];
+            }
+        }
+        if (maxVal === 0) maxVal = 1;
+
+        // Hour headers
+        var corner = document.createElement('div');
+        heatmapContainer.appendChild(corner);
+        for (var h = 0; h < 24; h++) {
+            var hLabel = document.createElement('div');
+            hLabel.className = 'heatmap-hour';
+            hLabel.textContent = h < 10 ? '0' + h : '' + h;
+            heatmapContainer.appendChild(hLabel);
+        }
+
+        // Rows
+        for (var d = 0; d < 7; d++) {
+            var rowLabel = document.createElement('div');
+            rowLabel.className = 'heatmap-label';
+            rowLabel.textContent = dayLabels[d];
+            heatmapContainer.appendChild(rowLabel);
+
+            for (var h = 0; h < 24; h++) {
+                var cell = document.createElement('div');
+                cell.className = 'heatmap-cell';
+                var intensity = heatmapData[d][h] / maxVal;
+                if (heatmapData[d][h] === 0) {
+                    cell.style.background = '#f9fafb';
+                } else if (intensity < 0.25) {
+                    cell.style.background = '#ecfdf5';
+                } else if (intensity < 0.5) {
+                    cell.style.background = '#6ee7b7';
+                } else if (intensity < 0.75) {
+                    cell.style.background = '#10b981';
+                } else {
+                    cell.style.background = '#064e3b';
+                }
+                cell.title = dayLabels[d] + ' ' + (h < 10 ? '0' + h : h) + ':00 — ' + heatmapData[d][h] + ' acciones';
+                heatmapContainer.appendChild(cell);
+            }
+        }
+    }
+
+    // ─── Role Distribution Bars ────────────────────────────────────────
+    var roleBars = document.getElementById('role-bars');
+    if (roleBars) {
+        var roleColors = ['#059669', '#3b82f6', '#f97316', '#8b5cf6'];
+        var roleMax = Math.max.apply(null, rolesTotales) || 1;
+        for (var i = 0; i < rolesLabels.length; i++) {
+            var barRow = document.createElement('div');
+            barRow.className = 'flex items-center gap-2';
+            var pct = Math.round((rolesTotales[i] / roleMax) * 100);
+            barRow.innerHTML =
+                '<span class="text-[0.7rem] text-dark-500 w-20 truncate">' + rolesLabels[i] + '</span>' +
+                '<div class="flex-1 h-2 bg-dark-100 rounded-full overflow-hidden">' +
+                    '<div class="h-full rounded-full" style="width:' + pct + '%;background:' + roleColors[i] + ';"></div>' +
+                '</div>' +
+                '<span class="text-[0.7rem] font-bold text-dark-600 w-6 text-right">' + rolesTotales[i] + '</span>';
+            roleBars.appendChild(barRow);
+        }
+    }
+
+    // ─── Failed Logins List ────────────────────────────────────────────
+    var failedContainer = document.getElementById('failed-logins-list');
+    if (failedContainer && failedLoginsList.length > 0) {
+        for (var i = 0; i < failedLoginsList.length; i++) {
+            var f = failedLoginsList[i];
+            var item = document.createElement('div');
+            item.className = 'flex items-center justify-between text-[0.7rem] py-1';
+            item.innerHTML =
+                '<span class="text-dark-500"><i class="fa-solid fa-triangle-exclamation text-red-400 mr-1"></i>' +
+                f.user + ' <span class="text-dark-300">(' + f.ip + ')</span></span>' +
+                '<span class="text-dark-400">' + f.time + '</span>';
+            failedContainer.appendChild(item);
+        }
+    }
+
+    // ─── Activity Timeline ─────────────────────────────────────────────
+    var timelineContainer = document.getElementById('activity-timeline');
+    if (timelineContainer && timelineData.length > 0) {
+        var actionIcons = {
+            'CREATE': { icon: 'fa-plus', cls: 'create' },
+            'UPDATE': { icon: 'fa-pen', cls: 'update' },
+            'DELETE': { icon: 'fa-trash', cls: 'delete' }
+        };
+        for (var i = 0; i < timelineData.length; i++) {
+            var t = timelineData[i];
+            var info = actionIcons[t.action] || { icon: 'fa-circle', cls: 'update' };
+            var el = document.createElement('div');
+            el.className = 'timeline-item';
+            el.innerHTML =
+                '<div class="timeline-dot ' + info.cls + '"><i class="fa-solid ' + info.icon + '"></i></div>' +
+                '<div class="flex-1">' +
+                    '<p class="text-dark-800 font-medium">' +
+                        '<span class="font-bold ' +
+                            (t.action === 'CREATE' ? 'text-oasis-600' : t.action === 'DELETE' ? 'text-red-500' : 'text-accent-500') +
+                        '">' + t.action + '</span> en ' +
+                        '<span class="badge-cluster">' + t.model + '</span> #' + t.id +
+                    '</p>' +
+                    '<p class="text-[0.7rem] text-dark-400 mt-0.5"><i class="fa-regular fa-clock mr-1"></i>' + t.time + '</p>' +
+                '</div>';
+            timelineContainer.appendChild(el);
+        }
+    } else if (timelineContainer) {
+        timelineContainer.innerHTML = '<div class="p-6 text-center text-dark-400"><i class="fa-solid fa-clock text-2xl text-dark-200 mb-2"></i><p class="text-sm">Sin actividad reciente</p></div>';
+    }
+
+    // ─── Presentation Mode ─────────────────────────────────────────────
+    var btnPres = document.getElementById('btn-presentation');
+    if (btnPres) {
+        btnPres.addEventListener('click', function() {
+            document.body.classList.toggle('presentation-mode');
+            var active = document.body.classList.contains('presentation-mode');
+            this.innerHTML = active
+                ? '<i class="fa-solid fa-eye mr-1"></i>Mostrar Datos'
+                : '<i class="fa-solid fa-eye-slash mr-1"></i>Presentacion';
+            this.className = active ? 'btn-sm btn-orange' : 'btn-sm btn-ghost';
+        });
+    }
+
+    // ─── Export to CSV ─────────────────────────────────────────────────
+    var btnExport = document.getElementById('btn-export');
+    if (btnExport) {
+        btnExport.addEventListener('click', function() {
+            var csvRows = [
+                'Metrica,Valor',
+                'Proyectos de Grado,' + {{ total_proyectos_grado }},
+                'Empresas Activas,' + {{ empresas_activas }},
+                'Aprendices,' + {{ total_aprendices }},
+                'Instructores,' + {{ total_instructores }},
+                'Usuarios Totales,' + {{ total_usuarios }},
+                'Empresas Pendientes,' + {{ empresas_pendientes_count }},
+                'Intentos Fallidos (7d),' + {{ failed_logins_7d }},
+                '',
+                'Mes,Proyectos Publicados'
+            ];
+            for (var i = 0; i < meses.length; i++) {
+                csvRows.push(meses[i] + ',' + totales[i]);
+            }
+            csvRows.push('');
+            csvRows.push('Cluster,Proyectos');
+            for (var i = 0; i < clusters.length; i++) {
+                csvRows.push('"' + clusters[i] + '",' + clusterTotales[i]);
+            }
+
+            var blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'oasis_dashboard_' + new Date().toISOString().slice(0,10) + '.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // BACKUP — Data Guardian
+    // ═══════════════════════════════════════════════════════════════════
+
+    bindSearch('search-backups', 'table-backups');
+
+    var restorePk = null;
+
+    // ─── Create Backup ──────────────────────────────────────────────
+    window.createBackup = function(type, encrypt) {
+        var progressDiv = document.getElementById('backup-progress');
+        var progressBar = document.getElementById('backup-progress-bar');
+        var progressText = document.getElementById('backup-progress-text');
+
+        progressDiv.classList.remove('hidden');
+        progressBar.style.width = '10%';
+        progressText.textContent = 'Creando backup...';
+
+        // Simulate progress
+        var progress = 10;
+        var interval = setInterval(function() {
+            progress = Math.min(progress + Math.random() * 15, 85);
+            progressBar.style.width = progress + '%';
+        }, 400);
+
+        var formData = new FormData();
+        formData.append('type', type);
+        formData.append('encrypt', encrypt ? 'true' : 'false');
+
+        fetch('/auth/admin/backup/create/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrftoken },
+            body: formData,
+        }).then(function(r) { return r.json(); })
+        .then(function(d) {
+            clearInterval(interval);
+            if (d.ok) {
+                progressBar.style.width = '100%';
+                progressBar.className = 'h-full bg-oasis-500 rounded-full transition-all';
+                progressText.textContent = 'Backup creado: ' + d.filename;
+
+                // Add row to table
+                addBackupRow(d);
+
+                setTimeout(function() {
+                    progressDiv.classList.add('hidden');
+                    progressBar.style.width = '0%';
+                }, 3000);
+            } else {
+                progressBar.className = 'h-full bg-red-500 rounded-full transition-all';
+                progressText.textContent = 'Error: ' + (d.error || 'Desconocido');
+            }
+        }).catch(function(err) {
+            clearInterval(interval);
+            progressBar.className = 'h-full bg-red-500 rounded-full transition-all';
+            progressText.textContent = 'Error de conexion';
+        });
+    };
+
+    function addBackupRow(d) {
+        var tbody = document.getElementById('backup-table-body');
+        var noMsg = document.getElementById('no-backups-msg');
+        if (noMsg) noMsg.style.display = 'none';
+
+        if (!tbody) {
+            // Table didn't exist, reload the page to show it
+            location.reload();
+            return;
+        }
+
+        var tr = document.createElement('tr');
+        tr.id = 'backup-row-' + d.id;
+        tr.innerHTML =
+            '<td class="font-semibold text-xs"><i class="fa-solid fa-file-zipper text-oasis-500 mr-1"></i>' + d.filename + '</td>' +
+            '<td><span class="badge-active">Manual</span></td>' +
+            '<td><span class="badge-cluster"><i class="fa-solid fa-layer-group mr-0.5"></i>Completo</span></td>' +
+            '<td class="text-xs text-dark-500">' + d.size + '</td>' +
+            '<td><code class="text-[0.6rem] bg-dark-50 px-1.5 py-0.5 rounded text-dark-500">' + d.hash + '</code></td>' +
+            '<td class="text-center">' + (d.encrypted ? '<i class="fa-solid fa-lock text-purple-500"></i>' : '<i class="fa-solid fa-lock-open text-dark-300"></i>') + '</td>' +
+            '<td class="text-dark-400 text-xs">' + d.created_at + '</td>' +
+            '<td><div class="flex items-center justify-end gap-1">' +
+                '<button class="btn-sm btn-ghost" onclick="verifyBackup(' + d.id + ')" title="Verificar"><i class="fa-solid fa-fingerprint"></i></button>' +
+                '<a href="/auth/admin/backup/download/' + d.id + '/" class="btn-sm btn-green" title="Descargar"><i class="fa-solid fa-download"></i></a>' +
+                '<button class="btn-sm btn-orange" onclick="restoreBackup(' + d.id + ',\'' + d.filename + '\')" title="Restaurar"><i class="fa-solid fa-rotate-left"></i></button>' +
+                '<button class="btn-sm btn-red" onclick="deleteBackup(' + d.id + ',\'' + d.filename + '\')" title="Eliminar"><i class="fa-solid fa-trash"></i></button>' +
+            '</div></td>';
+
+        tbody.insertBefore(tr, tbody.firstChild);
+    }
+
+    // ─── Delete Backup ──────────────────────────────────────────────
+    window.deleteBackup = function(pk, filename) {
+        if (!confirm('Eliminar backup "' + filename + '"? Esta accion no se puede deshacer.')) return;
+
+        fetch('/auth/admin/backup/delete/' + pk + '/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrftoken },
+        }).then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (d.ok) {
+                var row = document.getElementById('backup-row-' + pk);
+                if (row) {
+                    row.style.opacity = '0';
+                    row.style.transition = 'opacity 0.3s';
+                    setTimeout(function() { row.remove(); }, 300);
+                }
+            }
+        });
+    };
+
+    // ─── Verify Backup ──────────────────────────────────────────────
+    window.verifyBackup = function(pk) {
+        fetch('/auth/admin/backup/verify/' + pk + '/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrftoken },
+        }).then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (d.valid) {
+                alert('Integridad verificada.\nHash SHA-256: ' + d.hash + '\nEl archivo no ha sido modificado.');
+            } else {
+                alert('ALERTA DE SEGURIDAD\n' + (d.error || d.message || 'Hash no coincide. El archivo puede haber sido alterado.'));
+            }
+        }).catch(function() {
+            alert('Error verificando integridad.');
+        });
+    };
+
+    // ─── Restore Backup (Modal Flow) ────────────────────────────────
+    window.restoreBackup = function(pk, filename) {
+        restorePk = pk;
+        document.getElementById('restore-filename').textContent = filename;
+        document.getElementById('restore-password').value = '';
+        document.getElementById('restore-error').classList.add('hidden');
+        document.getElementById('restore-modal').classList.remove('hidden');
+    };
+
+    window.closeRestoreModal = function() {
+        document.getElementById('restore-modal').classList.add('hidden');
+        restorePk = null;
+    };
+
+    window.confirmRestore = function() {
+        var password = document.getElementById('restore-password').value;
+        var errorDiv = document.getElementById('restore-error');
+        var btn = document.getElementById('btn-confirm-restore');
+
+        if (!password) {
+            errorDiv.textContent = 'Ingresa tu contrasena para confirmar.';
+            errorDiv.classList.remove('hidden');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Restaurando...';
+        errorDiv.classList.add('hidden');
+
+        var formData = new FormData();
+        formData.append('password', password);
+
+        fetch('/auth/admin/backup/restore/' + restorePk + '/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrftoken },
+            body: formData,
+        }).then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (d.ok) {
+                closeRestoreModal();
+                alert('Restauracion exitosa.\n' + d.message);
+            } else {
+                errorDiv.textContent = d.error || 'Error en la restauracion.';
+                errorDiv.classList.remove('hidden');
+            }
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-rotate-left mr-1"></i>Restaurar';
+        }).catch(function() {
+            errorDiv.textContent = 'Error de conexion.';
+            errorDiv.classList.remove('hidden');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-rotate-left mr-1"></i>Restaurar';
+        });
+    };
+
+    // ─── Emergency Guide ────────────────────────────────────────────
+    window.showEmergencyGuide = function() {
+        var guide = document.getElementById('emergency-guide');
+        guide.style.display = guide.style.display === 'none' ? '' : 'none';
+        if (guide.style.display !== 'none') {
+            guide.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
+})();
+</script>
+{% endblock %}

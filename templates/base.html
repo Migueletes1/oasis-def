@@ -1,0 +1,253 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="OASIS - Repositorio Institucional de Proyectos de Grado. Conecta talento con empresas.">
+    <title>{% block title %}OASIS{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        oasis: {
+                            50:  '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0',
+                            300: '#6ee7b7', 400: '#34d399', 500: '#10b981',
+                            600: '#059669', 700: '#047857', 800: '#065f46',
+                            900: '#064e3b', 950: '#022c22',
+                        },
+                        accent: {
+                            50:  '#fff7ed', 100: '#ffedd5', 200: '#fed7aa',
+                            300: '#fdba74', 400: '#fb923c', 500: '#f97316',
+                            600: '#ea580c', 700: '#c2410c', 800: '#9a3412',
+                            900: '#7c2d12', 950: '#431407',
+                        },
+                        dark: {
+                            50: '#f9fafb', 100: '#f3f4f6', 200: '#e5e7eb',
+                            300: '#d1d5db', 400: '#9ca3af', 500: '#6b7280',
+                            600: '#4b5563', 700: '#374151', 800: '#1f2937',
+                            900: '#111827', 950: '#030712',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-white text-dark-700 font-sans antialiased overflow-x-hidden">
+
+    <!-- Skip Navigation (Accesibilidad WCAG 2.1) -->
+    <a href="#main-content" class="skip-nav">Ir al contenido principal</a>
+
+    <!-- Three.js Canvas (background global — override block to disable) -->
+    {% block three_canvas %}
+    <canvas id="three-canvas" class="fixed inset-0 w-full h-full pointer-events-none" style="z-index:0;"
+            aria-hidden="true" role="presentation"></canvas>
+    {% endblock %}
+
+    <!-- Content layer -->
+    <div class="relative" style="z-index:1;">
+        {% block navbar %}{% endblock %}
+
+        <main id="main-content" role="main">
+            {% block content %}{% endblock %}
+        </main>
+
+        {% block footer %}{% endblock %}
+    </div>
+
+    <!-- ═══ Modulo de Accesibilidad ═══════════════════════════════════════ -->
+
+    <!-- Reading Guide (linea horizontal naranja que sigue el cursor) -->
+    <div id="a11y-reading-guide" aria-hidden="true"></div>
+
+    <!-- FAB -->
+    <button id="a11y-fab"
+            aria-label="Abrir opciones de accesibilidad"
+            aria-expanded="false"
+            aria-controls="a11y-panel"
+            title="Accesibilidad">
+        <i class="fa-solid fa-universal-access"></i>
+    </button>
+
+    <!-- Overlay -->
+    <div id="a11y-overlay" aria-hidden="true"></div>
+
+    <!-- Panel -->
+    <aside id="a11y-panel"
+           role="dialog"
+           aria-label="Panel de accesibilidad"
+           aria-hidden="true">
+
+        <!-- Header -->
+        <div class="a11y-header">
+            <div class="a11y-header-title">
+                <div class="a11y-header-icon">
+                    <i class="fa-solid fa-universal-access"></i>
+                </div>
+                <div>
+                    <h2 style="font-size:1rem;font-weight:800;color:#111827;margin:0;">Accesibilidad</h2>
+                    <p style="font-size:0.7rem;color:#9ca3af;margin:0;">Personaliza tu experiencia</p>
+                </div>
+            </div>
+            <button id="a11y-close" class="a11y-close-btn" aria-label="Cerrar panel de accesibilidad">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="a11y-body">
+
+            <!-- ── Tamano de Texto ─────────────────────────────────── -->
+            <div class="a11y-group">
+                <div class="a11y-group-title">
+                    <i class="fa-solid fa-text-height"></i>
+                    Tamano de Texto
+                </div>
+                <div class="a11y-font-controls">
+                    <button id="a11y-font-decrease" class="a11y-font-btn" aria-label="Reducir tamano de texto">A-</button>
+                    <span id="a11y-font-value" class="a11y-font-value">100%</span>
+                    <button id="a11y-font-increase" class="a11y-font-btn" aria-label="Aumentar tamano de texto">A+</button>
+                </div>
+            </div>
+
+            <!-- ── Modos de Visualizacion ──────────────────────────── -->
+            <div class="a11y-group">
+                <div class="a11y-group-title">
+                    <i class="fa-solid fa-eye"></i>
+                    Visualizacion
+                </div>
+
+                <label class="a11y-toggle" for="a11y-toggle-high-contrast">
+                    <span class="a11y-toggle-label">
+                        <i class="fa-solid fa-circle-half-stroke"></i>
+                        Contraste Alto
+                    </span>
+                    <span class="a11y-toggle-switch">
+                        <input type="checkbox" id="a11y-toggle-high-contrast">
+                        <span class="a11y-toggle-track"></span>
+                    </span>
+                </label>
+
+                <label class="a11y-toggle" for="a11y-toggle-grayscale">
+                    <span class="a11y-toggle-label">
+                        <i class="fa-solid fa-droplet-slash"></i>
+                        Escala de Grises
+                    </span>
+                    <span class="a11y-toggle-switch">
+                        <input type="checkbox" id="a11y-toggle-grayscale">
+                        <span class="a11y-toggle-track"></span>
+                    </span>
+                </label>
+
+                <label class="a11y-toggle" for="a11y-toggle-invert">
+                    <span class="a11y-toggle-label">
+                        <i class="fa-solid fa-adjust"></i>
+                        Invertir Colores
+                    </span>
+                    <span class="a11y-toggle-switch">
+                        <input type="checkbox" id="a11y-toggle-invert">
+                        <span class="a11y-toggle-track"></span>
+                    </span>
+                </label>
+            </div>
+
+            <!-- ── Lectura ─────────────────────────────────────────── -->
+            <div class="a11y-group">
+                <div class="a11y-group-title">
+                    <i class="fa-solid fa-book-open-reader"></i>
+                    Lectura
+                </div>
+
+                <label class="a11y-toggle" for="a11y-toggle-dyslexia">
+                    <span class="a11y-toggle-label">
+                        <i class="fa-solid fa-font"></i>
+                        Fuente para Dislexia
+                    </span>
+                    <span class="a11y-toggle-switch">
+                        <input type="checkbox" id="a11y-toggle-dyslexia">
+                        <span class="a11y-toggle-track"></span>
+                    </span>
+                </label>
+
+                <label class="a11y-toggle" for="a11y-toggle-highlight">
+                    <span class="a11y-toggle-label">
+                        <i class="fa-solid fa-highlighter"></i>
+                        Resaltar Enlaces
+                    </span>
+                    <span class="a11y-toggle-switch">
+                        <input type="checkbox" id="a11y-toggle-highlight">
+                        <span class="a11y-toggle-track"></span>
+                    </span>
+                </label>
+
+                <label class="a11y-toggle" for="a11y-toggle-reading-guide">
+                    <span class="a11y-toggle-label">
+                        <i class="fa-solid fa-grip-lines"></i>
+                        Guia de Lectura
+                    </span>
+                    <span class="a11y-toggle-switch">
+                        <input type="checkbox" id="a11y-toggle-reading-guide">
+                        <span class="a11y-toggle-track"></span>
+                    </span>
+                </label>
+            </div>
+
+            <!-- ── Movimiento ──────────────────────────────────────── -->
+            <div class="a11y-group">
+                <div class="a11y-group-title">
+                    <i class="fa-solid fa-film"></i>
+                    Movimiento
+                </div>
+
+                <label class="a11y-toggle" for="a11y-toggle-no-motion">
+                    <span class="a11y-toggle-label">
+                        <i class="fa-solid fa-pause"></i>
+                        Detener Animaciones
+                    </span>
+                    <span class="a11y-toggle-switch">
+                        <input type="checkbox" id="a11y-toggle-no-motion">
+                        <span class="a11y-toggle-track"></span>
+                    </span>
+                </label>
+            </div>
+
+            <!-- ── Reset ───────────────────────────────────────────── -->
+            <button id="a11y-reset" class="a11y-reset-btn">
+                <i class="fa-solid fa-rotate-left"></i>
+                Restablecer Todo
+            </button>
+
+        </div>
+    </aside>
+
+    <!-- Custom JS -->
+    <script src="{% static 'js/three-bg.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/accessibility.js' %}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

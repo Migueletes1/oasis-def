@@ -3,32 +3,34 @@
 # Deployment Script for OASIS Production
 set -e
 
-echo "🚀 Starting Deployment..."
+echo "Starting Deployment..."
 
 # 1. Pull latest code
-echo "📦 Pulling latest code..."
+echo "Pulling latest code..."
 git pull origin main
 
-# 2. Build and restart containers using Docker Compose
-echo "🐳 Rebuilding and restarting containers..."
-# Using --build to ensure latest code is used
-# Using -d for detached mode
-docker-compose up -d --build --scale backend=3
+# 2. Build containers (sin escalar aun)
+echo "Building containers..."
+docker-compose build
 
-# 3. Wait for database to be ready (via healthcheck or sleep)
-echo "⏳ Waiting for services to stabilize..."
+# 3. Run migrations ANTES de escalar (usa contenedor temporal one-off)
+echo "Running Database Migrations..."
+docker-compose run --rm backend python manage.py migrate
+
+# 4. Collect Static Files
+echo "Collecting Static Files..."
+docker-compose run --rm backend python manage.py collectstatic --noinput
+
+# 5. Levantar servicios y escalar backend
+echo "Starting services and scaling backend..."
+docker-compose up -d --scale backend=3
+
+# 6. Esperar a que los servicios esten listos via healthcheck
+echo "Waiting for services to stabilize..."
 sleep 10
 
-# 4. Run Migrations
-echo "🔄 Running Database Migrations..."
-docker-compose exec -T backend python manage.py migrate
-
-# 5. Collect Static Files
-echo "🎨 Collecting Static Files..."
-docker-compose exec -T backend python manage.py collectstatic --noinput
-
-# 6. Cleanup unused images
-echo "🧹 Cleaning up old images..."
+# 7. Cleanup unused images
+echo "Cleaning up old images..."
 docker image prune -f
 
-echo "✅ Deployment Complete Successfully!"
+echo "Deployment Complete Successfully!"

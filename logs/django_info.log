@@ -11,3 +11,541 @@ WARNING Not Found: /
 WARNING "GET / HTTP/1.1" 404 3595
 WARNING Not Found: /favicon.ico
 WARNING "GET /favicon.ico HTTP/1.1" 404 3646
+INFO Watching for file changes with StatReloader
+INFO Watching for file changes with StatReloader
+INFO "GET / HTTP/1.1" 200 41922
+INFO "GET / HTTP/1.1" 200 41922
+INFO "GET /static/js/main.js HTTP/1.1" 200 5214
+INFO "GET /static/css/styles.css HTTP/1.1" 200 3885
+WARNING Not Found: /favicon.ico
+WARNING "GET /favicon.ico HTTP/1.1" 404 4314
+INFO "GET /admin/ HTTP/1.1" 302 0
+INFO "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4241
+INFO "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2808
+INFO "GET /static/admin/css/login.css HTTP/1.1" 200 951
+INFO "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2810
+INFO "GET /static/admin/css/responsive.css HTTP/1.1" 200 16565
+INFO "GET /static/admin/css/base.css HTTP/1.1" 200 22120
+INFO "GET /static/admin/js/theme.js HTTP/1.1" 200 1653
+INFO "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+INFO C:\Users\tecno\oasis-def\OASIS\settings.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\OASIS\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO Watching for file changes with StatReloader
+INFO "GET / HTTP/1.1" 200 115347
+INFO "GET / HTTP/1.1" 200 115347
+INFO "GET /static/js/three-bg.js HTTP/1.1" 200 6314
+INFO "GET /static/css/styles.css HTTP/1.1" 200 6382
+INFO "GET /static/js/main.js HTTP/1.1" 200 9425
+WARNING Unauthorized: /api/v1/
+WARNING "GET /api/v1/ HTTP/1.1" 401 5031
+INFO "GET /static/rest_framework/css/prettify.css HTTP/1.1" 200 817
+INFO "GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 200 3426
+INFO "GET /static/rest_framework/css/default.css HTTP/1.1" 200 1152
+INFO "GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 200 121457
+INFO "GET /static/rest_framework/js/ajax-form.js HTTP/1.1" 200 3796
+INFO "GET /static/rest_framework/js/default.js HTTP/1.1" 200 1268
+INFO "GET /static/rest_framework/js/csrf.js HTTP/1.1" 200 1793
+INFO "GET /static/rest_framework/js/load-ajax-form.js HTTP/1.1" 200 59
+INFO "GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 200 13632
+INFO "GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 200 39680
+INFO "GET /static/rest_framework/js/jquery-3.7.1.min.js HTTP/1.1" 200 87533
+INFO "GET /static/rest_framework/img/grid.png HTTP/1.1" 200 1458
+WARNING Unauthorized: /api/v1/
+WARNING "GET /api/v1/ HTTP/1.1" 401 5031
+WARNING Unauthorized: /api/v1/
+WARNING "GET /api/v1/ HTTP/1.1" 401 5031
+INFO "GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/css/prettify.css HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/css/default.css HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/js/csrf.js HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/js/jquery-3.7.1.min.js HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/js/ajax-form.js HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/js/load-ajax-form.js HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/js/default.js HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/img/grid.png HTTP/1.1" 304 0
+INFO C:\Users\tecno\oasis-def\OASIS\settings.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO "GET / HTTP/1.1" 200 116527
+INFO "GET /auth/login/ HTTP/1.1" 200 7872
+INFO "GET /auth/registro/ HTTP/1.1" 200 11383
+INFO "GET /auth/registro/pendiente/ HTTP/1.1" 200 5916
+INFO "GET /health/ HTTP/1.1" 200 41
+INFO "GET /auth/login/ HTTP/1.1" 200 7872
+INFO "POST /auth/login/ HTTP/1.1" 302 0
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 9267
+INFO "GET /auth/perfil/ HTTP/1.1" 200 7990
+INFO "GET / HTTP/1.1" 200 118648
+INFO "GET / HTTP/1.1" 200 116527
+INFO "GET / HTTP/1.1" 200 116527
+INFO "GET / HTTP/1.1" 200 116527
+INFO "GET / HTTP/1.1" 200 116527
+INFO "GET / HTTP/1.1" 200 116527
+INFO Watching for file changes with StatReloader
+INFO "GET / HTTP/1.1" 200 116527
+INFO "GET /static/js/main.js HTTP/1.1" 304 0
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /static/css/styles.css HTTP/1.1" 200 7230
+INFO "GET / HTTP/1.1" 200 116527
+INFO "GET /auth/registro/ HTTP/1.1" 200 11383
+INFO "GET /auth/login/ HTTP/1.1" 200 7872
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET / HTTP/1.1" 200 116527
+WARNING Unauthorized: /api/v1/
+WARNING "GET /api/v1/ HTTP/1.1" 401 5031
+INFO "GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/css/prettify.css HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/css/default.css HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/js/jquery-3.7.1.min.js HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/js/csrf.js HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/js/ajax-form.js HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/js/default.js HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/js/load-ajax-form.js HTTP/1.1" 304 0
+INFO "GET /static/rest_framework/img/grid.png HTTP/1.1" 304 0
+INFO "GET /auth/login/ HTTP/1.1" 200 7872
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET / HTTP/1.1" 200 116527
+INFO "GET /auth/login/ HTTP/1.1" 200 7872
+WARNING Unauthorized: /api/v1/
+WARNING "GET /api/v1/ HTTP/1.1" 401 5031
+INFO "GET /auth/login/ HTTP/1.1" 200 7872
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET / HTTP/1.1" 200 116527
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+WARNING Unauthorized: /api/v1/
+WARNING "GET /api/v1/ HTTP/1.1" 401 5031
+INFO "GET / HTTP/1.1" 200 116527
+INFO "GET /static/css/styles.css HTTP/1.1" 200 8084
+INFO "GET / HTTP/1.1" 200 116016
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET / HTTP/1.1" 200 116016
+INFO "GET / HTTP/1.1" 200 116016
+INFO "GET / HTTP/1.1" 200 116016
+INFO "GET / HTTP/1.1" 200 116016
+INFO "GET /static/css/styles.css HTTP/1.1" 200 8084
+INFO "GET /auth/login/ HTTP/1.1" 200 7872
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "POST /auth/login/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 118137
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 9267
+INFO "GET /admin/usuarios/usuario/?rol=empresa&is_active__exact=0 HTTP/1.1" 200 15263
+INFO "GET /static/admin/css/forms.css HTTP/1.1" 200 8525
+INFO "GET /static/admin/css/changelists.css HTTP/1.1" 200 6878
+INFO "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+INFO "GET /static/admin/js/core.js HTTP/1.1" 200 6208
+INFO "GET /static/admin/js/actions.js HTTP/1.1" 200 8076
+INFO "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 9777
+INFO "GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+INFO "GET /admin/jsi18n/ HTTP/1.1" 200 9110
+INFO "GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+INFO "GET /static/admin/css/widgets.css HTTP/1.1" 200 11991
+INFO "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+INFO "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 200 285314
+INFO "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+INFO "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 200 325171
+INFO "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+INFO "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+INFO "GET /static/admin/img/icon-yes.svg HTTP/1.1" 200 436
+INFO "GET /admin/ HTTP/1.1" 200 9965
+INFO "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+INFO "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+WARNING Unauthorized: /api/v1/
+WARNING "GET /api/v1/ HTTP/1.1" 401 5031
+INFO "GET /health/ HTTP/1.1" 200 41
+INFO "GET /auth/perfil/ HTTP/1.1" 200 7990
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "POST /auth/logout/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 116016
+INFO "GET /auth/login/ HTTP/1.1" 200 8174
+INFO "POST /auth/login/ HTTP/1.1" 200 8561
+INFO "GET /auth/registro/ HTTP/1.1" 200 11383
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /auth/login/ HTTP/1.1" 200 8826
+INFO "GET /auth/login/ HTTP/1.1" 200 8826
+INFO "GET /auth/login/ HTTP/1.1" 200 8826
+INFO "GET /auth/registro/ HTTP/1.1" 200 12954
+INFO "GET /auth/registro/ HTTP/1.1" 200 12954
+INFO "GET /auth/registro/ HTTP/1.1" 200 12954
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /auth/login/ HTTP/1.1" 200 8826
+INFO "GET /auth/registro/ HTTP/1.1" 200 12954
+INFO "GET / HTTP/1.1" 200 116016
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /static/js/main.js HTTP/1.1" 304 0
+INFO Watching for file changes with StatReloader
+INFO "GET / HTTP/1.1" 200 121278
+INFO "GET / HTTP/1.1" 200 121278
+INFO "GET /auth/login/ HTTP/1.1" 200 9037
+INFO "GET /auth/registro/ HTTP/1.1" 200 13165
+INFO "GET / HTTP/1.1" 200 121278
+INFO "GET /static/css/styles.css HTTP/1.1" 200 12117
+INFO "GET /auth/login/ HTTP/1.1" 200 9037
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET / HTTP/1.1" 200 121278
+INFO "GET /auth/login/ HTTP/1.1" 200 9037
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET / HTTP/1.1" 200 121278
+INFO "GET /auth/registro/ HTTP/1.1" 200 13165
+INFO "GET /auth/login/ HTTP/1.1" 200 9037
+INFO "GET /auth/registro/ HTTP/1.1" 200 13165
+INFO "GET / HTTP/1.1" 200 121278
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /auth/login/ HTTP/1.1" 200 9037
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO Watching for file changes with StatReloader
+INFO "GET / HTTP/1.1" 200 120424
+INFO "GET /auth/login/ HTTP/1.1" 200 9381
+INFO "GET /auth/registro/ HTTP/1.1" 200 13620
+INFO "GET /auth/registro/pendiente/ HTTP/1.1" 200 6457
+INFO "GET / HTTP/1.1" 200 120424
+INFO Watching for file changes with StatReloader
+INFO "GET / HTTP/1.1" 200 120424
+INFO "GET /static/js/three-bg.js HTTP/1.1" 200 7021
+INFO "GET /static/css/styles.css HTTP/1.1" 200 12567
+INFO "GET /static/js/main.js HTTP/1.1" 200 9725
+WARNING Not Found: /favicon.ico
+WARNING "GET /favicon.ico HTTP/1.1" 404 4462
+INFO "GET / HTTP/1.1" 200 120424
+INFO "GET /auth/login/ HTTP/1.1" 200 9381
+INFO "GET / HTTP/1.1" 200 120424
+INFO "GET / HTTP/1.1" 200 120424
+INFO "GET /static/css/styles.css HTTP/1.1" 200 12581
+INFO "GET /static/js/three-bg.js HTTP/1.1" 200 7020
+INFO "GET /auth/login/ HTTP/1.1" 200 9381
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /auth/registro/ HTTP/1.1" 200 13620
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /auth/login/ HTTP/1.1" 200 9381
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO Watching for file changes with StatReloader
+WARNING Not Found: /login/
+WARNING "GET /login/ HTTP/1.1" 404 4447
+WARNING Not Found: /registro/empresa/
+WARNING "GET /registro/empresa/ HTTP/1.1" 404 4480
+INFO "GET / HTTP/1.1" 200 120464
+WARNING Not Found: /usuarios/login/
+WARNING "GET /usuarios/login/ HTTP/1.1" 404 4474
+WARNING Not Found: /usuarios/registro-empresa/
+WARNING "GET /usuarios/registro-empresa/ HTTP/1.1" 404 4507
+INFO "GET /auth/login/ HTTP/1.1" 200 9423
+WARNING Not Found: /auth/registro-empresa/
+WARNING "GET /auth/registro-empresa/ HTTP/1.1" 404 5947
+INFO "GET /auth/registro/ HTTP/1.1" 200 13662
+INFO "GET /auth/registro/pendiente/ HTTP/1.1" 200 6499
+INFO "GET /auth/login/ HTTP/1.1" 200 9423
+INFO "GET /auth/login/ HTTP/1.1" 200 9423
+INFO "GET /auth/login/ HTTP/1.1" 200 9423
+INFO "GET /auth/registro/ HTTP/1.1" 200 13662
+INFO "GET /auth/registro/ HTTP/1.1" 200 13662
+INFO "GET /auth/registro/pendiente/ HTTP/1.1" 200 6499
+INFO "GET /auth/dashboard/ HTTP/1.1" 302 0
+INFO "GET /auth/login/?next=/auth/dashboard/ HTTP/1.1" 200 9423
+INFO Watching for file changes with StatReloader
+INFO "GET / HTTP/1.1" 200 120464
+INFO "GET /static/css/styles.css HTTP/1.1" 200 12858
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /static/js/main.js HTTP/1.1" 304 0
+WARNING Not Found: /favicon.ico
+WARNING "GET /favicon.ico HTTP/1.1" 404 4462
+INFO "GET /auth/login/ HTTP/1.1" 200 9423
+INFO "GET / HTTP/1.1" 200 120464
+INFO "GET /auth/registro/ HTTP/1.1" 200 13662
+INFO "GET /auth/login/ HTTP/1.1" 200 9423
+INFO "POST /auth/login/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 122469
+INFO "GET /auth/perfil/ HTTP/1.1" 200 8722
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 10083
+INFO "GET /admin/ HTTP/1.1" 200 10095
+INFO "GET /admin/usuarios/usuario/?rol=empresa&is_active__exact=0 HTTP/1.1" 200 15133
+INFO "GET /admin/jsi18n/ HTTP/1.1" 200 9110
+WARNING Not Found: /admin/auditoria/auditoria/
+WARNING "GET /admin/auditoria/auditoria/ HTTP/1.1" 404 6682
+INFO Watching for file changes with StatReloader
+INFO "GET / HTTP/1.1" 200 127844
+INFO "GET / HTTP/1.1" 200 127844
+INFO "GET / HTTP/1.1" 200 127844
+INFO "GET / HTTP/1.1" 200 127844
+INFO "GET /auth/login/ HTTP/1.1" 200 16803
+INFO "GET /auth/login/ HTTP/1.1" 200 16803
+INFO "GET /auth/registro/ HTTP/1.1" 200 21042
+INFO "GET /auth/registro/pendiente/ HTTP/1.1" 200 13879
+INFO "GET / HTTP/1.1" 200 127844
+INFO "GET / HTTP/1.1" 200 129849
+INFO "GET /static/css/styles.css HTTP/1.1" 200 26597
+INFO "GET /static/js/main.js HTTP/1.1" 304 0
+INFO "GET /static/js/accessibility.js HTTP/1.1" 200 9728
+INFO "GET /static/js/three-bg.js HTTP/1.1" 200 7476
+WARNING Not Found: /favicon.ico
+WARNING "GET /favicon.ico HTTP/1.1" 404 4462
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 17463
+INFO "GET /auth/login/ HTTP/1.1" 302 0
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 17463
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\urls.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO "GET /auth/dashboard/ HTTP/1.1" 302 0
+INFO "GET /auth/login/ HTTP/1.1" 200 16803
+INFO "POST /auth/login/ HTTP/1.1" 302 0
+WARNING Forbidden (CSRF token missing.): /
+WARNING "POST / HTTP/1.1" 403 2496
+INFO "GET / HTTP/1.1" 200 127844
+INFO "GET /auth/login/ HTTP/1.1" 200 16803
+INFO "GET /auth/registro/ HTTP/1.1" 200 21042
+INFO "GET /health/ HTTP/1.1" 200 41
+INFO "GET / HTTP/1.1" 200 129849
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 74621
+INFO "GET /admin/repositorio/proyectogrado/5/change/ HTTP/1.1" 200 19921
+INFO "GET /admin/jsi18n/ HTTP/1.1" 200 9110
+INFO "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 200 586
+INFO "GET /static/admin/js/change_form.js HTTP/1.1" 200 606
+INFO "GET /admin/ HTTP/1.1" 200 9965
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+ERROR Internal Server Error: /auth/dashboard/
+Traceback (most recent call last):
+  File "C:\Users\tecno\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\tecno\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\tecno\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "c:\Users\tecno\oasis-def\usuarios\views.py", line 110, in dashboard_view
+    context = _build_admin_context(user)
+  File "c:\Users\tecno\oasis-def\usuarios\views.py", line 155, in _build_admin_context
+    growth_proyectos = _calc_growth(proyectos_this_month, proyectos_last_month)
+                       ^^^^^^^^^^^^
+NameError: name '_calc_growth' is not defined
+ERROR "GET /auth/dashboard/ HTTP/1.1" 500 101590
+ERROR Internal Server Error: /auth/dashboard/
+Traceback (most recent call last):
+  File "C:\Users\tecno\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\tecno\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\tecno\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "c:\Users\tecno\oasis-def\usuarios\views.py", line 110, in dashboard_view
+    context = _build_admin_context(user)
+  File "c:\Users\tecno\oasis-def\usuarios\views.py", line 155, in _build_admin_context
+    growth_proyectos = _calc_growth(proyectos_this_month, proyectos_last_month)
+                       ^^^^^^^^^^^^
+NameError: name '_calc_growth' is not defined
+ERROR "GET /auth/dashboard/ HTTP/1.1" 500 101453
+INFO Watching for file changes with StatReloader
+INFO "GET / HTTP/1.1" 200 127844
+INFO "GET / HTTP/1.1" 200 129849
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /static/js/main.js HTTP/1.1" 304 0
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /static/js/accessibility.js HTTP/1.1" 304 0
+WARNING Not Found: /favicon.ico
+WARNING "GET /favicon.ico HTTP/1.1" 404 4462
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 102252
+INFO "POST /auth/admin/toggle-destacado/5/ HTTP/1.1" 200 32
+INFO "POST /auth/admin/toggle-destacado/5/ HTTP/1.1" 200 31
+INFO "GET /admin/repositorio/proyectogrado/5/change/ HTTP/1.1" 200 19965
+INFO "GET /admin/jsi18n/ HTTP/1.1" 200 9662
+INFO "GET /admin/repositorio/proyectogrado/add/ HTTP/1.1" 200 19382
+INFO "GET /admin/jsi18n/ HTTP/1.1" 200 9662
+INFO C:\Users\tecno\oasis-def\auditoria\models.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\urls.py changed, reloading.
+INFO Watching for file changes with StatReloader
+WARNING Forbidden: /auth/admin/backup/restore/1/
+INFO "GET /auth/dashboard/ HTTP/1.1" 302 0
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 127627
+INFO "POST /auth/admin/backup/create/ HTTP/1.1" 200 171
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 131535
+INFO Watching for file changes with StatReloader
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 131535
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /static/js/main.js HTTP/1.1" 304 0
+INFO "GET /static/js/accessibility.js HTTP/1.1" 304 0
+WARNING Not Found: /favicon.ico
+WARNING "GET /favicon.ico HTTP/1.1" 404 4786
+INFO "GET / HTTP/1.1" 200 127844
+INFO "GET /admin/repositorio/proyectogrado/add/ HTTP/1.1" 200 41122
+INFO "GET /admin/jsi18n/ HTTP/1.1" 200 9662
+INFO "GET /static/admin/js/SelectFilter2.js HTTP/1.1" 200 15845
+INFO "GET /static/admin/js/SelectBox.js HTTP/1.1" 200 4530
+INFO "GET /static/admin/js/inlines.js HTTP/1.1" 200 15628
+INFO "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 200 392
+INFO "GET /repositorio/ HTTP/1.1" 200 38218
+INFO "GET /static/admin/img/selector-icons.svg HTTP/1.1" 200 3291
+INFO "GET /repositorio/ HTTP/1.1" 200 59992
+INFO "GET /repositorio/?q=IA HTTP/1.1" 200 51095
+INFO "GET /repositorio/?cluster=TICS HTTP/1.1" 200 49021
+INFO "GET /repositorio/?carrera=software HTTP/1.1" 200 44108
+INFO "GET /repositorio/?sort=populares HTTP/1.1" 200 59992
+INFO "GET /repositorio/?tipo=CODE HTTP/1.1" 200 46159
+INFO "GET /repositorio/proyecto/13/ HTTP/1.1" 200 29464
+INFO "GET /repositorio/proyecto/8/ HTTP/1.1" 200 29419
+INFO "GET /repositorio/proyecto/7/ HTTP/1.1" 200 29257
+INFO "GET /repositorio/proyecto/11/ HTTP/1.1" 200 29353
+INFO "GET /auth/login/ HTTP/1.1" 200 16803
+INFO "POST /auth/login/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 129950
+INFO "GET /auth/login/ HTTP/1.1" 200 16803
+INFO "POST /auth/login/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 129950
+INFO "GET /repositorio/proyecto/13/ HTTP/1.1" 200 35998
+INFO "POST /repositorio/proyecto/13/votar/ HTTP/1.1" 200 25
+INFO "GET /repositorio/proyecto/13/ HTTP/1.1" 200 35998
+INFO "POST /repositorio/proyecto/13/subir/ HTTP/1.1" 200 164
+INFO "GET /repositorio/descargar/1/ HTTP/1.1" 200 21
+INFO "GET /repositorio/descargar/1/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 127945
+INFO "GET /health/ HTTP/1.1" 200 41
+INFO "GET /auth/login/ HTTP/1.1" 200 16803
+INFO "GET /repositorio/ HTTP/1.1" 200 60136
+INFO "GET /repositorio/?q=IA HTTP/1.1" 200 51095
+INFO "GET /repositorio/?cluster=TICS HTTP/1.1" 200 49165
+INFO "GET /repositorio/?carrera=software HTTP/1.1" 200 44108
+INFO "GET /repositorio/?anio=2026 HTTP/1.1" 200 54504
+INFO "GET /repositorio/?tipo=CODE HTTP/1.1" 200 46303
+INFO "GET /repositorio/?sort=populares HTTP/1.1" 200 60136
+INFO "GET /repositorio/?sort=descargas HTTP/1.1" 200 60136
+INFO "GET /repositorio/?sort=titulo HTTP/1.1" 200 59965
+INFO "GET /repositorio/proyecto/6/ HTTP/1.1" 200 29873
+INFO "GET /repositorio/proyecto/7/ HTTP/1.1" 200 29257
+INFO "GET /repositorio/proyecto/8/ HTTP/1.1" 200 29419
+INFO "GET /repositorio/proyecto/10/ HTTP/1.1" 200 29181
+INFO "GET /repositorio/proyecto/11/ HTTP/1.1" 200 29353
+INFO "GET /repositorio/descargar/1/ HTTP/1.1" 302 0
+WARNING Forbidden (CSRF cookie not set.): /repositorio/proyecto/13/votar/
+WARNING "POST /repositorio/proyecto/13/votar/ HTTP/1.1" 403 2901
+INFO "GET /repositorio/descargar/1/ HTTP/1.1" 200 21
+INFO "GET / HTTP/1.1" 200 127945
+INFO "GET /health/ HTTP/1.1" 200 41
+INFO "GET /repositorio/ HTTP/1.1" 200 60136
+INFO "GET /repositorio/?q=IA HTTP/1.1" 200 51095
+INFO "GET /repositorio/?cluster=TICS HTTP/1.1" 200 49165
+INFO "GET /repositorio/?carrera=software HTTP/1.1" 200 44108
+INFO "GET /repositorio/?anio=2026 HTTP/1.1" 200 54504
+INFO "GET /repositorio/?tipo=CODE HTTP/1.1" 200 46303
+INFO "GET /repositorio/proyecto/6/ HTTP/1.1" 200 29873
+INFO "GET /repositorio/proyecto/7/ HTTP/1.1" 200 29257
+INFO "GET /repositorio/proyecto/8/ HTTP/1.1" 200 29419
+INFO "GET /repositorio/proyecto/10/ HTTP/1.1" 200 29181
+INFO "GET /repositorio/proyecto/11/ HTTP/1.1" 200 29353
+INFO "GET /repositorio/descargar/1/ HTTP/1.1" 302 0
+INFO "GET /repositorio/descargar/1/ HTTP/1.1" 200 21
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 150749
+INFO "GET /admin/repositorio/ HTTP/1.1" 200 7908
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 150749
+INFO "POST /auth/admin/toggle-destacado/13/ HTTP/1.1" 200 32
+INFO "GET /admin/repositorio/proyectogrado/add/ HTTP/1.1" 200 41347
+INFO "GET /admin/jsi18n/ HTTP/1.1" 200 9662
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\repositorio\models.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\repositorio\models.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\repositorio\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\repositorio\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\repositorio\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\auditoria\models.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\auditoria\models.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\repositorio\models.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\repositorio\models.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\repositorio\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\repositorio\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\repositorio\models.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\repositorio\models.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 150747
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO "GET /admin/repositorio/proyectogrado/13/change/ HTTP/1.1" 200 44909
+INFO "GET /static/admin/js/inlines.js HTTP/1.1" 304 0
+INFO "GET /static/admin/js/SelectBox.js HTTP/1.1" 304 0
+INFO "GET /static/admin/js/SelectFilter2.js HTTP/1.1" 304 0
+INFO "GET /admin/jsi18n/ HTTP/1.1" 200 9662
+INFO "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 304 0
+INFO "GET /static/admin/img/selector-icons.svg HTTP/1.1" 304 0
+INFO "GET /admin/repositorio/proyectogrado/add/ HTTP/1.1" 200 41347
+INFO "GET /admin/jsi18n/ HTTP/1.1" 200 9662
+INFO C:\Users\tecno\oasis-def\repositorio\models.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\repositorio\admin.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\repositorio\admin.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\urls.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\tecno\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 150835
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /static/js/main.js HTTP/1.1" 304 0
+INFO "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO "GET /auth/admin/proyecto/nuevo/ HTTP/1.1" 200 65962

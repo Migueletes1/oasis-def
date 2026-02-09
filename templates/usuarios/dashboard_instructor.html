@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Instructor — OASIS{% endblock %}
+
+{% block three_canvas %}{% endblock %}
+
+{% block navbar %}
+{% include 'partials/navbar_auth.html' %}
+{% endblock %}
+
+{% block content %}
+<section class="relative min-h-screen py-24 bg-dark-50">
+    <div class="absolute inset-0">
+        <div class="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-oasis-100/30 rounded-full blur-[100px]"></div>
+    </div>
+
+    <div class="relative z-10 max-w-4xl mx-auto px-4">
+        <div class="mb-8">
+            <h1 class="text-3xl font-black text-dark-900">
+                <i class="fa-solid fa-chalkboard-user text-oasis-600 mr-2"></i>
+                Panel de Instructor
+            </h1>
+            <p class="text-dark-500 mt-1">Bienvenido, {{ user.get_full_name|default:user.username }}</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <a href="{% url 'index' %}#carreras" class="bg-white rounded-2xl p-6 group border border-dark-100 shadow-sm hover:border-oasis-300 hover:shadow-lg hover:shadow-oasis-50 transition-all">
+                <div class="w-12 h-12 rounded-xl bg-oasis-50 flex items-center justify-center mb-4
+                            group-hover:bg-oasis-100 transition-all">
+                    <i class="fa-solid fa-compass text-oasis-600 text-xl"></i>
+                </div>
+                <h3 class="text-dark-800 font-bold mb-1">Explorar Repositorio</h3>
+                <p class="text-sm text-dark-500">Navega proyectos de grado por carrera</p>
+            </a>
+
+            <a href="{% url 'perfil' %}" class="bg-white rounded-2xl p-6 group border border-dark-100 shadow-sm hover:border-oasis-300 hover:shadow-lg hover:shadow-oasis-50 transition-all">
+                <div class="w-12 h-12 rounded-xl bg-oasis-50 flex items-center justify-center mb-4
+                            group-hover:bg-oasis-100 transition-all">
+                    <i class="fa-solid fa-user-gear text-oasis-600 text-xl"></i>
+                </div>
+                <h3 class="text-dark-800 font-bold mb-1">Mi Perfil</h3>
+                <p class="text-sm text-dark-500">Tus datos personales</p>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

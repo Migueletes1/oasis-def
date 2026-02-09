@@ -13,7 +13,9 @@ logs/
 # Media y archivos generados
 media/
 backups/
-staticfiles/
+staticfiles/*
+!staticfiles/js/
+!staticfiles/css/
 
 # Herramientas IA
 .claude/

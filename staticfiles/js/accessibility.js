@@ -11,7 +11,12 @@
         dyslexia: false,
         highlight: false,
         readingGuide: false,
-        noMotion: false
+        noMotion: false,
+        lineSpacing: false,
+        letterSpacing: false,
+        bigCursor: false,
+        focusMode: false,
+        saturate: false
     };
 
     // Elementos del DOM
@@ -157,17 +162,61 @@
         updateToggleButton('a11y-toggle-no-motion', a11yState.noMotion);
     }
 
+    // Aplicar espaciado de líneas
+    function applyLineSpacing() {
+        if (a11yState.lineSpacing) {
+            document.body.classList.add('line-spacing');
+        } else {
+            document.body.classList.remove('line-spacing');
+        }
+        updateToggleButton('a11y-toggle-line-spacing', a11yState.lineSpacing);
+    }
+
+    // Aplicar espaciado de letras
+    function applyLetterSpacing() {
+        if (a11yState.letterSpacing) {
+            document.body.classList.add('letter-spacing');
+        } else {
+            document.body.classList.remove('letter-spacing');
+        }
+        updateToggleButton('a11y-toggle-letter-spacing', a11yState.letterSpacing);
+    }
+
+    // Aplicar cursor grande
+    function applyBigCursor() {
+        if (a11yState.bigCursor) {
+            document.body.classList.add('big-cursor');
+        } else {
+            document.body.classList.remove('big-cursor');
+        }
+        updateToggleButton('a11y-toggle-big-cursor', a11yState.bigCursor);
+    }
+
+    // Aplicar modo de enfoque
+    function applyFocusMode() {
+        if (a11yState.focusMode) {
+            document.body.classList.add('focus-mode');
+        } else {
+            document.body.classList.remove('focus-mode');
+        }
+        updateToggleButton('a11y-toggle-focus-mode', a11yState.focusMode);
+    }
+
+    // Aplicar saturación
+    function applySaturate() {
+        if (a11yState.saturate) {
+            document.body.classList.add('saturate');
+        } else {
+            document.body.classList.remove('saturate');
+        }
+        updateToggleButton('a11y-toggle-saturate', a11yState.saturate);
+    }
+
     // Actualizar botón de toggle
-    function updateToggleButton(buttonId, isActive) {
-        const button = document.getElementById(buttonId);
-        if (button) {
-            if (isActive) {
-                button.classList.add('active');
-                button.setAttribute('aria-pressed', 'true');
-            } else {
-                button.classList.remove('active');
-                button.setAttribute('aria-pressed', 'false');
-            }
+    function updateToggleButton(checkboxId, isActive) {
+        const checkbox = document.getElementById(checkboxId);
+        if (checkbox) {
+            checkbox.checked = isActive;
         }
     }
 
@@ -181,6 +230,11 @@
         applyHighlight();
         applyReadingGuide();
         applyNoMotion();
+        applyLineSpacing();
+        applyLetterSpacing();
+        applyBigCursor();
+        applyFocusMode();
+        applySaturate();
     }
 
     // Resetear todo
@@ -193,19 +247,104 @@
         a11yState.highlight = false;
         a11yState.readingGuide = false;
         a11yState.noMotion = false;
+        a11yState.lineSpacing = false;
+        a11yState.letterSpacing = false;
+        a11yState.bigCursor = false;
+        a11yState.focusMode = false;
+        a11yState.saturate = false;
 
         applyAllSettings();
         saveState();
+    }
+
+    // Actualizar badge del FAB
+    function updateFabBadge() {
+        const activeCount = Object.values(a11yState).filter(v => v === true).length;
+        let badge = fab.querySelector('.a11y-active-badge');
+
+        if (activeCount > 0) {
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'a11y-active-badge';
+                fab.appendChild(badge);
+            }
+        } else {
+            if (badge) {
+                badge.remove();
+            }
+        }
     }
 
     // Event Listeners
     fab.addEventListener('click', togglePanel);
     overlay.addEventListener('click', closePanel);
 
+    // Botón de cerrar en el panel
+    const closeBtn = document.getElementById('a11y-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closePanel);
+    }
+
     // Cerrar con ESC
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && panel.classList.contains('open')) {
             closePanel();
+        }
+    });
+
+    // Atajos de teclado
+    document.addEventListener('keydown', (e) => {
+        // Alt + A: Abrir/cerrar panel
+        if (e.altKey && e.key === 'a') {
+            e.preventDefault();
+            togglePanel();
+        }
+
+        // Alt + 1: Toggle alto contraste
+        if (e.altKey && e.key === '1') {
+            e.preventDefault();
+            a11yState.highContrast = !a11yState.highContrast;
+            applyHighContrast();
+            saveState();
+            updateFabBadge();
+        }
+
+        // Alt + 2: Toggle escala de grises
+        if (e.altKey && e.key === '2') {
+            e.preventDefault();
+            a11yState.grayscale = !a11yState.grayscale;
+            applyGrayscale();
+            saveState();
+            updateFabBadge();
+        }
+
+        // Alt + +: Aumentar tamaño de fuente
+        if (e.altKey && e.key === '+') {
+            e.preventDefault();
+            if (a11yState.fontSize < 150) {
+                a11yState.fontSize += 10;
+                applyFontSize();
+                saveState();
+            }
+        }
+
+        // Alt + -: Reducir tamaño de fuente
+        if (e.altKey && e.key === '-') {
+            e.preventDefault();
+            if (a11yState.fontSize > 80) {
+                a11yState.fontSize -= 10;
+                applyFontSize();
+                saveState();
+            }
+        }
+
+        // Alt + 0: Reset todo
+        if (e.altKey && e.key === '0') {
+            e.preventDefault();
+            if (confirm('¿Restablecer todas las opciones de accesibilidad?')) {
+                resetAll();
+                updateFabBadge();
+            }
         }
     });
 
@@ -241,16 +380,22 @@
         { id: 'a11y-toggle-dyslexia', key: 'dyslexia', apply: applyDyslexia },
         { id: 'a11y-toggle-highlight', key: 'highlight', apply: applyHighlight },
         { id: 'a11y-toggle-reading-guide', key: 'readingGuide', apply: applyReadingGuide },
-        { id: 'a11y-toggle-no-motion', key: 'noMotion', apply: applyNoMotion }
+        { id: 'a11y-toggle-no-motion', key: 'noMotion', apply: applyNoMotion },
+        { id: 'a11y-toggle-line-spacing', key: 'lineSpacing', apply: applyLineSpacing },
+        { id: 'a11y-toggle-letter-spacing', key: 'letterSpacing', apply: applyLetterSpacing },
+        { id: 'a11y-toggle-big-cursor', key: 'bigCursor', apply: applyBigCursor },
+        { id: 'a11y-toggle-focus-mode', key: 'focusMode', apply: applyFocusMode },
+        { id: 'a11y-toggle-saturate', key: 'saturate', apply: applySaturate }
     ];
 
     toggles.forEach(toggle => {
-        const button = document.getElementById(toggle.id);
-        if (button) {
-            button.addEventListener('click', () => {
-                a11yState[toggle.key] = !a11yState[toggle.key];
+        const checkbox = document.getElementById(toggle.id);
+        if (checkbox) {
+            checkbox.addEventListener('change', () => {
+                a11yState[toggle.key] = checkbox.checked;
                 toggle.apply();
                 saveState();
+                updateFabBadge();
             });
         }
     });
@@ -267,4 +412,34 @@
 
     // Inicializar
     loadState();
+    updateFabBadge();
+
+    // Mostrar tooltip de atajos al cargar (solo primera vez)
+    if (!localStorage.getItem('a11y-shortcuts-shown')) {
+        setTimeout(() => {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'a11y-shortcuts-tooltip';
+            tooltip.innerHTML = `
+                <div style="position: fixed; bottom: 100px; right: 24px; background: #047857; color: white; padding: 16px 20px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 999; max-width: 280px; animation: slideInRight 0.5s;">
+                    <div style="font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-keyboard"></i>
+                        Atajos de Teclado
+                    </div>
+                    <div style="font-size: 0.875rem; opacity: 0.95; line-height: 1.6;">
+                        <div><kbd style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Alt + A</kbd> Abrir/Cerrar</div>
+                        <div><kbd style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Alt + +/-</kbd> Tamaño</div>
+                        <div><kbd style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Alt + 0</kbd> Resetear</div>
+                    </div>
+                    <button onclick="this.parentElement.remove()" style="position: absolute; top: 8px; right: 8px; background: none; border: none; color: white; cursor: pointer; opacity: 0.7; font-size: 1.25rem;">×</button>
+                </div>
+            `;
+            document.body.appendChild(tooltip);
+
+            setTimeout(() => {
+                tooltip.remove();
+            }, 8000);
+
+            localStorage.setItem('a11y-shortcuts-shown', 'true');
+        }, 2000);
+    }
 })();

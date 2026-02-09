@@ -110,11 +110,14 @@
                     <i class="fa-solid fa-universal-access"></i>
                 </div>
                 <div>
-                    <h2 style="font-size:1rem;font-weight:800;color:#111827;margin:0;">Accesibilidad</h2>
-                    <p style="font-size:0.7rem;color:#9ca3af;margin:0;">Personaliza tu experiencia</p>
+                    <h2 style="font-size:1.125rem;font-weight:800;color:#111827;margin:0;">Centro de Accesibilidad</h2>
+                    <p style="font-size:0.75rem;color:#6b7280;margin:0;display:flex;align-items:center;gap:4px;">
+                        <i class="fa-solid fa-keyboard" style="font-size:0.7rem;"></i>
+                        Usa <kbd style="background:#f3f4f6;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:0.7rem;border:1px solid #d1d5db;">Alt+A</kbd> para abrir
+                    </p>
                 </div>
             </div>
-            <button id="a11y-close" class="a11y-close-btn" aria-label="Cerrar panel de accesibilidad">
+            <button id="a11y-close" class="a11y-close-btn" aria-label="Cerrar panel de accesibilidad" title="Cerrar (ESC)">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -214,13 +217,65 @@
                         <span class="a11y-toggle-track"></span>
                     </span>
                 </label>
+
+                <label class="a11y-toggle" for="a11y-toggle-line-spacing">
+                    <span class="a11y-toggle-label">
+                        <i class="fa-solid fa-text-height"></i>
+                        Espaciado de Lineas
+                    </span>
+                    <span class="a11y-toggle-switch">
+                        <input type="checkbox" id="a11y-toggle-line-spacing">
+                        <span class="a11y-toggle-track"></span>
+                    </span>
+                </label>
+
+                <label class="a11y-toggle" for="a11y-toggle-letter-spacing">
+                    <span class="a11y-toggle-label">
+                        <i class="fa-solid fa-text-width"></i>
+                        Espaciado de Letras
+                    </span>
+                    <span class="a11y-toggle-switch">
+                        <input type="checkbox" id="a11y-toggle-letter-spacing">
+                        <span class="a11y-toggle-track"></span>
+                    </span>
+                </label>
+            </div>
+
+            <!-- ── Navegacion ──────────────────────────────────────── -->
+            <div class="a11y-group">
+                <div class="a11y-group-title">
+                    <i class="fa-solid fa-computer-mouse"></i>
+                    Navegacion
+                </div>
+
+                <label class="a11y-toggle" for="a11y-toggle-big-cursor">
+                    <span class="a11y-toggle-label">
+                        <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+                        Cursor Grande
+                    </span>
+                    <span class="a11y-toggle-switch">
+                        <input type="checkbox" id="a11y-toggle-big-cursor">
+                        <span class="a11y-toggle-track"></span>
+                    </span>
+                </label>
+
+                <label class="a11y-toggle" for="a11y-toggle-focus-mode">
+                    <span class="a11y-toggle-label">
+                        <i class="fa-solid fa-bullseye"></i>
+                        Modo Enfoque
+                    </span>
+                    <span class="a11y-toggle-switch">
+                        <input type="checkbox" id="a11y-toggle-focus-mode">
+                        <span class="a11y-toggle-track"></span>
+                    </span>
+                </label>
             </div>
 
             <!-- ── Movimiento ──────────────────────────────────────── -->
             <div class="a11y-group">
                 <div class="a11y-group-title">
                     <i class="fa-solid fa-film"></i>
-                    Movimiento
+                    Movimiento & Color
                 </div>
 
                 <label class="a11y-toggle" for="a11y-toggle-no-motion">
@@ -233,6 +288,17 @@
                         <span class="a11y-toggle-track"></span>
                     </span>
                 </label>
+
+                <label class="a11y-toggle" for="a11y-toggle-saturate">
+                    <span class="a11y-toggle-label">
+                        <i class="fa-solid fa-droplet"></i>
+                        Saturacion Aumentada
+                    </span>
+                    <span class="a11y-toggle-switch">
+                        <input type="checkbox" id="a11y-toggle-saturate">
+                        <span class="a11y-toggle-track"></span>
+                    </span>
+                </label>
             </div>
 
             <!-- ── Reset ───────────────────────────────────────────── -->
@@ -240,6 +306,31 @@
                 <i class="fa-solid fa-rotate-left"></i>
                 Restablecer Todo
             </button>
+
+            <!-- ── Atajos de Teclado ───────────────────────────────── -->
+            <div style="margin-top:24px;padding:16px;background:#f9fafb;border-radius:12px;border:2px dashed #d1d5db;">
+                <div style="font-size:0.875rem;font-weight:700;color:#047857;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+                    <i class="fa-solid fa-keyboard"></i>
+                    Atajos de Teclado
+                </div>
+                <div style="font-size:0.8125rem;color:#6b7280;line-height:1.8;font-family:'JetBrains Mono',monospace;">
+                    <div><kbd style="background:#fff;padding:3px 8px;border-radius:6px;border:1px solid #d1d5db;">Alt + A</kbd> Abrir/Cerrar panel</div>
+                    <div><kbd style="background:#fff;padding:3px 8px;border-radius:6px;border:1px solid #d1d5db;">Alt + +</kbd> Aumentar texto</div>
+                    <div><kbd style="background:#fff;padding:3px 8px;border-radius:6px;border:1px solid #d1d5db;">Alt + -</kbd> Reducir texto</div>
+                    <div><kbd style="background:#fff;padding:3px 8px;border-radius:6px;border:1px solid #d1d5db;">Alt + 1</kbd> Alto contraste</div>
+                    <div><kbd style="background:#fff;padding:3px 8px;border-radius:6px;border:1px solid #d1d5db;">Alt + 2</kbd> Escala de grises</div>
+                    <div><kbd style="background:#fff;padding:3px 8px;border-radius:6px;border:1px solid #d1d5db;">Alt + 0</kbd> Restablecer todo</div>
+                    <div><kbd style="background:#fff;padding:3px 8px;border-radius:6px;border:1px solid #d1d5db;">ESC</kbd> Cerrar panel</div>
+                </div>
+            </div>
+
+            <!-- ── Informacion WCAG ────────────────────────────────── -->
+            <div style="margin-top:16px;padding:12px;background:#ecfdf5;border-radius:12px;border:2px solid #a7f3d0;text-align:center;">
+                <div style="font-size:0.75rem;color:#047857;font-weight:600;">
+                    <i class="fa-solid fa-check-circle"></i>
+                    Cumple con WCAG 2.1 Nivel AA
+                </div>
+            </div>
 
         </div>
     </aside>

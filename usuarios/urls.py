@@ -33,7 +33,9 @@ urlpatterns = [
     # Carga Masiva por CSV
     path('admin/carga-masiva/', views.carga_masiva_view, name='carga_masiva'),
     path('admin/carga-masiva/plantilla/', views.descargar_plantilla_csv, name='descargar_plantilla_csv'),
+    path('admin/carga-masiva/validar/', views.validar_csv, name='validar_csv'),  # ✨ NUEVO
     path('admin/carga-masiva/procesar/', views.procesar_csv, name='procesar_csv'),
+    path('admin/carga-masiva/exportar-errores/', views.exportar_errores_csv, name='exportar_errores_csv'),  # ✨ NUEVO
 
     # Backup endpoints
     path('admin/backup/create/', views.admin_backup_create, name='admin_backup_create'),

@@ -876,10 +876,225 @@ def _validar_carrera(nombre_carrera):
     return False, f"La carrera '{nombre_carrera}' no existe. Carreras disponibles: {', '.join(list(carreras_disponibles)[:5])}...", None
 
 
+def _validar_tipo_documento(tipo_doc):
+    """Valida que el tipo de documento sea uno de los permitidos."""
+    TIPOS_PERMITIDOS = ['CC', 'TI', 'CE', 'PA', 'PEP']
+    tipo_upper = tipo_doc.upper().strip()
+
+    if tipo_upper not in TIPOS_PERMITIDOS:
+        return False, f"Tipo de documento inválido '{tipo_doc}'. Permitidos: {', '.join(TIPOS_PERMITIDOS)}"
+
+    return True, None
+
+
 @admin_required
 def carga_masiva_view(request):
     """Vista principal del módulo de carga masiva."""
     return render(request, 'usuarios/carga_masiva.html')
+
+
+@admin_required
+@require_POST
+def validar_csv(request):
+    """
+    ✨ NUEVA FUNCIONALIDAD: Vista previa de datos CSV sin crear usuarios.
+    Valida el archivo y retorna una lista de registros válidos y errores.
+    """
+    if 'archivo' not in request.FILES:
+        return JsonResponse({'error': 'No se recibió ningún archivo'}, status=400)
+
+    archivo = request.FILES['archivo']
+    tipo = request.POST.get('tipo', 'aprendices')
+
+    # Validación de MIME type
+    if archivo.content_type not in ['text/csv', 'application/vnd.ms-excel', 'text/plain']:
+        return JsonResponse({
+            'error': 'Tipo de archivo no permitido. Solo se aceptan archivos CSV.'
+        }, status=400)
+
+    # Validación de tamaño (máximo 5MB)
+    if archivo.size > 5 * 1024 * 1024:
+        return JsonResponse({
+            'error': 'El archivo es demasiado grande. Tamaño máximo: 5MB'
+        }, status=400)
+
+    # Leer y decodificar el archivo
+    try:
+        archivo_contenido = archivo.read().decode('utf-8-sig')
+    except UnicodeDecodeError:
+        try:
+            archivo.seek(0)
+            archivo_contenido = archivo.read().decode('latin-1')
+        except:
+            return JsonResponse({
+                'error': 'No se pudo decodificar el archivo. Asegúrese de que esté en formato UTF-8.'
+            }, status=400)
+
+    # Parsear CSV
+    reader = csv.DictReader(io.StringIO(archivo_contenido))
+
+    errores = []
+    registros_validos = []
+    registros_duplicados_internos = []
+    filas_procesadas = 0
+    MAX_FILAS = 2000
+
+    # ✨ MEJORA: Detectar duplicados dentro del mismo CSV
+    emails_vistos = set()
+    documentos_vistos = set()
+
+    # Validar filas
+    for i, fila in enumerate(reader, start=2):
+        filas_procesadas += 1
+
+        if filas_procesadas > MAX_FILAS:
+            errores.append({
+                'fila': i,
+                'campo': 'general',
+                'error': f'Se excedió el límite máximo de {MAX_FILAS} filas'
+            })
+            break
+
+        try:
+            # Campos comunes
+            tipo_doc = _sanitizar_texto(fila.get('tipo_documento', ''))
+            numero_doc = _sanitizar_texto(fila.get('numero_documento', ''))
+            nombres = _sanitizar_texto(fila.get('nombres', ''))
+            apellidos = _sanitizar_texto(fila.get('apellidos', ''))
+            email = _sanitizar_texto(fila.get('email', ''))
+
+            # Lista de errores por fila
+            errores_fila = []
+
+            # Validaciones básicas
+            if not tipo_doc:
+                errores_fila.append({'campo': 'tipo_documento', 'error': 'Campo requerido'})
+
+            # ✨ MEJORA: Validar tipo de documento permitido
+            if tipo_doc:
+                es_valido, error_tipo = _validar_tipo_documento(tipo_doc)
+                if not es_valido:
+                    errores_fila.append({'campo': 'tipo_documento', 'error': error_tipo})
+
+            if not numero_doc:
+                errores_fila.append({'campo': 'numero_documento', 'error': 'Campo requerido'})
+
+            if not nombres:
+                errores_fila.append({'campo': 'nombres', 'error': 'Campo requerido'})
+
+            if not apellidos:
+                errores_fila.append({'campo': 'apellidos', 'error': 'Campo requerido'})
+
+            if not email:
+                errores_fila.append({'campo': 'email', 'error': 'Campo requerido'})
+
+            # Validar email
+            if email:
+                es_valido, error_email = _validar_email(email)
+                if not es_valido:
+                    errores_fila.append({'campo': 'email', 'error': error_email})
+
+            # ✨ MEJORA: Detectar duplicados dentro del CSV
+            if email in emails_vistos:
+                errores_fila.append({'campo': 'email', 'error': f'Email duplicado en el CSV (aparece en múltiples filas)'})
+                registros_duplicados_internos.append({
+                    'fila': i,
+                    'email': email,
+                    'documento': numero_doc
+                })
+            else:
+                emails_vistos.add(email)
+
+            if numero_doc in documentos_vistos:
+                errores_fila.append({'campo': 'numero_documento', 'error': f'Documento duplicado en el CSV'})
+            else:
+                documentos_vistos.add(numero_doc)
+
+            # Validar duplicados en BD
+            if email and Usuario.objects.filter(username=email).exists():
+                errores_fila.append({'campo': 'email', 'error': f'El email ya está registrado en la base de datos'})
+
+            # Validaciones específicas por tipo
+            if tipo == 'aprendices':
+                from aprendices.models import Aprendiz
+
+                telefono = _sanitizar_texto(fila.get('telefono', ''))
+                carrera_nombre = _sanitizar_texto(fila.get('carrera', ''))
+
+                if not telefono:
+                    errores_fila.append({'campo': 'telefono', 'error': 'Campo requerido'})
+
+                if not carrera_nombre:
+                    errores_fila.append({'campo': 'carrera', 'error': 'Campo requerido'})
+
+                # Validar carrera
+                if carrera_nombre:
+                    carrera_valida, error_carrera, carrera_obj = _validar_carrera(carrera_nombre)
+                    if not carrera_valida:
+                        errores_fila.append({'campo': 'carrera', 'error': error_carrera})
+
+                # Validar documento único en aprendices
+                if numero_doc and Aprendiz.objects.filter(numero_documento=numero_doc).exists():
+                    errores_fila.append({'campo': 'numero_documento', 'error': f'El documento ya está registrado en Aprendices'})
+
+            else:  # instructores
+                from instructores.models import Instructor
+
+                especialidad = _sanitizar_texto(fila.get('especialidad', ''))
+
+                if not especialidad:
+                    errores_fila.append({'campo': 'especialidad', 'error': 'Campo requerido'})
+
+                # Validar documento único en instructores
+                if numero_doc and Instructor.objects.filter(numero_documento=numero_doc).exists():
+                    errores_fila.append({'campo': 'numero_documento', 'error': f'El documento ya está registrado en Instructores'})
+
+            # Si hay errores en esta fila, agregarlos a la lista general
+            if errores_fila:
+                for error in errores_fila:
+                    errores.append({
+                        'fila': i,
+                        'campo': error['campo'],
+                        'error': error['error']
+                    })
+            else:
+                # Registro válido - agregar a vista previa
+                registro_valido = {
+                    'fila': i,
+                    'tipo_documento': tipo_doc,
+                    'numero_documento': numero_doc,
+                    'nombres': nombres,
+                    'apellidos': apellidos,
+                    'email': email
+                }
+
+                if tipo == 'aprendices':
+                    registro_valido['telefono'] = telefono
+                    registro_valido['carrera'] = carrera_nombre
+                else:
+                    registro_valido['especialidad'] = especialidad
+
+                registros_validos.append(registro_valido)
+
+        except Exception as e:
+            errores.append({
+                'fila': i,
+                'campo': 'general',
+                'error': f'Error al procesar: {str(e)}'
+            })
+
+    # Retornar vista previa con estadísticas
+    return JsonResponse({
+        'success': True,
+        'tipo': tipo,
+        'filas_procesadas': filas_procesadas,
+        'registros_validos': len(registros_validos),
+        'total_errores': len(errores),
+        'duplicados_internos': len(registros_duplicados_internos),
+        'preview': registros_validos[:100],  # Mostrar solo primeros 100
+        'errores': errores[:100],  # Mostrar solo primeros 100 errores
+        'puede_continuar': len(errores) == 0 or request.POST.get('modo_resiliente') == 'true'
+    })
 
 
 @admin_required
@@ -1019,6 +1234,12 @@ def procesar_csv(request):
                 errores.append({'fila': i, 'campo': 'tipo_documento', 'error': 'Campo requerido'})
                 continue
 
+            # ✨ MEJORA: Validar tipo de documento permitido
+            es_valido_tipo, error_tipo = _validar_tipo_documento(tipo_doc)
+            if not es_valido_tipo:
+                errores.append({'fila': i, 'campo': 'tipo_documento', 'error': error_tipo})
+                continue
+
             if not numero_doc:
                 errores.append({'fila': i, 'campo': 'numero_documento', 'error': 'Campo requerido'})
                 continue
@@ -1116,97 +1337,234 @@ def procesar_csv(request):
                 'error': f'Error al procesar: {str(e)}'
             })
 
-    # Si hay errores, devolver sin crear nada
-    if errores:
+    # ✨ MEJORA: Modo Resiliente
+    # Permite elegir entre rollback total o continuar con errores parciales
+    modo_resiliente = request.POST.get('modo_resiliente', 'false') == 'true'
+
+    # Modo ESTRICTO (comportamiento original): Si hay errores, no crear nada
+    if errores and not modo_resiliente:
         return JsonResponse({
             'success': False,
+            'modo': 'estricto',
             'errores': errores,
-            'filas_procesadas': filas_procesadas
+            'filas_procesadas': filas_procesadas,
+            'registros_validos': len(usuarios_creados),
+            'mensaje': 'Se encontraron errores. Ningún usuario fue creado. Corrija los errores e intente nuevamente.'
         }, status=400)
 
-    # Crear usuarios en transacción atómica
+    # Modo RESILIENTE: Crear solo los registros válidos
+    if errores and modo_resiliente:
+        logger.warning(f"Carga masiva en modo resiliente: {len(errores)} errores, {len(usuarios_creados)} registros válidos")
+
+    # Crear usuarios (transacción atómica para cada usuario o total según modo)
     usuarios_creados_exitosos = []
+    errores_creacion = []
+
+    if modo_resiliente:
+        # Modo resiliente: Intentar crear cada usuario individualmente
+        for idx, data in enumerate(usuarios_creados):
+            try:
+                with transaction.atomic():
+                    if tipo == 'aprendices':
+                        from aprendices.models import Aprendiz
+
+                        # Generar contraseña temporal
+                        password_temporal = _generar_contrasena_temporal()
+
+                        # Crear Usuario
+                        usuario = Usuario.objects.create_user(
+                            username=data['email'],
+                            email=data['email'],
+                            first_name=data['nombres'],
+                            last_name=data['apellidos'],
+                            password=password_temporal,
+                            rol=Usuario.Rol.APRENDIZ
+                        )
+
+                        # Crear Aprendiz
+                        aprendiz = Aprendiz.objects.create(
+                            tipo_documento=data['tipo_documento'],
+                            numero_documento=data['numero_documento'],
+                            nombres=data['nombres'],
+                            apellidos=data['apellidos'],
+                            email=data['email'],
+                            telefono=data['telefono']
+                        )
+
+                        usuarios_creados_exitosos.append({
+                            'email': data['email'],
+                            'nombre': f"{data['nombres']} {data['apellidos']}",
+                            'password_temporal': password_temporal
+                        })
+
+                    else:  # instructores
+                        from instructores.models import Instructor
+
+                        # Generar contraseña temporal
+                        password_temporal = _generar_contrasena_temporal()
+
+                        # Crear Usuario
+                        usuario = Usuario.objects.create_user(
+                            username=data['email'],
+                            email=data['email'],
+                            first_name=data['nombres'],
+                            last_name=data['apellidos'],
+                            password=password_temporal,
+                            rol=Usuario.Rol.INSTRUCTOR
+                        )
+
+                        # Crear Instructor
+                        instructor = Instructor.objects.create(
+                            tipo_documento=data['tipo_documento'],
+                            numero_documento=data['numero_documento'],
+                            nombres=data['nombres'],
+                            apellidos=data['apellidos'],
+                            email=data['email'],
+                            especialidad=data['especialidad']
+                        )
+
+                        usuarios_creados_exitosos.append({
+                            'email': data['email'],
+                            'nombre': f"{data['nombres']} {data['apellidos']}",
+                            'password_temporal': password_temporal
+                        })
+
+            except Exception as e:
+                errores_creacion.append({
+                    'email': data.get('email', 'desconocido'),
+                    'error': str(e)
+                })
+                logger.error(f"Error al crear usuario {data.get('email')}: {str(e)}")
+
+    else:
+        # Modo estricto: Transacción atómica para todos (rollback si falla uno)
+        try:
+            with transaction.atomic():
+                if tipo == 'aprendices':
+                    from aprendices.models import Aprendiz
+
+                    for data in usuarios_creados:
+                        # Generar contraseña temporal
+                        password_temporal = _generar_contrasena_temporal()
+
+                        # Crear Usuario
+                        usuario = Usuario.objects.create_user(
+                            username=data['email'],
+                            email=data['email'],
+                            first_name=data['nombres'],
+                            last_name=data['apellidos'],
+                            password=password_temporal,
+                            rol=Usuario.Rol.APRENDIZ
+                        )
+
+                        # Crear Aprendiz
+                        aprendiz = Aprendiz.objects.create(
+                            tipo_documento=data['tipo_documento'],
+                            numero_documento=data['numero_documento'],
+                            nombres=data['nombres'],
+                            apellidos=data['apellidos'],
+                            email=data['email'],
+                            telefono=data['telefono']
+                        )
+
+                        usuarios_creados_exitosos.append({
+                            'email': data['email'],
+                            'nombre': f"{data['nombres']} {data['apellidos']}",
+                            'password_temporal': password_temporal
+                        })
+
+                else:  # instructores
+                    from instructores.models import Instructor
+
+                    for data in usuarios_creados:
+                        # Generar contraseña temporal
+                        password_temporal = _generar_contrasena_temporal()
+
+                        # Crear Usuario
+                        usuario = Usuario.objects.create_user(
+                            username=data['email'],
+                            email=data['email'],
+                            first_name=data['nombres'],
+                            last_name=data['apellidos'],
+                            password=password_temporal,
+                            rol=Usuario.Rol.INSTRUCTOR
+                        )
+
+                        # Crear Instructor
+                        instructor = Instructor.objects.create(
+                            tipo_documento=data['tipo_documento'],
+                            numero_documento=data['numero_documento'],
+                            nombres=data['nombres'],
+                            apellidos=data['apellidos'],
+                            email=data['email'],
+                            especialidad=data['especialidad']
+                        )
+
+                        usuarios_creados_exitosos.append({
+                            'email': data['email'],
+                            'nombre': f"{data['nombres']} {data['apellidos']}",
+                            'password_temporal': password_temporal
+                        })
+
+        except Exception as e:
+            logger.error(f"Error en carga masiva (modo estricto): {str(e)}")
+            return JsonResponse({
+                'success': False,
+                'error': f'Error al crear usuarios: {str(e)}'
+            }, status=500)
+
+    # Log exitoso
+    logger.info(f"Carga masiva {'resiliente' if modo_resiliente else 'estricta'}: {len(usuarios_creados_exitosos)} {tipo} creados por {request.user.username}")
+
+    return JsonResponse({
+        'success': True,
+        'modo': 'resiliente' if modo_resiliente else 'estricto',
+        'usuarios_creados': len(usuarios_creados_exitosos),
+        'total_errores_validacion': len(errores),
+        'errores_creacion': len(errores_creacion),
+        'detalle': usuarios_creados_exitosos,
+        'errores': errores if modo_resiliente else [],
+        'errores_creacion_detalle': errores_creacion if modo_resiliente else []
+    })
+
+
+@admin_required
+@require_POST
+def exportar_errores_csv(request):
+    """
+    ✨ NUEVA FUNCIONALIDAD: Exporta la lista de errores a un archivo CSV descargable.
+    Permite al usuario corregir errores más fácilmente en Excel o Google Sheets.
+    """
+    import json
+
     try:
-        with transaction.atomic():
-            if tipo == 'aprendices':
-                from aprendices.models import Aprendiz
+        errores_json = request.POST.get('errores', '[]')
+        errores = json.loads(errores_json)
 
-                for data in usuarios_creados:
-                    # Generar contraseña temporal
-                    password_temporal = _generar_contrasena_temporal()
+        if not errores:
+            return HttpResponse("No hay errores para exportar", status=400)
 
-                    # Crear Usuario
-                    usuario = Usuario.objects.create_user(
-                        username=data['email'],
-                        email=data['email'],
-                        first_name=data['nombres'],
-                        last_name=data['apellidos'],
-                        password=password_temporal,
-                        rol=Usuario.Rol.APRENDIZ
-                    )
+        # Crear respuesta CSV
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = f'attachment; filename="errores_carga_masiva_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv"'
+        response.write('\ufeff')  # BOM para UTF-8
 
-                    # Crear Aprendiz
-                    aprendiz = Aprendiz.objects.create(
-                        tipo_documento=data['tipo_documento'],
-                        numero_documento=data['numero_documento'],
-                        nombres=data['nombres'],
-                        apellidos=data['apellidos'],
-                        email=data['email'],
-                        telefono=data['telefono']
-                    )
+        writer = csv.writer(response)
+        writer.writerow(['Fila', 'Campo', 'Error', 'Descripción'])
 
-                    usuarios_creados_exitosos.append({
-                        'email': data['email'],
-                        'nombre': f"{data['nombres']} {data['apellidos']}",
-                        'password_temporal': password_temporal
-                    })
+        for error in errores:
+            writer.writerow([
+                error.get('fila', ''),
+                error.get('campo', ''),
+                error.get('error', ''),
+                'Corrija este error y vuelva a intentar'
+            ])
 
-            else:  # instructores
-                from instructores.models import Instructor
-
-                for data in usuarios_creados:
-                    # Generar contraseña temporal
-                    password_temporal = _generar_contrasena_temporal()
-
-                    # Crear Usuario
-                    usuario = Usuario.objects.create_user(
-                        username=data['email'],
-                        email=data['email'],
-                        first_name=data['nombres'],
-                        last_name=data['apellidos'],
-                        password=password_temporal,
-                        rol=Usuario.Rol.INSTRUCTOR
-                    )
-
-                    # Crear Instructor
-                    instructor = Instructor.objects.create(
-                        tipo_documento=data['tipo_documento'],
-                        numero_documento=data['numero_documento'],
-                        nombres=data['nombres'],
-                        apellidos=data['apellidos'],
-                        email=data['email'],
-                        especialidad=data['especialidad']
-                    )
-
-                    usuarios_creados_exitosos.append({
-                        'email': data['email'],
-                        'nombre': f"{data['nombres']} {data['apellidos']}",
-                        'password_temporal': password_temporal
-                    })
-
-        logger.info(f"Carga masiva exitosa: {len(usuarios_creados_exitosos)} {tipo} creados por {request.user.username}")
-
-        return JsonResponse({
-            'success': True,
-            'usuarios_creados': len(usuarios_creados_exitosos),
-            'detalle': usuarios_creados_exitosos
-        })
+        logger.info(f"Exportación de errores CSV por {request.user.username}: {len(errores)} errores")
+        return response
 
     except Exception as e:
-        logger.error(f"Error en carga masiva: {str(e)}")
-        return JsonResponse({
-            'success': False,
-            'error': f'Error al crear usuarios: {str(e)}'
-        }, status=500)
+        logger.error(f"Error al exportar errores CSV: {str(e)}")
+        return HttpResponse(f"Error al exportar: {str(e)}", status=500)
 
 

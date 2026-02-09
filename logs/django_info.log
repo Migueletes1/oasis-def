@@ -549,3 +549,353 @@ INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
 INFO "GET /static/js/main.js HTTP/1.1" 304 0
 INFO "GET /static/js/accessibility.js HTTP/1.1" 304 0
 INFO "GET /auth/admin/proyecto/nuevo/ HTTP/1.1" 200 65962
+INFO Watching for file changes with StatReloader
+INFO Watching for file changes with StatReloader
+INFO "GET / HTTP/1.1" 200 127904
+WARNING "GET /static/js/three-bg.js HTTP/1.1" 404 1856
+WARNING "GET /static/js/main.js HTTP/1.1" 404 1844
+WARNING "GET /static/css/styles.css HTTP/1.1" 404 1856
+WARNING "GET /static/js/accessibility.js HTTP/1.1" 404 1871
+INFO "GET /auth/login/ HTTP/1.1" 200 16803
+WARNING "GET /static/css/styles.css HTTP/1.1" 404 1856
+WARNING "GET /static/js/accessibility.js HTTP/1.1" 404 1871
+WARNING "GET /static/js/main.js HTTP/1.1" 404 1844
+WARNING "GET /static/js/three-bg.js HTTP/1.1" 404 1856
+INFO "POST /auth/login/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 129909
+WARNING "GET /static/css/styles.css HTTP/1.1" 404 1856
+WARNING "GET /static/js/main.js HTTP/1.1" 404 1844
+WARNING "GET /static/js/three-bg.js HTTP/1.1" 404 1856
+WARNING "GET /static/js/accessibility.js HTTP/1.1" 404 1871
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 150933
+WARNING "GET /static/js/three-bg.js HTTP/1.1" 404 1856
+WARNING "GET /static/js/main.js HTTP/1.1" 404 1844
+WARNING "GET /static/js/accessibility.js HTTP/1.1" 404 1871
+WARNING "GET /static/css/styles.css HTTP/1.1" 404 1856
+INFO "GET /auth/admin/carrera/nueva/ HTTP/1.1" 200 25494
+WARNING "GET /static/js/three-bg.js HTTP/1.1" 404 1856
+WARNING "GET /static/css/styles.css HTTP/1.1" 404 1856
+WARNING "GET /static/js/main.js HTTP/1.1" 404 1844
+WARNING "GET /static/js/accessibility.js HTTP/1.1" 404 1871
+INFO "GET / HTTP/1.1" 200 129909
+WARNING "GET /static/css/styles.css HTTP/1.1" 404 1856
+WARNING "GET /static/js/three-bg.js HTTP/1.1" 404 1856
+WARNING "GET /static/js/main.js HTTP/1.1" 404 1844
+WARNING "GET /static/js/accessibility.js HTTP/1.1" 404 1871
+INFO Watching for file changes with StatReloader
+INFO "GET / HTTP/1.1" 200 129909
+INFO "GET /static/css/styles.css HTTP/1.1" 200 9200
+INFO "GET /static/js/three-bg.js HTTP/1.1" 200 3288
+INFO "GET /static/js/main.js HTTP/1.1" 200 9186
+INFO "GET /static/js/accessibility.js HTTP/1.1" 200 8528
+INFO "GET / HTTP/1.1" 200 129909
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO "GET /static/js/main.js HTTP/1.1" 304 0
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 150933
+INFO "GET /admin/ HTTP/1.1" 200 12867
+INFO "GET /static/admin/css/base.css HTTP/1.1" 200 22120
+INFO "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+INFO "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2808
+INFO "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2810
+INFO "GET /static/admin/css/responsive.css HTTP/1.1" 200 16565
+INFO "GET /static/admin/js/theme.js HTTP/1.1" 200 1653
+INFO "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+INFO "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+INFO "GET /static/admin/img/icon-yes.svg HTTP/1.1" 200 436
+INFO "POST /auth/admin/backup/create/ HTTP/1.1" 200 174
+INFO "POST /auth/admin/backup/create/ HTTP/1.1" 200 169
+INFO "POST /auth/admin/backup/create/ HTTP/1.1" 200 171
+INFO "GET / HTTP/1.1" 200 129909
+INFO "GET /static/css/styles.css HTTP/1.1" 200 18114
+INFO "GET /static/js/main.js HTTP/1.1" 304 0
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /static/js/accessibility.js HTTP/1.1" 200 13398
+INFO "GET / HTTP/1.1" 200 135446
+INFO "GET /static/css/styles.css HTTP/1.1" 200 18753
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /static/js/main.js HTTP/1.1" 304 0
+INFO "GET /static/js/accessibility.js HTTP/1.1" 200 15132
+INFO "GET / HTTP/1.1" 200 135446
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 166366
+INFO "GET /auth/perfil/ HTTP/1.1" 200 21639
+INFO "GET /auth/perfil/ HTTP/1.1" 200 21639
+INFO "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /auth/perfil/ HTTP/1.1" 200 21639
+INFO "POST /auth/logout/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 133441
+INFO "GET /auth/login/ HTTP/1.1" 200 22635
+INFO "POST /auth/login/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 135446
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /auth/perfil/ HTTP/1.1" 200 21639
+INFO "POST /auth/logout/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 133441
+INFO "GET /auth/login/ HTTP/1.1" 200 22875
+INFO "POST /auth/login/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 135446
+INFO "GET /auth/perfil/ HTTP/1.1" 200 21639
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /static/js/main.js HTTP/1.1" 304 0
+INFO "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO Watching for file changes with StatReloader
+INFO "GET /auth/perfil/ HTTP/1.1" 200 21639
+INFO "GET /static/css/styles.css HTTP/1.1" 200 18753
+INFO "GET /static/js/accessibility.js HTTP/1.1" 200 15132
+INFO "GET /static/js/main.js HTTP/1.1" 200 9186
+INFO "GET /static/js/three-bg.js HTTP/1.1" 200 3288
+WARNING Not Found: /favicon.ico
+WARNING "GET /favicon.ico HTTP/1.1" 404 4786
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 166366
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 166366
+WARNING Not Found: /usuarios/admin/carga-masiva/
+WARNING "GET /usuarios/admin/carga-masiva/ HTTP/1.1" 404 4837
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 170385
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO "GET /auth/admin/carga-masiva/plantilla/?tipo=aprendices HTTP/1.1" 200 264
+ERROR Internal Server Error: /auth/admin/carga-masiva/
+Traceback (most recent call last):
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\oasis-def\usuarios\views.py", line 37, in _wrapped
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\oasis-def\usuarios\views.py", line 882, in carga_masiva_view
+    return render(request, 'usuarios/carga_masiva.html')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 172, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 164, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 1018, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 164, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 1018, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 1018, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'dashboard_admin' not found. 'dashboard_admin' is not a valid view function or pattern name.
+ERROR "GET /auth/admin/carga-masiva/ HTTP/1.1" 500 185164
+ERROR Internal Server Error: /auth/admin/carga-masiva/
+Traceback (most recent call last):
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\oasis-def\usuarios\views.py", line 37, in _wrapped
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\oasis-def\usuarios\views.py", line 882, in carga_masiva_view
+    return render(request, 'usuarios/carga_masiva.html')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 172, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 164, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 1018, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 164, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 1018, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 1018, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\base.py", line 979, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'dashboard_admin' not found. 'dashboard_admin' is not a valid view function or pattern name.
+ERROR "GET /auth/admin/carga-masiva/ HTTP/1.1" 500 185301
+INFO "GET /auth/admin/carga-masiva/ HTTP/1.1" 200 38400
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /static/js/main.js HTTP/1.1" 304 0
+INFO "GET /auth/admin/carga-masiva/plantilla/?tipo=instructores HTTP/1.1" 200 227
+INFO "GET /auth/admin/carga-masiva/ HTTP/1.1" 200 38400
+INFO "GET / HTTP/1.1" 200 135446
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 170385
+INFO "GET /auth/admin/carga-masiva/ HTTP/1.1" 200 38400
+INFO "GET /auth/admin/carga-masiva/ HTTP/1.1" 200 38400
+INFO "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO "GET /auth/admin/carga-masiva/plantilla/?tipo=instructores HTTP/1.1" 200 227
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 170385
+INFO "GET /auth/admin/carga-masiva/ HTTP/1.1" 200 38400
+INFO "GET /auth/admin/carga-masiva/ HTTP/1.1" 200 38400
+INFO "GET /auth/admin/carga-masiva/ HTTP/1.1" 200 38400
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 170385
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /static/js/main.js HTTP/1.1" 304 0
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO "GET /auth/admin/proyecto/13/editar/ HTTP/1.1" 200 72856
+INFO "POST /auth/admin/proyecto/13/eliminar/ HTTP/1.1" 200 63
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 168003
+INFO "GET /auth/admin/carga-masiva/ HTTP/1.1" 200 38400
+INFO "GET /auth/admin/carga-masiva/ HTTP/1.1" 200 38400
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 168003
+INFO "GET /auth/admin/carga-masiva/ HTTP/1.1" 200 38400
+INFO "GET /auth/admin/carga-masiva/ HTTP/1.1" 200 38400
+INFO "GET /auth/admin/carga-masiva/ HTTP/1.1" 200 38400
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 168003
+INFO "POST /auth/logout/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 133441
+INFO "GET /auth/login/ HTTP/1.1" 200 22875
+INFO "POST /auth/login/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 135446
+INFO "GET /auth/perfil/ HTTP/1.1" 200 21639
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 168003
+INFO "GET /auth/admin/carga-masiva/ HTTP/1.1" 200 38400
+INFO "GET /auth/admin/carga-masiva/plantilla/?tipo=aprendices HTTP/1.1" 200 264
+INFO "GET /auth/admin/carga-masiva/ HTTP/1.1" 200 38400
+INFO "GET /auth/admin/carga-masiva/plantilla/?tipo=instructores HTTP/1.1" 200 227
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 168003
+INFO "POST /auth/logout/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 133441
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /auth/registro/ HTTP/1.1" 200 27114
+INFO "GET /auth/login/ HTTP/1.1" 200 22340
+INFO "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO "POST /auth/login/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 135446
+INFO "GET / HTTP/1.1" 200 135446
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /static/js/main.js HTTP/1.1" 304 0
+INFO "GET / HTTP/1.1" 200 135446
+INFO "GET / HTTP/1.1" 200 135446
+INFO "POST /auth/logout/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 133441
+INFO "GET / HTTP/1.1" 200 133441
+INFO "GET /static/js/three-bg.js HTTP/1.1" 200 3288
+INFO "GET /static/css/styles.css HTTP/1.1" 200 18753
+INFO "GET /static/js/main.js HTTP/1.1" 200 9186
+INFO "GET /static/js/accessibility.js HTTP/1.1" 200 15132
+WARNING Not Found: /favicon.ico
+WARNING "GET /favicon.ico HTTP/1.1" 404 4786
+INFO Watching for file changes with StatReloader
+INFO "GET /auth/login/ HTTP/1.1" 200 22340
+INFO "GET / HTTP/1.1" 200 133441
+INFO "GET /auth/registro/ HTTP/1.1" 200 26579
+INFO "GET /auth/login/ HTTP/1.1" 200 22340
+INFO "GET /auth/login/ HTTP/1.1" 200 22340
+INFO "GET /auth/login/ HTTP/1.1" 200 22875
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO "POST /auth/login/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 135446
+INFO "GET /auth/perfil/ HTTP/1.1" 200 21639
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 168003
+INFO "GET /auth/admin/carga-masiva/ HTTP/1.1" 200 38400
+INFO "POST /auth/logout/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 133444
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
+INFO "GET /static/js/accessibility.js HTTP/1.1" 304 0
+INFO "GET /static/js/main.js HTTP/1.1" 200 17219

@@ -30,6 +30,11 @@ urlpatterns = [
     # Admin — Empresa detalle
     path('admin/empresa/<int:pk>/detalle/', views.admin_empresa_detalle, name='admin_empresa_detalle'),
 
+    # Carga Masiva por CSV
+    path('admin/carga-masiva/', views.carga_masiva_view, name='carga_masiva'),
+    path('admin/carga-masiva/plantilla/', views.descargar_plantilla_csv, name='descargar_plantilla_csv'),
+    path('admin/carga-masiva/procesar/', views.procesar_csv, name='procesar_csv'),
+
     # Backup endpoints
     path('admin/backup/create/', views.admin_backup_create, name='admin_backup_create'),
     path('admin/backup/download/<int:pk>/', views.admin_backup_download, name='admin_backup_download'),

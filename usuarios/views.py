@@ -1,17 +1,24 @@
+import csv
+import io
 import json
 import logging
+import secrets
+import string
 from functools import wraps
 
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.db.models import Count
 from django.db.models.functions import TruncMonth, ExtractHour, ExtractWeekDay
-from django.http import JsonResponse, FileResponse
+from django.http import JsonResponse, FileResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_http_methods, require_POST
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 from OASIS.utils import get_client_ip
 from .forms import LoginForm, EmpresaRegistroForm
@@ -805,5 +812,401 @@ def _calc_growth(current, previous):
     if previous == 0:
         return 100 if current > 0 else 0
     return round(((current - previous) / previous) * 100)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CARGA MASIVA POR CSV
+# ═══════════════════════════════════════════════════════════════════════════
+
+def _generar_contrasena_temporal():
+    """Genera una contraseña aleatoria segura de 12 caracteres."""
+    chars = string.ascii_letters + string.digits + string.punctuation
+    # Asegurar al menos 1 mayúscula, 1 número, 1 especial
+    password = [
+        secrets.choice(string.ascii_uppercase),
+        secrets.choice(string.digits),
+        secrets.choice(string.punctuation),
+    ]
+    # Completar con caracteres aleatorios
+    password += [secrets.choice(chars) for _ in range(9)]
+    # Mezclar
+    secrets.SystemRandom().shuffle(password)
+    return ''.join(password)
+
+
+def _sanitizar_texto(texto):
+    """Limpia espacios en blanco y caracteres especiales."""
+    if not texto:
+        return ''
+    return texto.strip().replace('\n', '').replace('\r', '')
+
+
+def _validar_email(email):
+    """Valida formato de email."""
+    try:
+        validate_email(email)
+        return True, None
+    except ValidationError:
+        return False, "Formato de email inválido"
+
+
+def _validar_carrera(nombre_carrera):
+    """Valida que la carrera exista en las 44 permitidas."""
+    from repositorio.models import Carrera
+
+    # Sanitizar el nombre ingresado
+    nombre_sanitizado = _sanitizar_texto(nombre_carrera).lower()
+
+    # Buscar por nombre o clave
+    carrera = Carrera.objects.filter(activa=True).filter(
+        nombre__iexact=nombre_sanitizado
+    ).first()
+
+    if not carrera:
+        # Intentar por clave
+        carrera = Carrera.objects.filter(activa=True).filter(
+            clave__iexact=nombre_sanitizado
+        ).first()
+
+    if carrera:
+        return True, None, carrera
+
+    # Listar carreras disponibles para el mensaje de error
+    carreras_disponibles = Carrera.objects.filter(activa=True).values_list('nombre', flat=True)
+    return False, f"La carrera '{nombre_carrera}' no existe. Carreras disponibles: {', '.join(list(carreras_disponibles)[:5])}...", None
+
+
+@admin_required
+def carga_masiva_view(request):
+    """Vista principal del módulo de carga masiva."""
+    return render(request, 'usuarios/carga_masiva.html')
+
+
+@admin_required
+def descargar_plantilla_csv(request):
+    """Genera y descarga una plantilla CSV de ejemplo."""
+    tipo = request.GET.get('tipo', 'aprendices')  # aprendices o instructores
+
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
+    response['Content-Disposition'] = f'attachment; filename="plantilla_{tipo}.csv"'
+    response.write('\ufeff')  # BOM para UTF-8
+
+    writer = csv.writer(response)
+
+    if tipo == 'aprendices':
+        writer.writerow([
+            'tipo_documento',
+            'numero_documento',
+            'nombres',
+            'apellidos',
+            'email',
+            'telefono',
+            'carrera'
+        ])
+        writer.writerow([
+            'CC',
+            '1234567890',
+            'Juan',
+            'Pérez',
+            'juan.perez@example.com',
+            '3001234567',
+            'Desarrollo de Software'
+        ])
+        writer.writerow([
+            'TI',
+            '9876543210',
+            'María',
+            'González',
+            'maria.gonzalez@example.com',
+            '3109876543',
+            'Animación 3D y Efectos Visuales'
+        ])
+    else:  # instructores
+        writer.writerow([
+            'tipo_documento',
+            'numero_documento',
+            'nombres',
+            'apellidos',
+            'email',
+            'especialidad'
+        ])
+        writer.writerow([
+            'CC',
+            '1234567890',
+            'Carlos',
+            'Rodríguez',
+            'carlos.rodriguez@example.com',
+            'Desarrollo de Software'
+        ])
+        writer.writerow([
+            'CE',
+            '9876543210',
+            'Ana',
+            'Martínez',
+            'ana.martinez@example.com',
+            'Bases de Datos'
+        ])
+
+    logger.info(f"Plantilla CSV descargada: {tipo} por {request.user.username}")
+    return response
+
+
+@admin_required
+@require_POST
+def procesar_csv(request):
+    """Procesa el archivo CSV y crea usuarios en masa."""
+    if 'archivo' not in request.FILES:
+        return JsonResponse({'error': 'No se recibió ningún archivo'}, status=400)
+
+    archivo = request.FILES['archivo']
+    tipo = request.POST.get('tipo', 'aprendices')
+
+    # Validación de MIME type
+    if archivo.content_type not in ['text/csv', 'application/vnd.ms-excel']:
+        return JsonResponse({
+            'error': 'Tipo de archivo no permitido. Solo se aceptan archivos CSV.'
+        }, status=400)
+
+    # Validación de tamaño (máximo 5MB)
+    if archivo.size > 5 * 1024 * 1024:
+        return JsonResponse({
+            'error': 'El archivo es demasiado grande. Tamaño máximo: 5MB'
+        }, status=400)
+
+    # Leer y decodificar el archivo
+    try:
+        archivo_contenido = archivo.read().decode('utf-8-sig')
+    except UnicodeDecodeError:
+        try:
+            archivo.seek(0)
+            archivo_contenido = archivo.read().decode('latin-1')
+        except:
+            return JsonResponse({
+                'error': 'No se pudo decodificar el archivo. Asegúrese de que esté en formato UTF-8.'
+            }, status=400)
+
+    # Parsear CSV
+    reader = csv.DictReader(io.StringIO(archivo_contenido))
+
+    errores = []
+    usuarios_creados = []
+    filas_procesadas = 0
+    MAX_FILAS = 2000
+
+    # Validar filas
+    for i, fila in enumerate(reader, start=2):  # Empezar en 2 por el header
+        filas_procesadas += 1
+
+        if filas_procesadas > MAX_FILAS:
+            errores.append({
+                'fila': i,
+                'campo': 'general',
+                'error': f'Se excedió el límite máximo de {MAX_FILAS} filas'
+            })
+            break
+
+        # Validar y sanitizar campos
+        try:
+            # Campos comunes
+            tipo_doc = _sanitizar_texto(fila.get('tipo_documento', ''))
+            numero_doc = _sanitizar_texto(fila.get('numero_documento', ''))
+            nombres = _sanitizar_texto(fila.get('nombres', ''))
+            apellidos = _sanitizar_texto(fila.get('apellidos', ''))
+            email = _sanitizar_texto(fila.get('email', ''))
+
+            # Validaciones básicas
+            if not tipo_doc:
+                errores.append({'fila': i, 'campo': 'tipo_documento', 'error': 'Campo requerido'})
+                continue
+
+            if not numero_doc:
+                errores.append({'fila': i, 'campo': 'numero_documento', 'error': 'Campo requerido'})
+                continue
+
+            if not nombres:
+                errores.append({'fila': i, 'campo': 'nombres', 'error': 'Campo requerido'})
+                continue
+
+            if not apellidos:
+                errores.append({'fila': i, 'campo': 'apellidos', 'error': 'Campo requerido'})
+                continue
+
+            if not email:
+                errores.append({'fila': i, 'campo': 'email', 'error': 'Campo requerido'})
+                continue
+
+            # Validar email
+            es_valido, error_email = _validar_email(email)
+            if not es_valido:
+                errores.append({'fila': i, 'campo': 'email', 'error': error_email})
+                continue
+
+            # Validar duplicados en BD
+            if Usuario.objects.filter(username=email).exists():
+                errores.append({'fila': i, 'campo': 'email', 'error': f'El email {email} ya está registrado'})
+                continue
+
+            # Validaciones específicas por tipo
+            if tipo == 'aprendices':
+                from aprendices.models import Aprendiz
+
+                telefono = _sanitizar_texto(fila.get('telefono', ''))
+                carrera_nombre = _sanitizar_texto(fila.get('carrera', ''))
+
+                if not telefono:
+                    errores.append({'fila': i, 'campo': 'telefono', 'error': 'Campo requerido'})
+                    continue
+
+                if not carrera_nombre:
+                    errores.append({'fila': i, 'campo': 'carrera', 'error': 'Campo requerido'})
+                    continue
+
+                # Validar carrera
+                carrera_valida, error_carrera, carrera_obj = _validar_carrera(carrera_nombre)
+                if not carrera_valida:
+                    errores.append({'fila': i, 'campo': 'carrera', 'error': error_carrera})
+                    continue
+
+                # Validar documento único en aprendices
+                if Aprendiz.objects.filter(numero_documento=numero_doc).exists():
+                    errores.append({'fila': i, 'campo': 'numero_documento', 'error': f'El documento {numero_doc} ya está registrado'})
+                    continue
+
+                # Agregar a la lista de creación
+                usuarios_creados.append({
+                    'tipo': 'aprendiz',
+                    'tipo_documento': tipo_doc,
+                    'numero_documento': numero_doc,
+                    'nombres': nombres,
+                    'apellidos': apellidos,
+                    'email': email,
+                    'telefono': telefono,
+                    'carrera': carrera_obj
+                })
+
+            else:  # instructores
+                from instructores.models import Instructor
+
+                especialidad = _sanitizar_texto(fila.get('especialidad', ''))
+
+                if not especialidad:
+                    errores.append({'fila': i, 'campo': 'especialidad', 'error': 'Campo requerido'})
+                    continue
+
+                # Validar documento único en instructores
+                if Instructor.objects.filter(numero_documento=numero_doc).exists():
+                    errores.append({'fila': i, 'campo': 'numero_documento', 'error': f'El documento {numero_doc} ya está registrado'})
+                    continue
+
+                # Agregar a la lista de creación
+                usuarios_creados.append({
+                    'tipo': 'instructor',
+                    'tipo_documento': tipo_doc,
+                    'numero_documento': numero_doc,
+                    'nombres': nombres,
+                    'apellidos': apellidos,
+                    'email': email,
+                    'especialidad': especialidad
+                })
+
+        except Exception as e:
+            errores.append({
+                'fila': i,
+                'campo': 'general',
+                'error': f'Error al procesar: {str(e)}'
+            })
+
+    # Si hay errores, devolver sin crear nada
+    if errores:
+        return JsonResponse({
+            'success': False,
+            'errores': errores,
+            'filas_procesadas': filas_procesadas
+        }, status=400)
+
+    # Crear usuarios en transacción atómica
+    usuarios_creados_exitosos = []
+    try:
+        with transaction.atomic():
+            if tipo == 'aprendices':
+                from aprendices.models import Aprendiz
+
+                for data in usuarios_creados:
+                    # Generar contraseña temporal
+                    password_temporal = _generar_contrasena_temporal()
+
+                    # Crear Usuario
+                    usuario = Usuario.objects.create_user(
+                        username=data['email'],
+                        email=data['email'],
+                        first_name=data['nombres'],
+                        last_name=data['apellidos'],
+                        password=password_temporal,
+                        rol=Usuario.Rol.APRENDIZ
+                    )
+
+                    # Crear Aprendiz
+                    aprendiz = Aprendiz.objects.create(
+                        tipo_documento=data['tipo_documento'],
+                        numero_documento=data['numero_documento'],
+                        nombres=data['nombres'],
+                        apellidos=data['apellidos'],
+                        email=data['email'],
+                        telefono=data['telefono']
+                    )
+
+                    usuarios_creados_exitosos.append({
+                        'email': data['email'],
+                        'nombre': f"{data['nombres']} {data['apellidos']}",
+                        'password_temporal': password_temporal
+                    })
+
+            else:  # instructores
+                from instructores.models import Instructor
+
+                for data in usuarios_creados:
+                    # Generar contraseña temporal
+                    password_temporal = _generar_contrasena_temporal()
+
+                    # Crear Usuario
+                    usuario = Usuario.objects.create_user(
+                        username=data['email'],
+                        email=data['email'],
+                        first_name=data['nombres'],
+                        last_name=data['apellidos'],
+                        password=password_temporal,
+                        rol=Usuario.Rol.INSTRUCTOR
+                    )
+
+                    # Crear Instructor
+                    instructor = Instructor.objects.create(
+                        tipo_documento=data['tipo_documento'],
+                        numero_documento=data['numero_documento'],
+                        nombres=data['nombres'],
+                        apellidos=data['apellidos'],
+                        email=data['email'],
+                        especialidad=data['especialidad']
+                    )
+
+                    usuarios_creados_exitosos.append({
+                        'email': data['email'],
+                        'nombre': f"{data['nombres']} {data['apellidos']}",
+                        'password_temporal': password_temporal
+                    })
+
+        logger.info(f"Carga masiva exitosa: {len(usuarios_creados_exitosos)} {tipo} creados por {request.user.username}")
+
+        return JsonResponse({
+            'success': True,
+            'usuarios_creados': len(usuarios_creados_exitosos),
+            'detalle': usuarios_creados_exitosos
+        })
+
+    except Exception as e:
+        logger.error(f"Error en carga masiva: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'error': f'Error al crear usuarios: {str(e)}'
+        }, status=500)
 
 

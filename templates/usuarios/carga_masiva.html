@@ -1,0 +1,513 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Carga Masiva por CSV - OASIS{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-4xl font-black text-dark-900">
+                        <i class="fa-solid fa-file-csv text-oasis-500"></i>
+                        Carga Masiva por CSV
+                    </h1>
+                    <p class="mt-2 text-lg text-dark-600">
+                        Registra cientos de Aprendices o Instructores simultáneamente
+                    </p>
+                </div>
+                <a href="{% url 'dashboard_admin' %}" class="px-6 py-3 bg-dark-100 text-dark-700 rounded-lg hover:bg-dark-200 transition font-semibold">
+                    <i class="fa-solid fa-arrow-left mr-2"></i>
+                    Volver al Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Selector de Tipo -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold text-dark-900 mb-6">
+                <i class="fa-solid fa-users text-oasis-500"></i>
+                Selecciona el Tipo de Usuario
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Aprendices -->
+                <button type="button"
+                        onclick="seleccionarTipo('aprendices')"
+                        id="btn-aprendices"
+                        class="tipo-btn p-8 border-4 border-oasis-200 rounded-xl hover:border-oasis-500 transition bg-gradient-to-br from-oasis-50 to-white group">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-20 h-20 bg-oasis-500 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-graduation-cap text-3xl text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-dark-900 mb-2">Aprendices</h3>
+                        <p class="text-dark-600">Estudiantes del SENA con fichas y carreras asignadas</p>
+                    </div>
+                </button>
+
+                <!-- Instructores -->
+                <button type="button"
+                        onclick="seleccionarTipo('instructores')"
+                        id="btn-instructores"
+                        class="tipo-btn p-8 border-4 border-oasis-200 rounded-xl hover:border-oasis-500 transition bg-gradient-to-br from-oasis-50 to-white group">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-20 h-20 bg-oasis-500 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                            <i class="fa-solid fa-chalkboard-teacher text-3xl text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-dark-900 mb-2">Instructores</h3>
+                        <p class="text-dark-600">Profesores con especialidades definidas</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Panel de Carga (inicialmente oculto) -->
+        <div id="panel-carga" class="hidden">
+
+            <!-- Descarga de Plantilla -->
+            <div class="bg-gradient-to-r from-accent-500 to-accent-600 rounded-2xl shadow-lg p-8 mb-8 text-white">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold mb-3">
+                            <i class="fa-solid fa-download mr-2"></i>
+                            Paso 1: Descarga la Plantilla CSV
+                        </h2>
+                        <p class="text-accent-100 mb-4">
+                            Descarga el archivo de ejemplo con las columnas correctas para <span id="tipo-seleccionado-text" class="font-bold">Aprendices</span>
+                        </p>
+                        <button type="button"
+                                onclick="descargarPlantilla()"
+                                class="px-8 py-4 bg-white text-accent-600 rounded-lg hover:bg-accent-50 transition font-bold text-lg shadow-lg hover:shadow-xl">
+                            <i class="fa-solid fa-file-download mr-2"></i>
+                            Descargar Plantilla CSV
+                        </button>
+                    </div>
+                    <div class="ml-8 hidden md:block">
+                        <i class="fa-solid fa-file-csv text-8xl opacity-20"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zona de Carga -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-dark-900 mb-6">
+                    <i class="fa-solid fa-cloud-upload-alt text-oasis-500"></i>
+                    Paso 2: Sube tu Archivo CSV
+                </h2>
+
+                <!-- Dropzone -->
+                <div id="dropzone"
+                     class="border-4 border-dashed border-oasis-300 rounded-xl p-12 text-center cursor-pointer hover:border-oasis-500 hover:bg-oasis-50 transition">
+                    <input type="file" id="archivo-csv" accept=".csv" class="hidden">
+                    <div id="dropzone-content">
+                        <i class="fa-solid fa-cloud-upload-alt text-6xl text-oasis-400 mb-4"></i>
+                        <h3 class="text-xl font-bold text-dark-900 mb-2">
+                            Arrastra tu archivo CSV aquí
+                        </h3>
+                        <p class="text-dark-600 mb-4">
+                            o haz clic para seleccionar desde tu computadora
+                        </p>
+                        <p class="text-sm text-dark-500">
+                            Tamaño máximo: 5MB | Máximo 2,000 filas | Formato: CSV (UTF-8)
+                        </p>
+                    </div>
+                    <div id="archivo-seleccionado" class="hidden">
+                        <i class="fa-solid fa-file-csv text-6xl text-oasis-500 mb-4"></i>
+                        <h3 class="text-xl font-bold text-dark-900 mb-2" id="nombre-archivo"></h3>
+                        <p class="text-dark-600 mb-4" id="info-archivo"></p>
+                        <button type="button"
+                                onclick="removerArchivo()"
+                                class="px-6 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition font-semibold">
+                            <i class="fa-solid fa-times mr-2"></i>
+                            Remover Archivo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Botón de Procesar -->
+                <div class="mt-8 flex justify-center">
+                    <button type="button"
+                            id="btn-procesar"
+                            onclick="procesarArchivo()"
+                            disabled
+                            class="px-12 py-4 bg-oasis-500 text-white rounded-xl hover:bg-oasis-600 transition font-bold text-lg shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-upload mr-2"></i>
+                        Procesar Archivo CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- Barra de Progreso -->
+            <div id="panel-progreso" class="hidden bg-white rounded-2xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-dark-900 mb-6">
+                    <i class="fa-solid fa-spinner fa-spin text-oasis-500"></i>
+                    Procesando...
+                </h2>
+
+                <div class="relative pt-1">
+                    <div class="flex mb-2 items-center justify-between">
+                        <div>
+                            <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-oasis-600 bg-oasis-200">
+                                <span id="progreso-texto">Validando archivo...</span>
+                            </span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-semibold inline-block text-oasis-600" id="progreso-porcentaje">
+                                0%
+                            </span>
+                        </div>
+                    </div>
+                    <div class="overflow-hidden h-4 mb-4 text-xs flex rounded-full bg-oasis-200">
+                        <div id="barra-progreso"
+                             style="width: 0%"
+                             class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-oasis-500 to-oasis-600 transition-all duration-500"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Errores -->
+            <div id="panel-errores" class="hidden bg-white rounded-2xl shadow-lg p-8 mb-8">
+                <div class="bg-gradient-to-r from-red-500 to-accent-600 rounded-lg p-6 text-white mb-6">
+                    <h2 class="text-2xl font-bold mb-2">
+                        <i class="fa-solid fa-exclamation-triangle mr-2"></i>
+                        Errores Encontrados
+                    </h2>
+                    <p class="text-red-100">
+                        El archivo contiene <span id="total-errores" class="font-bold">0</span> error(es). Por favor corrige los siguientes problemas:
+                    </p>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Fila</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Campo</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Error</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-errores" class="bg-white divide-y divide-gray-200">
+                            <!-- Se llena dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-6 flex justify-center">
+                    <button type="button"
+                            onclick="limpiarErrores()"
+                            class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-semibold">
+                        <i class="fa-solid fa-redo mr-2"></i>
+                        Intentar con Otro Archivo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Panel de Éxito -->
+            <div id="panel-exito" class="hidden bg-white rounded-2xl shadow-lg p-8">
+                <div class="bg-gradient-to-r from-oasis-500 to-oasis-600 rounded-lg p-6 text-white mb-6">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-check text-3xl text-oasis-500"></i>
+                        </div>
+                    </div>
+                    <h2 class="text-3xl font-bold text-center mb-2">
+                        ¡Importación Exitosa!
+                    </h2>
+                    <p class="text-oasis-100 text-center text-lg">
+                        Se crearon <span id="total-creados" class="font-bold">0</span> usuarios correctamente
+                    </p>
+                </div>
+
+                <!-- Tabla de usuarios creados -->
+                <div class="mb-6">
+                    <h3 class="text-xl font-bold text-dark-900 mb-4">
+                        <i class="fa-solid fa-users-check text-oasis-500"></i>
+                        Usuarios Creados
+                    </h3>
+                    <div class="overflow-x-auto max-h-96 overflow-y-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50 sticky top-0">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Nombre</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Contraseña Temporal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-usuarios" class="bg-white divide-y divide-gray-200">
+                                <!-- Se llena dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="flex gap-4 justify-center">
+                    <button type="button"
+                            onclick="descargarCredenciales()"
+                            class="px-6 py-3 bg-accent-500 text-white rounded-lg hover:bg-accent-600 transition font-semibold">
+                        <i class="fa-solid fa-download mr-2"></i>
+                        Descargar Credenciales (CSV)
+                    </button>
+                    <button type="button"
+                            onclick="location.reload()"
+                            class="px-6 py-3 bg-oasis-500 text-white rounded-lg hover:bg-oasis-600 transition font-semibold">
+                        <i class="fa-solid fa-plus mr-2"></i>
+                        Cargar Más Usuarios
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+let tipoSeleccionado = null;
+let usuariosCreados = [];
+
+// Seleccionar tipo de usuario
+function seleccionarTipo(tipo) {
+    tipoSeleccionado = tipo;
+
+    // Actualizar botones
+    document.querySelectorAll('.tipo-btn').forEach(btn => {
+        btn.classList.remove('border-oasis-500', 'bg-oasis-100');
+        btn.classList.add('border-oasis-200');
+    });
+
+    const btnSeleccionado = document.getElementById(`btn-${tipo}`);
+    btnSeleccionado.classList.add('border-oasis-500', 'bg-oasis-100');
+    btnSeleccionado.classList.remove('border-oasis-200');
+
+    // Mostrar panel de carga
+    document.getElementById('panel-carga').classList.remove('hidden');
+
+    // Actualizar texto
+    document.getElementById('tipo-seleccionado-text').textContent =
+        tipo === 'aprendices' ? 'Aprendices' : 'Instructores';
+
+    // Resetear archivo
+    removerArchivo();
+}
+
+// Descargar plantilla
+function descargarPlantilla() {
+    if (!tipoSeleccionado) {
+        alert('Por favor selecciona un tipo de usuario primero');
+        return;
+    }
+
+    window.location.href = `{% url 'descargar_plantilla_csv' %}?tipo=${tipoSeleccionado}`;
+}
+
+// Configurar dropzone
+const dropzone = document.getElementById('dropzone');
+const archivoInput = document.getElementById('archivo-csv');
+
+dropzone.addEventListener('click', () => {
+    if (!tipoSeleccionado) {
+        alert('Por favor selecciona un tipo de usuario primero');
+        return;
+    }
+    archivoInput.click();
+});
+
+dropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropzone.classList.add('border-oasis-500', 'bg-oasis-50');
+});
+
+dropzone.addEventListener('dragleave', () => {
+    dropzone.classList.remove('border-oasis-500', 'bg-oasis-50');
+});
+
+dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('border-oasis-500', 'bg-oasis-50');
+
+    if (!tipoSeleccionado) {
+        alert('Por favor selecciona un tipo de usuario primero');
+        return;
+    }
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        manejarArchivo(files[0]);
+    }
+});
+
+archivoInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+        manejarArchivo(e.target.files[0]);
+    }
+});
+
+function manejarArchivo(archivo) {
+    // Validar extensión
+    if (!archivo.name.endsWith('.csv')) {
+        alert('Por favor selecciona un archivo CSV válido');
+        return;
+    }
+
+    // Validar tamaño (5MB)
+    if (archivo.size > 5 * 1024 * 1024) {
+        alert('El archivo es demasiado grande. Tamaño máximo: 5MB');
+        return;
+    }
+
+    // Mostrar información del archivo
+    document.getElementById('dropzone-content').classList.add('hidden');
+    document.getElementById('archivo-seleccionado').classList.remove('hidden');
+    document.getElementById('nombre-archivo').textContent = archivo.name;
+    document.getElementById('info-archivo').textContent =
+        `${(archivo.size / 1024).toFixed(2)} KB`;
+
+    // Habilitar botón de procesar
+    document.getElementById('btn-procesar').disabled = false;
+}
+
+function removerArchivo() {
+    archivoInput.value = '';
+    document.getElementById('dropzone-content').classList.remove('hidden');
+    document.getElementById('archivo-seleccionado').classList.add('hidden');
+    document.getElementById('btn-procesar').disabled = true;
+    limpiarErrores();
+    document.getElementById('panel-exito').classList.add('hidden');
+}
+
+function limpiarErrores() {
+    document.getElementById('panel-errores').classList.add('hidden');
+    document.getElementById('tabla-errores').innerHTML = '';
+}
+
+function procesarArchivo() {
+    const archivo = archivoInput.files[0];
+    if (!archivo) {
+        alert('Por favor selecciona un archivo primero');
+        return;
+    }
+
+    // Mostrar progreso
+    document.getElementById('panel-progreso').classList.remove('hidden');
+    document.getElementById('btn-procesar').disabled = true;
+    limpiarErrores();
+    document.getElementById('panel-exito').classList.add('hidden');
+
+    // Crear FormData
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+    formData.append('tipo', tipoSeleccionado);
+
+    // Obtener CSRF token
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    // Simular progreso
+    let progreso = 0;
+    const intervalo = setInterval(() => {
+        if (progreso < 90) {
+            progreso += 10;
+            actualizarProgreso(progreso, 'Procesando archivo...');
+        }
+    }, 200);
+
+    // Enviar al servidor
+    fetch('{% url "procesar_csv" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        clearInterval(intervalo);
+        actualizarProgreso(100, '¡Completado!');
+
+        setTimeout(() => {
+            document.getElementById('panel-progreso').classList.add('hidden');
+
+            if (data.success) {
+                mostrarExito(data);
+            } else {
+                mostrarErrores(data);
+            }
+
+            document.getElementById('btn-procesar').disabled = false;
+        }, 500);
+    })
+    .catch(error => {
+        clearInterval(intervalo);
+        document.getElementById('panel-progreso').classList.add('hidden');
+        alert('Error al procesar el archivo: ' + error.message);
+        document.getElementById('btn-procesar').disabled = false;
+    });
+}
+
+function actualizarProgreso(porcentaje, texto) {
+    document.getElementById('barra-progreso').style.width = `${porcentaje}%`;
+    document.getElementById('progreso-porcentaje').textContent = `${porcentaje}%`;
+    document.getElementById('progreso-texto').textContent = texto;
+}
+
+function mostrarErrores(data) {
+    document.getElementById('panel-errores').classList.remove('hidden');
+    document.getElementById('total-errores').textContent = data.errores.length;
+
+    const tbody = document.getElementById('tabla-errores');
+    tbody.innerHTML = '';
+
+    data.errores.forEach(error => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${error.fila}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${error.campo}</td>
+            <td class="px-6 py-4 text-sm text-red-600">${error.error}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function mostrarExito(data) {
+    usuariosCreados = data.detalle;
+
+    document.getElementById('panel-exito').classList.remove('hidden');
+    document.getElementById('total-creados').textContent = data.usuarios_creados;
+
+    const tbody = document.getElementById('tabla-usuarios');
+    tbody.innerHTML = '';
+
+    data.detalle.forEach(usuario => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${usuario.nombre}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${usuario.email}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-oasis-600 font-semibold">${usuario.password_temporal}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function descargarCredenciales() {
+    if (usuariosCreados.length === 0) return;
+
+    let csv = 'Nombre,Email,Contraseña Temporal\n';
+    usuariosCreados.forEach(usuario => {
+        csv += `"${usuario.nombre}","${usuario.email}","${usuario.password_temporal}"\n`;
+    });
+
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `credenciales_${tipoSeleccionado}_${new Date().getTime()}.csv`;
+    link.click();
+}
+</script>
+
+<!-- CSRF Token -->
+{% csrf_token %}
+
+{% endblock %}

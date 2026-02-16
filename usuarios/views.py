@@ -210,6 +210,10 @@ def _build_admin_context(user):
         rol='empresa', is_active=False
     ).order_by('-date_joined')
 
+    # ─── Listas de Usuarios (Aprendices e Instructores) ────────────────
+    lista_aprendices = Aprendiz.objects.order_by('-id')[:100]  # Últimos 100 aprendices
+    lista_instructores = Instructor.objects.order_by('-id')[:100]  # Últimos 100 instructores
+
     # ─── Proyectos recientes ────────────────────────────────────────────
     proyectos_recientes = ProyectoGrado.objects.order_by('-fecha_publicacion')[:25]
 
@@ -402,6 +406,9 @@ def _build_admin_context(user):
         'empresas_pendientes': empresas_pendientes,
         'empresas_pendientes_count': empresas_pendientes.count(),
         'proyectos_recientes': proyectos_recientes,
+        # User Lists
+        'lista_aprendices': lista_aprendices,
+        'lista_instructores': lista_instructores,
         # Audit
         'logs_recientes': logs_recientes,
         'logins_recientes': logins_recientes,

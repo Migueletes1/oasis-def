@@ -899,3 +899,156 @@ INFO "GET /static/css/styles.css HTTP/1.1" 304 0
 INFO "GET /static/js/three-bg.js HTTP/1.1" 304 0
 INFO "GET /static/js/accessibility.js HTTP/1.1" 304 0
 INFO "GET /static/js/main.js HTTP/1.1" 200 17219
+INFO Watching for file changes with StatReloader
+INFO "GET / HTTP/1.1" 200 133444
+INFO "GET /static/js/three-bg.js HTTP/1.1" 200 3288
+INFO "GET /static/css/styles.css HTTP/1.1" 200 18753
+INFO "GET /static/js/main.js HTTP/1.1" 200 17219
+INFO "GET /static/js/accessibility.js HTTP/1.1" 200 15132
+WARNING Not Found: /favicon.ico
+WARNING "GET /favicon.ico HTTP/1.1" 404 4786
+INFO Watching for file changes with StatReloader
+INFO "GET / HTTP/1.1" 200 133470
+INFO Watching for file changes with StatReloader
+INFO "GET / HTTP/1.1" 200 133470
+INFO Watching for file changes with StatReloader
+INFO Watching for file changes with StatReloader
+INFO "GET / HTTP/1.1" 200 133434
+INFO "GET /static/css/styles.css HTTP/1.1" 200 19415
+INFO "GET /static/js/three-bg.js HTTP/1.1" 200 3288
+INFO "GET /static/js/main.js HTTP/1.1" 200 17219
+INFO "GET /static/js/accessibility.js HTTP/1.1" 200 15151
+WARNING Not Found: /favicon.ico
+WARNING "GET /favicon.ico HTTP/1.1" 404 4786
+INFO "GET /auth/login/ HTTP/1.1" 200 22330
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "POST /auth/login/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 135439
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 168090
+INFO "POST /auth/logout/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 133434
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO C:\Users\SENA\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO C:\Users\SENA\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO "GET /auth/login/ HTTP/1.1" 200 22865
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "POST /auth/login/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 135439
+ERROR Internal Server Error: /auth/dashboard/
+Traceback (most recent call last):
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\oasis-def\usuarios\views.py", line 133, in dashboard_view
+    context = _build_admin_context(user)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\oasis-def\usuarios\views.py", line 214, in _build_admin_context
+    lista_aprendices = Aprendiz.objects.select_related('usuario').order_by(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\query.py", line 1727, in order_by
+    obj.query.add_ordering(*field_names)
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\sql\query.py", line 2312, in add_ordering
+    self.names_to_path(item.split(LOOKUP_SEP), self.model._meta)
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\sql\query.py", line 1813, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'usuario' into field. Choices are: apellidos, asignacion, email, id, nombres, numero_documento, telefono, tipo_documento
+ERROR "GET /auth/dashboard/ HTTP/1.1" 500 115245
+ERROR Internal Server Error: /auth/dashboard/
+Traceback (most recent call last):
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\oasis-def\usuarios\views.py", line 133, in dashboard_view
+    context = _build_admin_context(user)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\oasis-def\usuarios\views.py", line 214, in _build_admin_context
+    lista_aprendices = Aprendiz.objects.select_related('usuario').order_by(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\query.py", line 1727, in order_by
+    obj.query.add_ordering(*field_names)
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\sql\query.py", line 2312, in add_ordering
+    self.names_to_path(item.split(LOOKUP_SEP), self.model._meta)
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\sql\query.py", line 1813, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'usuario' into field. Choices are: apellidos, asignacion, email, id, nombres, numero_documento, telefono, tipo_documento
+ERROR "GET /auth/dashboard/ HTTP/1.1" 500 115382
+ERROR Internal Server Error: /auth/dashboard/
+Traceback (most recent call last):
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\oasis-def\usuarios\views.py", line 133, in dashboard_view
+    context = _build_admin_context(user)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\oasis-def\usuarios\views.py", line 214, in _build_admin_context
+    lista_aprendices = Aprendiz.objects.select_related('usuario').order_by(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\query.py", line 1727, in order_by
+    obj.query.add_ordering(*field_names)
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\sql\query.py", line 2312, in add_ordering
+    self.names_to_path(item.split(LOOKUP_SEP), self.model._meta)
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\sql\query.py", line 1813, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'usuario' into field. Choices are: apellidos, asignacion, email, id, nombres, numero_documento, telefono, tipo_documento
+ERROR "GET /auth/dashboard/ HTTP/1.1" 500 115245
+INFO C:\Users\SENA\oasis-def\usuarios\views.py changed, reloading.
+INFO Watching for file changes with StatReloader
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 204983
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+INFO "GET /auth/admin/carga-masiva/plantilla/?tipo=aprendices HTTP/1.1" 200 264
+WARNING Bad Request: /auth/admin/carga-masiva/procesar/
+WARNING "POST /auth/admin/carga-masiva/procesar/ HTTP/1.1" 400 465
+INFO "POST /auth/logout/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 133434
+INFO "GET /auth/login/ HTTP/1.1" 200 22865
+INFO "POST /auth/login/ HTTP/1.1" 302 0
+INFO "GET / HTTP/1.1" 200 135439
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 204983
+WARNING Bad Request: /auth/admin/carga-masiva/procesar/
+WARNING "POST /auth/admin/carga-masiva/procesar/ HTTP/1.1" 400 334
+WARNING Bad Request: /auth/admin/carga-masiva/procesar/
+WARNING "POST /auth/admin/carga-masiva/procesar/ HTTP/1.1" 400 278
+WARNING Bad Request: /auth/admin/carga-masiva/procesar/
+WARNING "POST /auth/admin/carga-masiva/procesar/ HTTP/1.1" 400 278
+WARNING Bad Request: /auth/admin/carga-masiva/procesar/
+WARNING "POST /auth/admin/carga-masiva/procesar/ HTTP/1.1" 400 278
+WARNING Bad Request: /auth/admin/carga-masiva/procesar/
+WARNING "POST /auth/admin/carga-masiva/procesar/ HTTP/1.1" 400 278
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 204983
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+WARNING Bad Request: /auth/admin/carga-masiva/procesar/
+WARNING "POST /auth/admin/carga-masiva/procesar/ HTTP/1.1" 400 278
+INFO "GET /static/css/styles.css HTTP/1.1" 304 0
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4897
+INFO "GET / HTTP/1.1" 200 135439
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4897
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 235460
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4897
+INFO "GET /auth/dashboard/ HTTP/1.1" 200 249289
+WARNING Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4897
+INFO "GET /static/css/styles.css HTTP/1.1" 200 21693
+INFO "POST /auth/admin/carga-masiva/validar/ HTTP/1.1" 200 630

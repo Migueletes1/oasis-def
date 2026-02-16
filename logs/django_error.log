@@ -184,3 +184,78 @@ Traceback (most recent call last):
     raise NoReverseMatch(msg)
 django.urls.exceptions.NoReverseMatch: Reverse for 'dashboard_admin' not found. 'dashboard_admin' is not a valid view function or pattern name.
 ERROR 2026-02-09 11:03:28,722 basehttp "GET /auth/admin/carga-masiva/ HTTP/1.1" 500 185301
+ERROR 2026-02-16 07:24:23,651 log Internal Server Error: /auth/dashboard/
+Traceback (most recent call last):
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\oasis-def\usuarios\views.py", line 133, in dashboard_view
+    context = _build_admin_context(user)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\oasis-def\usuarios\views.py", line 214, in _build_admin_context
+    lista_aprendices = Aprendiz.objects.select_related('usuario').order_by(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\query.py", line 1727, in order_by
+    obj.query.add_ordering(*field_names)
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\sql\query.py", line 2312, in add_ordering
+    self.names_to_path(item.split(LOOKUP_SEP), self.model._meta)
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\sql\query.py", line 1813, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'usuario' into field. Choices are: apellidos, asignacion, email, id, nombres, numero_documento, telefono, tipo_documento
+ERROR 2026-02-16 07:24:23,658 basehttp "GET /auth/dashboard/ HTTP/1.1" 500 115245
+ERROR 2026-02-16 07:27:27,727 log Internal Server Error: /auth/dashboard/
+Traceback (most recent call last):
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\oasis-def\usuarios\views.py", line 133, in dashboard_view
+    context = _build_admin_context(user)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\oasis-def\usuarios\views.py", line 214, in _build_admin_context
+    lista_aprendices = Aprendiz.objects.select_related('usuario').order_by(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\query.py", line 1727, in order_by
+    obj.query.add_ordering(*field_names)
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\sql\query.py", line 2312, in add_ordering
+    self.names_to_path(item.split(LOOKUP_SEP), self.model._meta)
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\sql\query.py", line 1813, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'usuario' into field. Choices are: apellidos, asignacion, email, id, nombres, numero_documento, telefono, tipo_documento
+ERROR 2026-02-16 07:27:27,729 basehttp "GET /auth/dashboard/ HTTP/1.1" 500 115382
+ERROR 2026-02-16 07:27:30,812 log Internal Server Error: /auth/dashboard/
+Traceback (most recent call last):
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\oasis-def\usuarios\views.py", line 133, in dashboard_view
+    context = _build_admin_context(user)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\oasis-def\usuarios\views.py", line 214, in _build_admin_context
+    lista_aprendices = Aprendiz.objects.select_related('usuario').order_by(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\query.py", line 1727, in order_by
+    obj.query.add_ordering(*field_names)
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\sql\query.py", line 2312, in add_ordering
+    self.names_to_path(item.split(LOOKUP_SEP), self.model._meta)
+  File "C:\Users\SENA\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\sql\query.py", line 1813, in names_to_path
+    raise FieldError(
+django.core.exceptions.FieldError: Cannot resolve keyword 'usuario' into field. Choices are: apellidos, asignacion, email, id, nombres, numero_documento, telefono, tipo_documento
+ERROR 2026-02-16 07:27:30,814 basehttp "GET /auth/dashboard/ HTTP/1.1" 500 115245

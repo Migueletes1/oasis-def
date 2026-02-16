@@ -1,5 +1,5 @@
 // accessibility.js - Módulo de Accesibilidad WCAG 2.1
-(function() {
+(function () {
     'use strict';
 
     // Estado de accesibilidad
@@ -76,34 +76,30 @@
         }
     }
 
-    // Aplicar alto contraste
-    function applyHighContrast() {
-        if (a11yState.highContrast) {
-            document.body.classList.add('high-contrast');
-        } else {
-            document.body.classList.remove('high-contrast');
-        }
+    // Aplicar todos los filtros combinados al wrapper (evita romper position:fixed en el FAB)
+    function applyFilters() {
+        const wrapper = document.getElementById('a11y-content-wrapper');
+        const canvas = document.getElementById('three-canvas');
+
+        const filters = [];
+        if (a11yState.highContrast) filters.push('contrast(150%) brightness(1.1)');
+        if (a11yState.grayscale) filters.push('grayscale(100%)');
+        if (a11yState.invert) filters.push('invert(1) hue-rotate(180deg)');
+        if (a11yState.saturate) filters.push('saturate(150%)');
+
+        const filterStr = filters.length > 0 ? filters.join(' ') : '';
+        if (wrapper) wrapper.style.filter = filterStr;
+        if (canvas) canvas.style.filter = filterStr;
+
+        // Clases en body para estilos adicionales no-filter (text-shadow, box-shadow, etc.)
+        document.body.classList.toggle('high-contrast', a11yState.highContrast);
+        document.body.classList.toggle('invert-colors', a11yState.invert);
+        document.body.classList.toggle('saturate', a11yState.saturate);
+
         updateToggleButton('a11y-toggle-high-contrast', a11yState.highContrast);
-    }
-
-    // Aplicar escala de grises
-    function applyGrayscale() {
-        if (a11yState.grayscale) {
-            document.body.style.filter = 'grayscale(100%)';
-        } else {
-            document.body.style.filter = '';
-        }
         updateToggleButton('a11y-toggle-grayscale', a11yState.grayscale);
-    }
-
-    // Aplicar inversión de colores
-    function applyInvert() {
-        if (a11yState.invert) {
-            document.body.classList.add('invert-colors');
-        } else {
-            document.body.classList.remove('invert-colors');
-        }
         updateToggleButton('a11y-toggle-invert', a11yState.invert);
+        updateToggleButton('a11y-toggle-saturate', a11yState.saturate);
     }
 
     // Aplicar fuente para dislexia
@@ -202,16 +198,6 @@
         updateToggleButton('a11y-toggle-focus-mode', a11yState.focusMode);
     }
 
-    // Aplicar saturación
-    function applySaturate() {
-        if (a11yState.saturate) {
-            document.body.classList.add('saturate');
-        } else {
-            document.body.classList.remove('saturate');
-        }
-        updateToggleButton('a11y-toggle-saturate', a11yState.saturate);
-    }
-
     // Actualizar botón de toggle
     function updateToggleButton(checkboxId, isActive) {
         const checkbox = document.getElementById(checkboxId);
@@ -223,9 +209,7 @@
     // Aplicar todas las configuraciones
     function applyAllSettings() {
         applyFontSize();
-        applyHighContrast();
-        applyGrayscale();
-        applyInvert();
+        applyFilters();
         applyDyslexia();
         applyHighlight();
         applyReadingGuide();
@@ -234,7 +218,6 @@
         applyLetterSpacing();
         applyBigCursor();
         applyFocusMode();
-        applySaturate();
     }
 
     // Resetear todo
@@ -304,7 +287,7 @@
         if (e.altKey && e.key === '1') {
             e.preventDefault();
             a11yState.highContrast = !a11yState.highContrast;
-            applyHighContrast();
+            applyFilters();
             saveState();
             updateFabBadge();
         }
@@ -313,7 +296,7 @@
         if (e.altKey && e.key === '2') {
             e.preventDefault();
             a11yState.grayscale = !a11yState.grayscale;
-            applyGrayscale();
+            applyFilters();
             saveState();
             updateFabBadge();
         }
@@ -374,9 +357,9 @@
 
     // Toggles
     const toggles = [
-        { id: 'a11y-toggle-high-contrast', key: 'highContrast', apply: applyHighContrast },
-        { id: 'a11y-toggle-grayscale', key: 'grayscale', apply: applyGrayscale },
-        { id: 'a11y-toggle-invert', key: 'invert', apply: applyInvert },
+        { id: 'a11y-toggle-high-contrast', key: 'highContrast', apply: applyFilters },
+        { id: 'a11y-toggle-grayscale', key: 'grayscale', apply: applyFilters },
+        { id: 'a11y-toggle-invert', key: 'invert', apply: applyFilters },
         { id: 'a11y-toggle-dyslexia', key: 'dyslexia', apply: applyDyslexia },
         { id: 'a11y-toggle-highlight', key: 'highlight', apply: applyHighlight },
         { id: 'a11y-toggle-reading-guide', key: 'readingGuide', apply: applyReadingGuide },
@@ -385,7 +368,7 @@
         { id: 'a11y-toggle-letter-spacing', key: 'letterSpacing', apply: applyLetterSpacing },
         { id: 'a11y-toggle-big-cursor', key: 'bigCursor', apply: applyBigCursor },
         { id: 'a11y-toggle-focus-mode', key: 'focusMode', apply: applyFocusMode },
-        { id: 'a11y-toggle-saturate', key: 'saturate', apply: applySaturate }
+        { id: 'a11y-toggle-saturate', key: 'saturate', apply: applyFilters }
     ];
 
     toggles.forEach(toggle => {

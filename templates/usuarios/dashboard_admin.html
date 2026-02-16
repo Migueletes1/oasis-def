@@ -249,15 +249,17 @@
             </a>
 
             <div class="nav-section">Gestion</div>
+            <a class="nav-item" data-section="usuarios">
+                <i class="fa-solid fa-users"></i> Usuarios
+                {% if empresas_pendientes_count %}
+                <span class="ml-auto badge-pending">{{ empresas_pendientes_count }}</span>
+                {% endif %}
+            </a>
             <a class="nav-item" data-section="repositorio">
                 <i class="fa-solid fa-folder-open"></i> Repositorio
             </a>
             <a class="nav-item" data-section="carreras">
                 <i class="fa-solid fa-graduation-cap"></i> Carreras
-            </a>
-            <a class="nav-item" href="{% url 'carga_masiva' %}">
-                <i class="fa-solid fa-file-csv"></i> Carga Masiva CSV
-                <span class="ml-auto text-xs bg-accent-500 text-white px-2 py-0.5 rounded-full font-bold">Nuevo</span>
             </a>
 
             <div class="nav-section">Seguridad</div>
@@ -406,56 +408,6 @@
                         <div class="kpi-value text-lg">{{ carrera_lider_count }}</div>
                         <div class="kpi-label">Carrera Lider</div>
                         <p class="text-[0.65rem] text-dark-300 mt-1 truncate" title="{{ carrera_lider }}">{{ carrera_lider }}</p>
-                    </div>
-                </div>
-
-                <!-- ── Carga Masiva CTA Card ────────────────────────── -->
-                <div class="mb-6 bg-gradient-to-r from-accent-500 to-accent-600 rounded-2xl shadow-xl overflow-hidden">
-                    <div class="p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div class="flex items-start gap-6 flex-1">
-                            <div class="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center flex-shrink-0">
-                                <i class="fa-solid fa-file-csv text-4xl text-white"></i>
-                            </div>
-                            <div class="text-white flex-1">
-                                <div class="flex items-center gap-3 mb-2">
-                                    <h3 class="text-2xl font-black">Carga Masiva por CSV</h3>
-                                    <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-bold">NUEVO</span>
-                                </div>
-                                <p class="text-accent-100 mb-3 text-sm leading-relaxed">
-                                    Registra cientos de <strong>Aprendices</strong> o <strong>Instructores</strong> simultáneamente con validaciones robustas y generación automática de credenciales.
-                                </p>
-                                <div class="flex flex-wrap gap-3 text-xs">
-                                    <div class="flex items-center gap-2">
-                                        <i class="fa-solid fa-check-circle text-white/80"></i>
-                                        <span>Validación de 44 carreras</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fa-solid fa-check-circle text-white/80"></i>
-                                        <span>Contraseñas seguras</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fa-solid fa-check-circle text-white/80"></i>
-                                        <span>Hasta 2,000 usuarios</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fa-solid fa-check-circle text-white/80"></i>
-                                        <span>Transacciones atómicas</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex flex-col gap-3 flex-shrink-0">
-                            <a href="{% url 'carga_masiva' %}"
-                               class="px-8 py-4 bg-white text-accent-600 rounded-xl hover:bg-accent-50 transition font-bold text-center shadow-lg hover:shadow-xl hover:scale-105 transform">
-                                <i class="fa-solid fa-upload mr-2"></i>
-                                Ir a Carga Masiva
-                            </a>
-                            <a href="{% url 'descargar_plantilla_csv' %}?tipo=aprendices"
-                               class="px-8 py-3 bg-white/10 backdrop-blur-sm text-white rounded-xl hover:bg-white/20 transition font-semibold text-center border-2 border-white/30 text-sm">
-                                <i class="fa-solid fa-download mr-2"></i>
-                                Descargar Plantilla
-                            </a>
-                        </div>
                     </div>
                 </div>
 
@@ -736,6 +688,796 @@
                             <p class="text-sm">No hay proyectos aun</p>
                         </div>
                         {% endif %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ SECTION: Usuarios ═════════════════════════════════════ -->
+            <section id="section-usuarios" class="admin-section">
+                <div class="mb-6">
+                    <h1 class="text-2xl font-black text-dark-900">Gestión de Usuarios</h1>
+                    <p class="text-sm text-dark-400 mt-0.5">Administra aprendices, instructores, empresas y carga masiva</p>
+                </div>
+
+                <!-- Tabs Navigation -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="border-b border-gray-200">
+                        <nav class="flex -mb-px" role="tablist">
+                            <button type="button"
+                                    onclick="cambiarTabUsuarios('aprendices')"
+                                    id="tab-aprendices"
+                                    class="tab-usuarios-btn flex-1 py-4 px-6 text-center border-b-2 font-semibold text-sm transition-colors border-oasis-600 text-oasis-600"
+                                    role="tab"
+                                    aria-selected="true">
+                                <i class="fa-solid fa-graduation-cap mr-2"></i>
+                                Aprendices
+                                <span class="ml-2 px-2 py-0.5 bg-oasis-100 text-oasis-600 rounded-full text-xs">{{ total_aprendices }}</span>
+                            </button>
+                            <button type="button"
+                                    onclick="cambiarTabUsuarios('instructores')"
+                                    id="tab-instructores"
+                                    class="tab-usuarios-btn flex-1 py-4 px-6 text-center border-b-2 font-semibold text-sm transition-colors border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                    role="tab"
+                                    aria-selected="false">
+                                <i class="fa-solid fa-chalkboard-teacher mr-2"></i>
+                                Instructores
+                                <span class="ml-2 px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">{{ total_instructores }}</span>
+                            </button>
+                            <button type="button"
+                                    onclick="cambiarTabUsuarios('empresas')"
+                                    id="tab-empresas"
+                                    class="tab-usuarios-btn flex-1 py-4 px-6 text-center border-b-2 font-semibold text-sm transition-colors border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                    role="tab"
+                                    aria-selected="false">
+                                <i class="fa-solid fa-building mr-2"></i>
+                                Empresas
+                                {% if empresas_pendientes_count %}
+                                <span class="ml-2 px-2 py-0.5 bg-accent-100 text-accent-600 rounded-full text-xs">{{ empresas_pendientes_count }} pendientes</span>
+                                {% endif %}
+                            </button>
+                            <button type="button"
+                                    onclick="cambiarTabUsuarios('carga-masiva')"
+                                    id="tab-carga-masiva"
+                                    class="tab-usuarios-btn flex-1 py-4 px-6 text-center border-b-2 font-semibold text-sm transition-colors border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                                    role="tab"
+                                    aria-selected="false">
+                                <i class="fa-solid fa-file-csv mr-2"></i>
+                                Carga Masiva
+                            </button>
+                        </nav>
+                    </div>
+
+                    <!-- Tab Content: Aprendices -->
+                    <div id="content-aprendices" class="tab-usuarios-content p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-dark-900">
+                                <i class="fa-solid fa-graduation-cap text-oasis-500 mr-2"></i>
+                                Lista de Aprendices
+                            </h3>
+                            <div class="relative">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-dark-400 text-xs"></i>
+                                <input type="text" id="search-aprendices" class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-oasis-500 focus:border-transparent" placeholder="Buscar aprendiz...">
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Documento</th>
+                                        <th>Teléfono</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-aprendices-body">
+                                    {% for aprendiz in lista_aprendices %}
+                                    <tr class="aprendiz-row" data-search="{{ aprendiz.nombres|lower }} {{ aprendiz.apellidos|lower }} {{ aprendiz.email|lower }} {{ aprendiz.numero_documento }}">
+                                        <td class="font-semibold">{{ aprendiz.nombres }} {{ aprendiz.apellidos }}</td>
+                                        <td class="text-dark-500">{{ aprendiz.email }}</td>
+                                        <td><code class="text-xs bg-dark-50 px-1.5 py-0.5 rounded">{{ aprendiz.tipo_documento }} {{ aprendiz.numero_documento }}</code></td>
+                                        <td class="text-dark-400 text-xs">{{ aprendiz.telefono|default:"N/A" }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="4" class="text-center py-8 text-dark-400">
+                                            <i class="fa-solid fa-user-slash text-3xl text-dark-300 mb-2"></i>
+                                            <p>No hay aprendices registrados</p>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content: Instructores -->
+                    <div id="content-instructores" class="tab-usuarios-content hidden p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-dark-900">
+                                <i class="fa-solid fa-chalkboard-teacher text-oasis-500 mr-2"></i>
+                                Lista de Instructores
+                            </h3>
+                            <div class="relative">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-dark-400 text-xs"></i>
+                                <input type="text" id="search-instructores" class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-oasis-500 focus:border-transparent" placeholder="Buscar instructor...">
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Documento</th>
+                                        <th>Especialidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-instructores-body">
+                                    {% for instructor in lista_instructores %}
+                                    <tr class="instructor-row" data-search="{{ instructor.nombres|lower }} {{ instructor.apellidos|lower }} {{ instructor.email|lower }} {{ instructor.numero_documento }}">
+                                        <td class="font-semibold">{{ instructor.nombres }} {{ instructor.apellidos }}</td>
+                                        <td class="text-dark-500">{{ instructor.email }}</td>
+                                        <td><code class="text-xs bg-dark-50 px-1.5 py-0.5 rounded">{{ instructor.tipo_documento }} {{ instructor.numero_documento }}</code></td>
+                                        <td class="text-xs">{{ instructor.especialidad|default:"N/A" }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="4" class="text-center py-8 text-dark-400">
+                                            <i class="fa-solid fa-user-slash text-3xl text-dark-300 mb-2"></i>
+                                            <p>No hay instructores registrados</p>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content: Empresas Pendientes -->
+                    <div id="content-empresas" class="tab-usuarios-content hidden p-6">
+                        <div class="mb-6">
+                            <h3 class="text-xl font-bold text-dark-900">
+                                <i class="fa-solid fa-clock text-accent-500 mr-2"></i>
+                                Empresas Pendientes de Validación
+                                {% if empresas_pendientes_count %}<span class="badge-pending ml-2">{{ empresas_pendientes_count }}</span>{% endif %}
+                            </h3>
+                        </div>
+
+                        {% if empresas_pendientes %}
+                        <div class="overflow-x-auto">
+                            <table class="admin-table" id="table-empresas-tab">
+                                <thead>
+                                    <tr>
+                                        <th>Empresa</th>
+                                        <th>NIT</th>
+                                        <th>Representante</th>
+                                        <th>Email</th>
+                                        <th>Fecha</th>
+                                        <th class="text-right">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for emp in empresas_pendientes %}
+                                    <tr id="empresa-row-tab-{{ emp.pk }}">
+                                        <td class="font-semibold">{{ emp.nombre_empresa }}</td>
+                                        <td><code class="text-xs bg-dark-50 px-1.5 py-0.5 rounded">{{ emp.nit_empresa }}</code></td>
+                                        <td>{{ emp.get_full_name }}</td>
+                                        <td class="text-dark-500">{{ emp.email }}</td>
+                                        <td class="text-dark-400 text-xs">{{ emp.date_joined|date:"d/m/Y H:i" }}</td>
+                                        <td class="text-right">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <a href="{% url 'admin_empresa_detalle' emp.pk %}" class="btn-sm btn-ghost" title="Ver detalle">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </a>
+                                                <button class="btn-sm btn-green" onclick="aprobarEmpresa({{ emp.pk }}, this, 'tab')" title="Aprobar">
+                                                    <i class="fa-solid fa-check mr-1"></i>Aprobar
+                                                </button>
+                                                <button class="btn-sm btn-red" onclick="rechazarEmpresa({{ emp.pk }}, this, 'tab')" title="Rechazar">
+                                                    <i class="fa-solid fa-xmark"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-12 text-dark-400">
+                            <i class="fa-solid fa-circle-check text-5xl text-oasis-300 mb-3"></i>
+                            <p class="text-lg">No hay empresas pendientes de validación</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Tab Content: Carga Masiva -->
+                    <div id="content-carga-masiva" class="tab-usuarios-content hidden p-6">
+                        <div class="mb-6">
+                            <h3 class="text-2xl font-bold text-dark-900">
+                                <i class="fa-solid fa-file-csv text-oasis-500 mr-2"></i>
+                                Carga Masiva por CSV
+                            </h3>
+                            <p class="text-sm text-dark-600 mt-2">
+                                Registra cientos de Aprendices o Instructores simultáneamente
+                            </p>
+                        </div>
+
+                        <!-- Selector de Tipo -->
+                        <div class="mb-8 p-6 bg-gradient-to-br from-oasis-50 to-white rounded-xl border border-oasis-200">
+                            <h4 class="text-lg font-bold text-dark-900 mb-4">
+                                <i class="fa-solid fa-users text-oasis-500 mr-2"></i>
+                                Selecciona el Tipo de Usuario
+                            </h4>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Aprendices -->
+                                <button type="button"
+                                        onclick="seleccionarTipoCargaMasiva('aprendices')"
+                                        id="btn-tipo-aprendices"
+                                        class="tipo-btn-carga p-6 border-3 border-oasis-300 rounded-xl hover:border-oasis-500 transition bg-white group">
+                                    <div class="flex flex-col items-center text-center">
+                                        <div class="w-16 h-16 bg-oasis-500 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                            <i class="fa-solid fa-graduation-cap text-2xl text-white"></i>
+                                        </div>
+                                        <h5 class="text-lg font-bold text-dark-900 mb-1">Aprendices</h5>
+                                        <p class="text-sm text-dark-600">Estudiantes del SENA</p>
+                                    </div>
+                                </button>
+
+                                <!-- Instructores -->
+                                <button type="button"
+                                        onclick="seleccionarTipoCargaMasiva('instructores')"
+                                        id="btn-tipo-instructores"
+                                        class="tipo-btn-carga p-6 border-3 border-oasis-300 rounded-xl hover:border-oasis-500 transition bg-white group">
+                                    <div class="flex flex-col items-center text-center">
+                                        <div class="w-16 h-16 bg-oasis-500 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                                            <i class="fa-solid fa-chalkboard-teacher text-2xl text-white"></i>
+                                        </div>
+                                        <h5 class="text-lg font-bold text-dark-900 mb-1">Instructores</h5>
+                                        <p class="text-sm text-dark-600">Profesores del SENA</p>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Panel de Carga (inicialmente oculto) -->
+                        <div id="panel-carga-tab" class="hidden">
+                            <!-- Pasos Visuales -->
+                            <div class="mb-8 flex justify-center">
+                                <div class="flex items-center gap-2 sm:gap-4">
+                                    <!-- Paso 1 -->
+                                    <div class="flex flex-col items-center">
+                                        <div id="paso-1-badge" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-oasis-500 text-white flex items-center justify-center font-bold text-lg shadow-lg">
+                                            1
+                                        </div>
+                                        <span class="text-xs sm:text-sm font-semibold text-oasis-600 mt-2 text-center">Plantilla</span>
+                                    </div>
+                                    <div class="w-8 sm:w-12 h-1 bg-gray-300 rounded" id="linea-paso-1"></div>
+
+                                    <!-- Paso 2 -->
+                                    <div class="flex flex-col items-center">
+                                        <div id="paso-2-badge" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-300 text-gray-500 flex items-center justify-center font-bold text-lg">
+                                            2
+                                        </div>
+                                        <span class="text-xs sm:text-sm font-semibold text-gray-500 mt-2 text-center">Subir</span>
+                                    </div>
+                                    <div class="w-8 sm:w-12 h-1 bg-gray-300 rounded" id="linea-paso-2"></div>
+
+                                    <!-- Paso 3 -->
+                                    <div class="flex flex-col items-center">
+                                        <div id="paso-3-badge" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-300 text-gray-500 flex items-center justify-center font-bold text-lg">
+                                            3
+                                        </div>
+                                        <span class="text-xs sm:text-sm font-semibold text-gray-500 mt-2 text-center">Validar</span>
+                                    </div>
+                                    <div class="w-8 sm:w-12 h-1 bg-gray-300 rounded" id="linea-paso-3"></div>
+
+                                    <!-- Paso 4 -->
+                                    <div class="flex flex-col items-center">
+                                        <div id="paso-4-badge" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-300 text-gray-500 flex items-center justify-center font-bold text-lg">
+                                            <i class="fa-solid fa-check text-sm"></i>
+                                        </div>
+                                        <span class="text-xs sm:text-sm font-semibold text-gray-500 mt-2 text-center">Completar</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Descarga de Plantilla -->
+                            <div class="mb-6 p-6 bg-gradient-to-r from-accent-500 to-accent-600 rounded-xl text-white shadow-lg">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-bold">1</div>
+                                            <h4 class="text-lg font-bold">
+                                                Descarga la Plantilla CSV
+                                            </h4>
+                                        </div>
+                                        <p class="text-accent-100 text-sm mb-3 ml-10">
+                                            <i class="fa-solid fa-info-circle mr-1"></i>
+                                            La plantilla contiene las columnas necesarias para <span id="tipo-seleccionado-text-tab" class="font-bold">Aprendices</span>
+                                        </p>
+                                        <div class="ml-10 flex flex-wrap gap-3">
+                                            <button type="button"
+                                                    onclick="descargarPlantillaCargaMasiva()"
+                                                    class="px-6 py-3 bg-white text-accent-600 rounded-lg hover:bg-accent-50 transition font-bold shadow-lg flex items-center gap-2">
+                                                <i class="fa-solid fa-file-download"></i>
+                                                <span>Descargar Plantilla</span>
+                                            </button>
+                                            <button type="button"
+                                                    onclick="mostrarAyudaColumnas()"
+                                                    class="px-6 py-3 bg-white/20 text-white rounded-lg hover:bg-white/30 transition font-semibold flex items-center gap-2">
+                                                <i class="fa-solid fa-question-circle"></i>
+                                                <span>¿Qué columnas necesito?</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="ml-6 hidden md:block">
+                                        <i class="fa-solid fa-file-csv text-7xl opacity-20"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Panel de Ayuda de Columnas -->
+                            <div id="ayuda-columnas-tab" class="hidden mb-6 p-6 bg-blue-50 border-2 border-blue-200 rounded-xl">
+                                <div class="flex justify-between items-start mb-4">
+                                    <h5 class="text-lg font-bold text-blue-900">
+                                        <i class="fa-solid fa-book-open text-blue-600 mr-2"></i>
+                                        Guía de Columnas
+                                    </h5>
+                                    <button onclick="document.getElementById('ayuda-columnas-tab').classList.add('hidden')"
+                                            class="text-blue-600 hover:text-blue-800">
+                                        <i class="fa-solid fa-times text-xl"></i>
+                                    </button>
+                                </div>
+                                <div id="columnas-info-aprendices" class="space-y-3 text-sm">
+                                    <div class="flex gap-3">
+                                        <div class="w-40 font-bold text-blue-900">tipo_documento:</div>
+                                        <div class="flex-1 text-gray-700">CC, TI, CE, PA o PEP</div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <div class="w-40 font-bold text-blue-900">numero_documento:</div>
+                                        <div class="flex-1 text-gray-700">Número único de identificación</div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <div class="w-40 font-bold text-blue-900">nombres:</div>
+                                        <div class="flex-1 text-gray-700">Nombres completos del aprendiz</div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <div class="w-40 font-bold text-blue-900">apellidos:</div>
+                                        <div class="flex-1 text-gray-700">Apellidos completos del aprendiz</div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <div class="w-40 font-bold text-blue-900">email:</div>
+                                        <div class="flex-1 text-gray-700">Correo electrónico único (será su usuario)</div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <div class="w-40 font-bold text-blue-900">telefono:</div>
+                                        <div class="flex-1 text-gray-700">Número de contacto</div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <div class="w-40 font-bold text-blue-900">carrera:</div>
+                                        <div class="flex-1 text-gray-700">Nombre completo de la carrera (debe existir en el sistema)</div>
+                                    </div>
+                                </div>
+                                <div id="columnas-info-instructores" class="space-y-3 text-sm hidden">
+                                    <div class="flex gap-3">
+                                        <div class="w-40 font-bold text-blue-900">tipo_documento:</div>
+                                        <div class="flex-1 text-gray-700">CC, TI, CE, PA o PEP</div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <div class="w-40 font-bold text-blue-900">numero_documento:</div>
+                                        <div class="flex-1 text-gray-700">Número único de identificación</div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <div class="w-40 font-bold text-blue-900">nombres:</div>
+                                        <div class="flex-1 text-gray-700">Nombres completos del instructor</div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <div class="w-40 font-bold text-blue-900">apellidos:</div>
+                                        <div class="flex-1 text-gray-700">Apellidos completos del instructor</div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <div class="w-40 font-bold text-blue-900">email:</div>
+                                        <div class="flex-1 text-gray-700">Correo electrónico único (será su usuario)</div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <div class="w-40 font-bold text-blue-900">especialidad:</div>
+                                        <div class="flex-1 text-gray-700">Área de especialización del instructor</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Zona de Carga -->
+                            <div class="mb-6 p-6 bg-white rounded-xl border-2 border-gray-200 shadow-sm">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <div class="w-8 h-8 rounded-full bg-oasis-500 text-white flex items-center justify-center font-bold">2</div>
+                                    <h4 class="text-lg font-bold text-dark-900">
+                                        Sube tu Archivo CSV
+                                    </h4>
+                                </div>
+
+                                <!-- Dropzone -->
+                                <div id="dropzone-tab"
+                                     class="border-3 border-dashed border-oasis-300 rounded-xl p-10 text-center cursor-pointer hover:border-oasis-500 hover:bg-oasis-50 transition relative">
+                                    <input type="file" id="archivo-csv-tab" accept=".csv" class="hidden">
+                                    <div id="dropzone-content-tab">
+                                        <div class="mb-4">
+                                            <i class="fa-solid fa-cloud-upload-alt text-6xl text-oasis-400 mb-3"></i>
+                                        </div>
+                                        <h5 class="text-lg font-bold text-dark-900 mb-2">
+                                            <i class="fa-solid fa-hand-pointer text-oasis-500 mr-2"></i>
+                                            Arrastra tu archivo CSV aquí
+                                        </h5>
+                                        <p class="text-dark-600 mb-3 text-sm">
+                                            o haz clic para seleccionar desde tu computadora
+                                        </p>
+                                        <div class="flex justify-center gap-6 mt-4 text-xs text-dark-500">
+                                            <span><i class="fa-solid fa-file-alt text-oasis-500 mr-1"></i> Formato: CSV</span>
+                                            <span><i class="fa-solid fa-weight-hanging text-oasis-500 mr-1"></i> Máx: 5MB</span>
+                                            <span><i class="fa-solid fa-list-ol text-oasis-500 mr-1"></i> Máx: 2,000 filas</span>
+                                        </div>
+                                    </div>
+                                    <div id="archivo-seleccionado-tab" class="hidden">
+                                        <div class="bg-oasis-50 border-2 border-oasis-200 rounded-lg p-6 mb-4">
+                                            <i class="fa-solid fa-file-csv text-5xl text-oasis-500 mb-3"></i>
+                                            <h5 class="text-lg font-bold text-dark-900 mb-1" id="nombre-archivo-tab"></h5>
+                                            <p class="text-dark-600 text-sm mb-1" id="info-archivo-tab"></p>
+                                            <div class="flex justify-center items-center gap-2 text-xs text-oasis-600 mt-2">
+                                                <i class="fa-solid fa-check-circle"></i>
+                                                <span>Archivo cargado correctamente</span>
+                                            </div>
+                                        </div>
+                                        <button type="button"
+                                                onclick="removerArchivoCargaMasiva()"
+                                                class="px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition font-semibold text-sm">
+                                            <i class="fa-solid fa-times mr-2"></i>
+                                            Cambiar Archivo
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Botones de Acción -->
+                                <div class="mt-6 flex flex-wrap justify-center gap-3">
+                                    <button type="button"
+                                            id="btn-validar-tab"
+                                            onclick="validarArchivoCargaMasiva()"
+                                            disabled
+                                            class="px-10 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <i class="fa-solid fa-check-double mr-2"></i>
+                                        Validar y Previsualizar
+                                    </button>
+                                    <button type="button"
+                                            id="btn-procesar-tab"
+                                            onclick="procesarArchivoCargaMasiva()"
+                                            disabled
+                                            class="px-10 py-3 bg-oasis-500 text-white rounded-xl hover:bg-oasis-600 transition font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hidden">
+                                        <i class="fa-solid fa-upload mr-2"></i>
+                                        Procesar y Crear Usuarios
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Panel de Vista Previa -->
+                            <div id="panel-preview-tab" class="hidden mb-6 p-6 bg-white rounded-xl border-2 border-oasis-200">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <div class="w-8 h-8 rounded-full bg-oasis-500 text-white flex items-center justify-center font-bold">3</div>
+                                    <h4 class="text-lg font-bold text-dark-900">
+                                        Vista Previa y Validación
+                                    </h4>
+                                </div>
+
+                                <!-- Estadísticas -->
+                                <div id="stats-preview-tab" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                                    <div class="bg-oasis-50 border-2 border-oasis-200 rounded-lg p-4 text-center">
+                                        <div class="text-3xl font-black text-oasis-600" id="stat-total-tab">0</div>
+                                        <div class="text-sm text-dark-600 font-semibold mt-1">Filas Procesadas</div>
+                                    </div>
+                                    <div class="bg-green-50 border-2 border-green-200 rounded-lg p-4 text-center">
+                                        <div class="text-3xl font-black text-green-600" id="stat-validos-tab">0</div>
+                                        <div class="text-sm text-dark-600 font-semibold mt-1">Registros Válidos</div>
+                                    </div>
+                                    <div class="bg-red-50 border-2 border-red-200 rounded-lg p-4 text-center">
+                                        <div class="text-3xl font-black text-red-600" id="stat-errores-tab">0</div>
+                                        <div class="text-sm text-dark-600 font-semibold mt-1">Errores Encontrados</div>
+                                    </div>
+                                </div>
+
+                                <!-- Contenedor de tabs de preview -->
+                                <div id="preview-tabs-container-tab" class="hidden">
+                                    <div class="flex border-b border-gray-200 mb-4">
+                                        <button type="button" onclick="cambiarPreviewTab('validos')"
+                                                id="preview-tab-validos"
+                                                class="px-4 py-2 font-semibold border-b-2 border-oasis-600 text-oasis-600">
+                                            <i class="fa-solid fa-check-circle mr-1"></i>
+                                            Válidos (<span id="count-validos-tab">0</span>)
+                                        </button>
+                                        <button type="button" onclick="cambiarPreviewTab('errores')"
+                                                id="preview-tab-errores"
+                                                class="px-4 py-2 font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                                            <i class="fa-solid fa-exclamation-triangle mr-1"></i>
+                                            Errores (<span id="count-errores-tab">0</span>)
+                                        </button>
+                                    </div>
+
+                                    <!-- Tab contenido: Válidos -->
+                                    <div id="preview-content-validos" class="preview-tab-content">
+                                        <div class="overflow-x-auto max-h-96 overflow-y-auto">
+                                            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                                <thead class="bg-green-50 sticky top-0">
+                                                    <tr>
+                                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase">Fila</th>
+                                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase">Nombre</th>
+                                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase">Email</th>
+                                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase">Documento</th>
+                                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase" id="preview-col-extra">Extra</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tabla-preview-validos-tab" class="bg-white divide-y divide-gray-200">
+                                                    <!-- Se llena dinámicamente -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tab contenido: Errores -->
+                                    <div id="preview-content-errores" class="preview-tab-content hidden">
+                                        <div class="mb-4 flex justify-end">
+                                            <button onclick="exportarErroresCSV()"
+                                                    class="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition font-semibold text-sm">
+                                                <i class="fa-solid fa-file-export mr-2"></i>
+                                                Exportar Errores
+                                            </button>
+                                        </div>
+                                        <div class="overflow-x-auto max-h-96 overflow-y-auto">
+                                            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                                <thead class="bg-red-50 sticky top-0">
+                                                    <tr>
+                                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase w-16">Fila</th>
+                                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase w-32">Campo</th>
+                                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase">Error</th>
+                                                        <th class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase w-32">Sugerencia</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tabla-preview-errores-tab" class="bg-white divide-y divide-gray-200">
+                                                    <!-- Se llena dinámicamente -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Mensaje de resultado -->
+                                <div id="preview-message-tab" class="text-center py-6">
+                                    <i class="fa-solid fa-spinner fa-spin text-4xl text-oasis-500 mb-3"></i>
+                                    <p class="text-dark-600">Validando archivo...</p>
+                                </div>
+
+                                <!-- Acciones finales -->
+                                <div id="preview-actions-tab" class="hidden mt-6 flex justify-center gap-3">
+                                    <button type="button"
+                                            onclick="ocultarPreview()"
+                                            class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-semibold">
+                                        <i class="fa-solid fa-arrow-left mr-2"></i>
+                                        Volver
+                                    </button>
+                                    <button type="button"
+                                            id="btn-continuar-procesar-tab"
+                                            onclick="confirmarProcesamiento()"
+                                            disabled
+                                            class="px-8 py-2 bg-oasis-500 text-white rounded-lg hover:bg-oasis-600 transition font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <i class="fa-solid fa-rocket mr-2"></i>
+                                        Continuar y Crear Usuarios
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Barra de Progreso -->
+                            <div id="panel-progreso-tab" class="hidden mb-6 p-6 bg-white rounded-xl border border-gray-200">
+                                <h4 class="text-lg font-bold text-dark-900 mb-4">
+                                    <i class="fa-solid fa-spinner fa-spin text-oasis-500 mr-2"></i>
+                                    Procesando...
+                                </h4>
+
+                                <div class="relative">
+                                    <div class="flex mb-2 items-center justify-between">
+                                        <span class="text-xs font-semibold px-3 py-1 rounded-full text-oasis-600 bg-oasis-100">
+                                            <span id="progreso-texto-tab">Validando archivo...</span>
+                                        </span>
+                                        <span class="text-xs font-semibold text-oasis-600" id="progreso-porcentaje-tab">0%</span>
+                                    </div>
+                                    <div class="overflow-hidden h-3 mb-4 rounded-full bg-oasis-100">
+                                        <div id="barra-progreso-tab"
+                                             style="width: 0%"
+                                             class="h-full bg-gradient-to-r from-oasis-500 to-oasis-600 transition-all duration-500"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Panel de Errores (legacy para procesar directo) -->
+                            <div id="panel-errores-tab" class="hidden mb-6 p-6 bg-white rounded-xl border-2 border-red-300 shadow-lg">
+                                <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-lg p-6 text-white mb-6">
+                                    <div class="flex items-center justify-center mb-3">
+                                        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+                                            <i class="fa-solid fa-exclamation-triangle text-3xl text-red-500"></i>
+                                        </div>
+                                    </div>
+                                    <h4 class="text-2xl font-bold text-center mb-2">
+                                        No se pudo completar la carga
+                                    </h4>
+                                    <p class="text-red-100 text-center">
+                                        Se encontraron <span id="total-errores-tab" class="font-bold text-2xl">0</span> error(es) en el archivo
+                                    </p>
+                                </div>
+
+                                <!-- Resumen de errores por tipo -->
+                                <div id="errores-resumen-tab" class="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <!-- Se llenará dinámicamente con estadísticas -->
+                                </div>
+
+                                <!-- Sugerencias comunes -->
+                                <div class="mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+                                    <h5 class="font-bold text-yellow-900 mb-2">
+                                        <i class="fa-solid fa-lightbulb mr-2"></i>
+                                        Sugerencias para corregir:
+                                    </h5>
+                                    <ul class="text-sm text-yellow-800 space-y-1 list-disc list-inside">
+                                        <li>Verifica que todos los campos obligatorios estén completos</li>
+                                        <li>Asegúrate de que los emails no estén duplicados</li>
+                                        <li>Confirma que los tipos de documento sean válidos (CC, TI, CE, PA, PEP)</li>
+                                        <li>Verifica que las carreras existan en el sistema</li>
+                                    </ul>
+                                </div>
+
+                                <div class="overflow-x-auto max-h-96 overflow-y-auto border rounded-lg">
+                                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                        <thead class="bg-red-50 sticky top-0">
+                                            <tr>
+                                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase w-16">
+                                                    <i class="fa-solid fa-hashtag mr-1"></i>Fila
+                                                </th>
+                                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase w-32">
+                                                    <i class="fa-solid fa-tag mr-1"></i>Campo
+                                                </th>
+                                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase">
+                                                    <i class="fa-solid fa-info-circle mr-1"></i>Descripción del Error
+                                                </th>
+                                                <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase w-32">
+                                                    <i class="fa-solid fa-lightbulb mr-1"></i>Sugerencia
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tabla-errores-tab" class="bg-white divide-y divide-gray-200">
+                                            <!-- Se llena dinámicamente -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="mt-6 flex flex-wrap justify-center gap-3">
+                                    <button type="button"
+                                            onclick="exportarErroresCSV()"
+                                            class="px-6 py-3 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition font-bold">
+                                        <i class="fa-solid fa-file-export mr-2"></i>
+                                        Exportar Errores a CSV
+                                    </button>
+                                    <button type="button"
+                                            onclick="limpiarErroresCargaMasiva()"
+                                            class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-bold">
+                                        <i class="fa-solid fa-redo mr-2"></i>
+                                        Intentar con Otro Archivo
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Panel de Éxito -->
+                            <div id="panel-exito-tab" class="hidden p-6 bg-white rounded-xl border-2 border-oasis-300 shadow-lg">
+                                <div class="bg-gradient-to-r from-oasis-500 to-oasis-600 rounded-lg p-8 text-white mb-6 relative overflow-hidden">
+                                    <!-- Decoración de fondo -->
+                                    <div class="absolute top-0 right-0 opacity-10">
+                                        <i class="fa-solid fa-users text-9xl"></i>
+                                    </div>
+
+                                    <div class="relative z-10">
+                                        <div class="flex items-center justify-center mb-4">
+                                            <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                                                <i class="fa-solid fa-check text-4xl text-oasis-500"></i>
+                                            </div>
+                                        </div>
+                                        <h4 class="text-3xl font-black text-center mb-3">
+                                            ¡Importación Completada!
+                                        </h4>
+                                        <p class="text-oasis-100 text-center text-lg">
+                                            Se crearon exitosamente <span id="total-creados-tab" class="font-bold text-3xl">0</span> usuario(s)
+                                        </p>
+                                        <div class="mt-4 flex justify-center">
+                                            <div class="inline-block px-4 py-2 bg-white/20 rounded-lg">
+                                                <i class="fa-solid fa-clock mr-2"></i>
+                                                <span id="tiempo-proceso-tab">Completado en X segundos</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Alerta importante -->
+                                <div class="mb-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg">
+                                    <div class="flex">
+                                        <div class="flex-shrink-0">
+                                            <i class="fa-solid fa-exclamation-triangle text-yellow-600 text-2xl"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <h5 class="font-bold text-yellow-900 mb-1">
+                                                ⚠️ Importante: Guarda las credenciales
+                                            </h5>
+                                            <p class="text-sm text-yellow-800">
+                                                Las contraseñas se generaron automáticamente. Descarga el archivo CSV con las credenciales
+                                                para compartirlas con los usuarios. <strong>Esta es la única vez que verás las contraseñas.</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tabla de usuarios creados -->
+                                <div class="mb-6">
+                                    <div class="flex justify-between items-center mb-3">
+                                        <h5 class="text-lg font-bold text-dark-900">
+                                            <i class="fa-solid fa-users-check text-oasis-500 mr-2"></i>
+                                            Usuarios Creados
+                                        </h5>
+                                        <span class="text-sm text-dark-500">
+                                            <i class="fa-solid fa-eye mr-1"></i>
+                                            Mostrando todos los registros
+                                        </span>
+                                    </div>
+                                    <div class="overflow-x-auto max-h-96 overflow-y-auto border rounded-lg">
+                                        <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                            <thead class="bg-oasis-50 sticky top-0">
+                                                <tr>
+                                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase">
+                                                        <i class="fa-solid fa-user mr-1"></i>Nombre Completo
+                                                    </th>
+                                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase">
+                                                        <i class="fa-solid fa-envelope mr-1"></i>Email (Usuario)
+                                                    </th>
+                                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase">
+                                                        <i class="fa-solid fa-key mr-1"></i>Contraseña Temporal
+                                                    </th>
+                                                    <th class="px-4 py-3 text-center text-xs font-bold text-gray-700 uppercase w-24">
+                                                        <i class="fa-solid fa-copy"></i>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tabla-usuarios-tab" class="bg-white divide-y divide-gray-200">
+                                                <!-- Se llena dinámicamente -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Acciones -->
+                                <div class="flex flex-wrap gap-3 justify-center">
+                                    <button type="button"
+                                            onclick="descargarCredencialesCargaMasiva()"
+                                            class="px-8 py-4 bg-gradient-to-r from-accent-500 to-accent-600 text-white rounded-lg hover:from-accent-600 hover:to-accent-700 transition font-bold shadow-lg">
+                                        <i class="fa-solid fa-download mr-2"></i>
+                                        Descargar CSV con Credenciales
+                                    </button>
+                                    <button type="button"
+                                            onclick="resetCargaMasiva()"
+                                            class="px-8 py-4 bg-oasis-500 text-white rounded-lg hover:bg-oasis-600 transition font-bold shadow-lg">
+                                        <i class="fa-solid fa-plus mr-2"></i>
+                                        Cargar Más Usuarios
+                                    </button>
+                                    <button type="button"
+                                            onclick="volverAlDashboard()"
+                                            class="px-8 py-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-bold">
+                                        <i class="fa-solid fa-arrow-left mr-2"></i>
+                                        Volver al Dashboard
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </section>
@@ -1381,36 +2123,707 @@ curl -s -o /dev/null -w '%{http_code}' http://localhost/health/</code></pre>
     }
 
     // ─── AJAX: Aprobar Empresa ─────────────────────────────────────────
-    window.aprobarEmpresa = function(pk, btn) {
+    window.aprobarEmpresa = function(pk, btn, prefix) {
         if (!confirm('Aprobar esta empresa?')) return;
         btn.disabled = true;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        var rowId = prefix === 'tab' ? 'empresa-row-tab-' + pk : 'empresa-row-' + pk;
         fetch('/auth/admin/aprobar-empresa/' + pk + '/', {
             method: 'POST',
             headers: { 'X-CSRFToken': csrftoken },
         }).then(function(r) { return r.json(); })
         .then(function(d) {
             if (d.ok) {
-                var row = document.getElementById('empresa-row-' + pk);
+                var row = document.getElementById(rowId);
                 if (row) { row.style.opacity = '0'; row.style.transition = 'opacity 0.3s'; setTimeout(function(){ row.remove(); }, 300); }
             }
         }).catch(function() { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i>Aprobar'; });
     };
 
     // ─── AJAX: Rechazar Empresa ────────────────────────────────────────
-    window.rechazarEmpresa = function(pk, btn) {
+    window.rechazarEmpresa = function(pk, btn, prefix) {
         if (!confirm('Rechazar y eliminar esta empresa? No se puede deshacer.')) return;
         btn.disabled = true;
+        var rowId = prefix === 'tab' ? 'empresa-row-tab-' + pk : 'empresa-row-' + pk;
         fetch('/auth/admin/rechazar-empresa/' + pk + '/', {
             method: 'POST',
             headers: { 'X-CSRFToken': csrftoken },
         }).then(function(r) { return r.json(); })
         .then(function(d) {
             if (d.ok) {
-                var row = document.getElementById('empresa-row-' + pk);
+                var row = document.getElementById(rowId);
                 if (row) { row.style.opacity = '0'; row.style.transition = 'opacity 0.3s'; setTimeout(function(){ row.remove(); }, 300); }
             }
         }).catch(function() { btn.disabled = false; });
+    };
+
+    // ═══════════════════════════════════════════════════════════════════
+    // USUARIOS SECTION - TABS
+    // ═══════════════════════════════════════════════════════════════════
+
+    // ─── Tab Navigation ────────────────────────────────────────────────
+    window.cambiarTabUsuarios = function(tabId) {
+        // Ocultar todos los contenidos
+        document.querySelectorAll('.tab-usuarios-content').forEach(function(content) {
+            content.classList.add('hidden');
+        });
+
+        // Desactivar todos los botones
+        document.querySelectorAll('.tab-usuarios-btn').forEach(function(btn) {
+            btn.classList.remove('border-oasis-600', 'text-oasis-600');
+            btn.classList.add('border-transparent', 'text-gray-500');
+            btn.setAttribute('aria-selected', 'false');
+        });
+
+        // Activar tab seleccionado
+        var content = document.getElementById('content-' + tabId);
+        if (content) content.classList.remove('hidden');
+
+        var btn = document.getElementById('tab-' + tabId);
+        if (btn) {
+            btn.classList.remove('border-transparent', 'text-gray-500');
+            btn.classList.add('border-oasis-600', 'text-oasis-600');
+            btn.setAttribute('aria-selected', 'true');
+        }
+    };
+
+    // ─── Búsqueda en tablas de usuarios ────────────────────────────────
+    var searchAprendices = document.getElementById('search-aprendices');
+    if (searchAprendices) {
+        searchAprendices.addEventListener('input', function() {
+            var query = this.value.toLowerCase();
+            document.querySelectorAll('.aprendiz-row').forEach(function(row) {
+                var searchData = row.getAttribute('data-search');
+                row.style.display = searchData && searchData.indexOf(query) > -1 ? '' : 'none';
+            });
+        });
+    }
+
+    var searchInstructores = document.getElementById('search-instructores');
+    if (searchInstructores) {
+        searchInstructores.addEventListener('input', function() {
+            var query = this.value.toLowerCase();
+            document.querySelectorAll('.instructor-row').forEach(function(row) {
+                var searchData = row.getAttribute('data-search');
+                row.style.display = searchData && searchData.indexOf(query) > -1 ? '' : 'none';
+            });
+        });
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // CARGA MASIVA INTEGRADA - MEJORADA
+    // ═══════════════════════════════════════════════════════════════════
+
+    var tipoSeleccionadoCargaMasiva = null;
+    var usuariosCreadosCargaMasiva = [];
+    var erroresActuales = [];
+    var tiempoInicio = null;
+
+    // ─── Actualizar Pasos Visuales ─────────────────────────────────────
+    function actualizarPasoVisual(paso) {
+        // Resetear todos
+        for (var i = 1; i <= 4; i++) {
+            var badge = document.getElementById('paso-' + i + '-badge');
+            var linea = document.getElementById('linea-paso-' + i);
+            if (badge) {
+                badge.classList.remove('bg-oasis-500', 'text-white', 'shadow-lg');
+                badge.classList.add('bg-gray-300', 'text-gray-500');
+            }
+            if (linea) {
+                linea.classList.remove('bg-oasis-500');
+                linea.classList.add('bg-gray-300');
+            }
+        }
+
+        // Activar hasta el paso actual
+        for (var i = 1; i <= paso; i++) {
+            var badge = document.getElementById('paso-' + i + '-badge');
+            var linea = document.getElementById('linea-paso-' + (i-1));
+            if (badge) {
+                badge.classList.remove('bg-gray-300', 'text-gray-500');
+                badge.classList.add('bg-oasis-500', 'text-white', 'shadow-lg');
+            }
+            if (linea && i > 1) {
+                linea.classList.remove('bg-gray-300');
+                linea.classList.add('bg-oasis-500');
+            }
+        }
+    }
+
+    // ─── Seleccionar Tipo ──────────────────────────────────────────────
+    window.seleccionarTipoCargaMasiva = function(tipo) {
+        tipoSeleccionadoCargaMasiva = tipo;
+
+        // Actualizar botones
+        document.querySelectorAll('.tipo-btn-carga').forEach(function(btn) {
+            btn.classList.remove('border-oasis-500', 'bg-oasis-100');
+            btn.classList.add('border-oasis-300');
+        });
+
+        var btnSeleccionado = document.getElementById('btn-tipo-' + tipo);
+        if (btnSeleccionado) {
+            btnSeleccionado.classList.add('border-oasis-500', 'bg-oasis-100');
+            btnSeleccionado.classList.remove('border-oasis-300');
+        }
+
+        // Mostrar panel de carga
+        var panelCarga = document.getElementById('panel-carga-tab');
+        if (panelCarga) panelCarga.classList.remove('hidden');
+
+        // Actualizar texto y ayuda de columnas
+        var tipoText = document.getElementById('tipo-seleccionado-text-tab');
+        if (tipoText) tipoText.textContent = tipo === 'aprendices' ? 'Aprendices' : 'Instructores';
+
+        var columnasAprendices = document.getElementById('columnas-info-aprendices');
+        var columnasInstructores = document.getElementById('columnas-info-instructores');
+        if (tipo === 'aprendices') {
+            if (columnasAprendices) columnasAprendices.classList.remove('hidden');
+            if (columnasInstructores) columnasInstructores.classList.add('hidden');
+        } else {
+            if (columnasAprendices) columnasAprendices.classList.add('hidden');
+            if (columnasInstructores) columnasInstructores.classList.remove('hidden');
+        }
+
+        // Paso 1 activo
+        actualizarPasoVisual(1);
+
+        // Resetear archivo
+        removerArchivoCargaMasiva();
+    };
+
+    // ─── Mostrar Ayuda de Columnas ─────────────────────────────────────
+    window.mostrarAyudaColumnas = function() {
+        var ayuda = document.getElementById('ayuda-columnas-tab');
+        if (ayuda) {
+            ayuda.classList.toggle('hidden');
+        }
+    };
+
+    // ─── Descargar Plantilla ───────────────────────────────────────────
+    window.descargarPlantillaCargaMasiva = function() {
+        if (!tipoSeleccionadoCargaMasiva) {
+            alert('Por favor selecciona un tipo de usuario primero');
+            return;
+        }
+        window.location.href = '/auth/admin/carga-masiva/plantilla/?tipo=' + tipoSeleccionadoCargaMasiva;
+    };
+
+    // ─── Manejo de Archivo ─────────────────────────────────────────────
+    var dropzoneTab = document.getElementById('dropzone-tab');
+    var archivoInputTab = document.getElementById('archivo-csv-tab');
+
+    if (dropzoneTab && archivoInputTab) {
+        dropzoneTab.addEventListener('click', function() {
+            if (!tipoSeleccionadoCargaMasiva) {
+                alert('Por favor selecciona un tipo de usuario primero');
+                return;
+            }
+            archivoInputTab.click();
+        });
+
+        dropzoneTab.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('border-oasis-500', 'bg-oasis-50');
+        });
+
+        dropzoneTab.addEventListener('dragleave', function() {
+            this.classList.remove('border-oasis-500', 'bg-oasis-50');
+        });
+
+        dropzoneTab.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('border-oasis-500', 'bg-oasis-50');
+
+            if (!tipoSeleccionadoCargaMasiva) {
+                alert('Por favor selecciona un tipo de usuario primero');
+                return;
+            }
+
+            var files = e.dataTransfer.files;
+            if (files.length > 0) manejarArchivoCargaMasiva(files[0]);
+        });
+
+        archivoInputTab.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) manejarArchivoCargaMasiva(e.target.files[0]);
+        });
+    }
+
+    function manejarArchivoCargaMasiva(archivo) {
+        if (!archivo.name.endsWith('.csv')) {
+            alert('Por favor selecciona un archivo CSV válido (.csv)');
+            return;
+        }
+
+        if (archivo.size > 5 * 1024 * 1024) {
+            alert('El archivo es demasiado grande. Tamaño máximo: 5MB');
+            return;
+        }
+
+        var dropzoneContent = document.getElementById('dropzone-content-tab');
+        var archivoSeleccionado = document.getElementById('archivo-seleccionado-tab');
+        var nombreArchivo = document.getElementById('nombre-archivo-tab');
+        var infoArchivo = document.getElementById('info-archivo-tab');
+        var btnValidar = document.getElementById('btn-validar-tab');
+
+        if (dropzoneContent) dropzoneContent.classList.add('hidden');
+        if (archivoSeleccionado) archivoSeleccionado.classList.remove('hidden');
+        if (nombreArchivo) nombreArchivo.textContent = archivo.name;
+        if (infoArchivo) infoArchivo.textContent = (archivo.size / 1024).toFixed(2) + ' KB';
+        if (btnValidar) btnValidar.disabled = false;
+
+        // Ocultar preview previo
+        var panelPreview = document.getElementById('panel-preview-tab');
+        if (panelPreview) panelPreview.classList.add('hidden');
+
+        // Paso 2 activo
+        actualizarPasoVisual(2);
+    }
+
+    window.removerArchivoCargaMasiva = function() {
+        if (archivoInputTab) archivoInputTab.value = '';
+        var dropzoneContent = document.getElementById('dropzone-content-tab');
+        var archivoSeleccionado = document.getElementById('archivo-seleccionado-tab');
+        var btnValidar = document.getElementById('btn-validar-tab');
+        var btnProcesar = document.getElementById('btn-procesar-tab');
+
+        if (dropzoneContent) dropzoneContent.classList.remove('hidden');
+        if (archivoSeleccionado) archivoSeleccionado.classList.add('hidden');
+        if (btnValidar) btnValidar.disabled = true;
+        if (btnProcesar) btnProcesar.classList.add('hidden');
+
+        limpiarErroresCargaMasiva();
+        var panelExito = document.getElementById('panel-exito-tab');
+        var panelPreview = document.getElementById('panel-preview-tab');
+        if (panelExito) panelExito.classList.add('hidden');
+        if (panelPreview) panelPreview.classList.add('hidden');
+
+        actualizarPasoVisual(1);
+    };
+
+    window.limpiarErroresCargaMasiva = function() {
+        var panelErrores = document.getElementById('panel-errores-tab');
+        var tablaErrores = document.getElementById('tabla-errores-tab');
+        if (panelErrores) panelErrores.classList.add('hidden');
+        if (tablaErrores) tablaErrores.innerHTML = '';
+        erroresActuales = [];
+    };
+
+    // ─── Validar Archivo y Mostrar Preview ────────────────────────────
+    window.validarArchivoCargaMasiva = function() {
+        var archivo = archivoInputTab ? archivoInputTab.files[0] : null;
+        if (!archivo) {
+            alert('Por favor selecciona un archivo primero');
+            return;
+        }
+
+        var panelPreview = document.getElementById('panel-preview-tab');
+        var previewMessage = document.getElementById('preview-message-tab');
+        var previewActions = document.getElementById('preview-actions-tab');
+        var tabsContainer = document.getElementById('preview-tabs-container-tab');
+
+        if (panelPreview) panelPreview.classList.remove('hidden');
+        if (previewMessage) previewMessage.classList.remove('hidden');
+        if (previewActions) previewActions.classList.add('hidden');
+        if (tabsContainer) tabsContainer.classList.add('hidden');
+
+        // Crear FormData
+        var formData = new FormData();
+        formData.append('archivo', archivo);
+        formData.append('tipo', tipoSeleccionadoCargaMasiva);
+
+        tiempoInicio = Date.now();
+        actualizarPasoVisual(3);
+
+        fetch('/auth/admin/carga-masiva/validar/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrftoken },
+            body: formData
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (previewMessage) previewMessage.classList.add('hidden');
+
+            // Actualizar estadísticas
+            document.getElementById('stat-total-tab').textContent = data.filas_procesadas;
+            document.getElementById('stat-validos-tab').textContent = data.registros_validos;
+            document.getElementById('stat-errores-tab').textContent = data.total_errores;
+            document.getElementById('count-validos-tab').textContent = data.registros_validos;
+            document.getElementById('count-errores-tab').textContent = data.total_errores;
+
+            // Llenar tabla de válidos
+            llenarTablaPreviewValidos(data.preview, data.tipo);
+
+            // Llenar tabla de errores
+            erroresActuales = data.errores || [];
+            llenarTablaPreviewErrores(data.errores || []);
+
+            if (tabsContainer) tabsContainer.classList.remove('hidden');
+            if (previewActions) previewActions.classList.remove('hidden');
+
+            // Habilitar botón de continuar solo si hay registros válidos
+            var btnContinuar = document.getElementById('btn-continuar-procesar-tab');
+            if (btnContinuar) {
+                btnContinuar.disabled = data.registros_validos === 0;
+            }
+
+            // Mostrar tab correspondiente
+            if (data.total_errores > 0) {
+                cambiarPreviewTab('errores');
+            } else {
+                cambiarPreviewTab('validos');
+            }
+        })
+        .catch(function(error) {
+            if (previewMessage) {
+                previewMessage.innerHTML = '<i class="fa-solid fa-exclamation-triangle text-4xl text-red-500 mb-3"></i><p class="text-red-600">Error al validar: ' + error.message + '</p>';
+            }
+        });
+    };
+
+    function llenarTablaPreviewValidos(registros, tipo) {
+        var tabla = document.getElementById('tabla-preview-validos-tab');
+        var colExtra = document.getElementById('preview-col-extra');
+        if (!tabla) return;
+
+        tabla.innerHTML = '';
+        if (colExtra) colExtra.textContent = tipo === 'aprendices' ? 'Carrera' : 'Especialidad';
+
+        registros.forEach(function(registro) {
+            var tr = document.createElement('tr');
+            tr.className = 'hover:bg-green-50';
+            var extraData = tipo === 'aprendices' ? registro.carrera : registro.especialidad;
+            tr.innerHTML =
+                '<td class="px-4 py-3 text-sm text-gray-600">' + registro.fila + '</td>' +
+                '<td class="px-4 py-3 text-sm font-semibold text-gray-900">' + registro.nombres + ' ' + registro.apellidos + '</td>' +
+                '<td class="px-4 py-3 text-sm text-gray-700">' + registro.email + '</td>' +
+                '<td class="px-4 py-3 text-sm text-gray-600">' + registro.tipo_documento + ' ' + registro.numero_documento + '</td>' +
+                '<td class="px-4 py-3 text-sm text-gray-600">' + (extraData || 'N/A') + '</td>';
+            tabla.appendChild(tr);
+        });
+    }
+
+    function llenarTablaPreviewErrores(errores) {
+        var tabla = document.getElementById('tabla-preview-errores-tab');
+        if (!tabla) return;
+
+        tabla.innerHTML = '';
+        errores.forEach(function(error) {
+            var tr = document.createElement('tr');
+            tr.className = 'hover:bg-red-50';
+            var sugerencia = obtenerSugerenciaError(error);
+            tr.innerHTML =
+                '<td class="px-4 py-3 text-sm font-semibold text-gray-900">' + error.fila + '</td>' +
+                '<td class="px-4 py-3 text-sm"><span class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-semibold">' + error.campo + '</span></td>' +
+                '<td class="px-4 py-3 text-sm text-red-600">' + error.error + '</td>' +
+                '<td class="px-4 py-3 text-xs text-blue-600">' + sugerencia + '</td>';
+            tabla.appendChild(tr);
+        });
+    }
+
+    function obtenerSugerenciaError(error) {
+        var sugerencias = {
+            'tipo_documento': 'Usa: CC, TI, CE, PA o PEP',
+            'email': 'Verifica formato (ej: usuario@dominio.com)',
+            'carrera': 'Verifica que la carrera exista en el sistema',
+            'numero_documento': 'Verifica que no esté duplicado',
+        };
+
+        if (error.error.includes('duplicado')) {
+            return '<i class="fa-solid fa-clone mr-1"></i>Valor duplicado';
+        }
+        if (error.error.includes('requerido')) {
+            return '<i class="fa-solid fa-asterisk mr-1"></i>Campo obligatorio';
+        }
+        if (error.error.includes('inválido')) {
+            return '<i class="fa-solid fa-check-circle mr-1"></i>' + (sugerencias[error.campo] || 'Revisa el formato');
+        }
+        return sugerencias[error.campo] || 'Revisa los datos';
+    }
+
+    window.cambiarPreviewTab = function(tabId) {
+        // Cambiar contenido
+        document.querySelectorAll('.preview-tab-content').forEach(function(content) {
+            content.classList.add('hidden');
+        });
+        document.getElementById('preview-content-' + tabId).classList.remove('hidden');
+
+        // Cambiar botones
+        var tabValidos = document.getElementById('preview-tab-validos');
+        var tabErrores = document.getElementById('preview-tab-errores');
+
+        if (tabValidos) {
+            tabValidos.classList.remove('border-oasis-600', 'text-oasis-600');
+            tabValidos.classList.add('border-transparent', 'text-gray-500');
+        }
+        if (tabErrores) {
+            tabErrores.classList.remove('border-red-600', 'text-red-600');
+            tabErrores.classList.add('border-transparent', 'text-gray-500');
+        }
+
+        if (tabId === 'validos' && tabValidos) {
+            tabValidos.classList.remove('border-transparent', 'text-gray-500');
+            tabValidos.classList.add('border-oasis-600', 'text-oasis-600');
+        } else if (tabId === 'errores' && tabErrores) {
+            tabErrores.classList.remove('border-transparent', 'text-gray-500');
+            tabErrores.classList.add('border-red-600', 'text-red-600');
+        }
+    };
+
+    window.ocultarPreview = function() {
+        var panelPreview = document.getElementById('panel-preview-tab');
+        if (panelPreview) panelPreview.classList.add('hidden');
+        actualizarPasoVisual(2);
+    };
+
+    window.confirmarProcesamiento = function() {
+        if (!confirm('¿Confirmas que deseas crear estos usuarios? Esta acción no se puede deshacer.')) {
+            return;
+        }
+        procesarArchivoCargaMasiva();
+    };
+
+    window.exportarErroresCSV = function() {
+        if (erroresActuales.length === 0) {
+            alert('No hay errores para exportar');
+            return;
+        }
+
+        var csv = 'Fila,Campo,Error,Sugerencia\n';
+        erroresActuales.forEach(function(error) {
+            var sugerencia = obtenerSugerenciaError(error);
+            csv += error.fila + ',"' + error.campo + '","' + error.error.replace(/"/g, '""') + '","' + sugerencia + '"\n';
+        });
+
+        var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+        var link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'errores_carga_masiva_' + new Date().getTime() + '.csv';
+        link.click();
+    };
+
+    window.volverAlDashboard = function() {
+        cambiarTabUsuarios('aprendices');
+        window.location.reload();
+    };
+
+    // ─── Procesar Archivo (Creación Final) ─────────────────────────────
+    window.procesarArchivoCargaMasiva = function() {
+        var archivo = archivoInputTab ? archivoInputTab.files[0] : null;
+        if (!archivo) {
+            alert('Por favor selecciona un archivo primero');
+            return;
+        }
+
+        var panelProgreso = document.getElementById('panel-progreso-tab');
+        var btnProcesar = document.getElementById('btn-procesar-tab');
+        var btnContinuar = document.getElementById('btn-continuar-procesar-tab');
+        var panelExito = document.getElementById('panel-exito-tab');
+        var panelPreview = document.getElementById('panel-preview-tab');
+
+        // Ocultar preview y mostrar progreso
+        if (panelPreview) panelPreview.classList.add('hidden');
+        if (panelProgreso) panelProgreso.classList.remove('hidden');
+        if (btnProcesar) btnProcesar.disabled = true;
+        if (btnContinuar) btnContinuar.disabled = true;
+        limpiarErroresCargaMasiva();
+        if (panelExito) panelExito.classList.add('hidden');
+
+        var formData = new FormData();
+        formData.append('archivo', archivo);
+        formData.append('tipo', tipoSeleccionadoCargaMasiva);
+
+        var progreso = 0;
+        var mensajes = ['Validando archivo...', 'Creando usuarios...', 'Generando contraseñas...', 'Finalizando...'];
+        var mensajeIndex = 0;
+
+        var intervalo = setInterval(function() {
+            if (progreso < 90) {
+                progreso += 8;
+                actualizarProgresoCargaMasiva(progreso, mensajes[mensajeIndex]);
+                if (progreso % 30 === 0) mensajeIndex = Math.min(mensajeIndex + 1, mensajes.length - 1);
+            }
+        }, 200);
+
+        fetch('/auth/admin/carga-masiva/procesar/', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrftoken },
+            body: formData
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            clearInterval(intervalo);
+            actualizarProgresoCargaMasiva(100, '¡Completado!');
+
+            setTimeout(function() {
+                if (panelProgreso) panelProgreso.classList.add('hidden');
+
+                if (data.success) {
+                    mostrarExitoCargaMasiva(data);
+                    actualizarPasoVisual(4);
+                } else {
+                    mostrarErroresCargaMasiva(data);
+                }
+
+                if (btnProcesar) btnProcesar.disabled = false;
+                if (btnContinuar) btnContinuar.disabled = false;
+            }, 500);
+        })
+        .catch(function(error) {
+            clearInterval(intervalo);
+            if (panelProgreso) panelProgreso.classList.add('hidden');
+            alert('Error al procesar el archivo. Por favor intenta nuevamente.');
+            console.error(error);
+            if (btnProcesar) btnProcesar.disabled = false;
+            if (btnContinuar) btnContinuar.disabled = false;
+        });
+    };
+
+    function actualizarProgresoCargaMasiva(porcentaje, texto) {
+        var barra = document.getElementById('barra-progreso-tab');
+        var porcentajeEl = document.getElementById('progreso-porcentaje-tab');
+        var textoEl = document.getElementById('progreso-texto-tab');
+
+        if (barra) barra.style.width = porcentaje + '%';
+        if (porcentajeEl) porcentajeEl.textContent = porcentaje + '%';
+        if (textoEl) textoEl.textContent = texto;
+    }
+
+    function mostrarErroresCargaMasiva(data) {
+        erroresActuales = data.errores || [];
+        var panelErrores = document.getElementById('panel-errores-tab');
+        var totalErrores = document.getElementById('total-errores-tab');
+        var tablaErrores = document.getElementById('tabla-errores-tab');
+        var resumenErrores = document.getElementById('errores-resumen-tab');
+
+        if (panelErrores) panelErrores.classList.remove('hidden');
+        if (totalErrores) totalErrores.textContent = erroresActuales.length;
+
+        // Crear resumen por tipo de error
+        if (resumenErrores) {
+            var tiposError = {};
+            erroresActuales.forEach(function(error) {
+                tiposError[error.campo] = (tiposError[error.campo] || 0) + 1;
+            });
+
+            resumenErrores.innerHTML = '';
+            Object.keys(tiposError).forEach(function(campo) {
+                var div = document.createElement('div');
+                div.className = 'bg-red-50 border border-red-200 rounded-lg p-3 text-center';
+                div.innerHTML =
+                    '<div class="text-2xl font-black text-red-600">' + tiposError[campo] + '</div>' +
+                    '<div class="text-xs text-red-800 font-semibold mt-1">' + campo + '</div>';
+                resumenErrores.appendChild(div);
+            });
+        }
+
+        // Llenar tabla
+        if (tablaErrores) {
+            tablaErrores.innerHTML = '';
+            erroresActuales.forEach(function(error) {
+                var tr = document.createElement('tr');
+                tr.className = 'hover:bg-red-50';
+                var sugerencia = obtenerSugerenciaError(error);
+                tr.innerHTML =
+                    '<td class="px-4 py-3 text-sm font-bold text-gray-900"><span class="inline-flex items-center justify-center w-8 h-8 bg-red-100 text-red-600 rounded-full">' + error.fila + '</span></td>' +
+                    '<td class="px-4 py-3 text-sm"><span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold">' + error.campo + '</span></td>' +
+                    '<td class="px-4 py-3 text-sm text-red-700"><i class="fa-solid fa-exclamation-circle mr-2 text-red-500"></i>' + error.error + '</td>' +
+                    '<td class="px-4 py-3 text-xs text-blue-700"><i class="fa-solid fa-lightbulb mr-1"></i>' + sugerencia + '</td>';
+                tablaErrores.appendChild(tr);
+            });
+        }
+    }
+
+    function mostrarExitoCargaMasiva(data) {
+        usuariosCreadosCargaMasiva = data.detalle || [];
+        var tiempoFinal = Date.now();
+        var tiempoTotal = ((tiempoFinal - tiempoInicio) / 1000).toFixed(1);
+
+        var panelExito = document.getElementById('panel-exito-tab');
+        var totalCreados = document.getElementById('total-creados-tab');
+        var tiempoProceso = document.getElementById('tiempo-proceso-tab');
+        var tablaUsuarios = document.getElementById('tabla-usuarios-tab');
+
+        if (panelExito) panelExito.classList.remove('hidden');
+        if (totalCreados) totalCreados.textContent = data.usuarios_creados || usuariosCreadosCargaMasiva.length;
+        if (tiempoProceso) tiempoProceso.textContent = 'Completado en ' + tiempoTotal + ' segundos';
+
+        if (tablaUsuarios) {
+            tablaUsuarios.innerHTML = '';
+            usuariosCreadosCargaMasiva.forEach(function(usuario) {
+                var tr = document.createElement('tr');
+                tr.className = 'hover:bg-oasis-50';
+                tr.innerHTML =
+                    '<td class="px-4 py-3 text-sm font-semibold text-gray-900"><i class="fa-solid fa-user-check text-oasis-500 mr-2"></i>' + usuario.nombre + '</td>' +
+                    '<td class="px-4 py-3 text-sm text-gray-700">' + usuario.email + '</td>' +
+                    '<td class="px-4 py-3 text-sm"><code class="px-3 py-1.5 bg-oasis-100 text-oasis-700 rounded font-mono font-bold">' + usuario.password_temporal + '</code></td>' +
+                    '<td class="px-4 py-3 text-center"><button onclick="copiarTexto(\'' + usuario.password_temporal + '\')" class="text-oasis-600 hover:text-oasis-700 transition" title="Copiar contraseña"><i class="fa-solid fa-copy"></i></button></td>';
+                tablaUsuarios.appendChild(tr);
+            });
+        }
+    }
+
+    window.copiarTexto = function(texto) {
+        navigator.clipboard.writeText(texto).then(function() {
+            // Mostrar feedback temporal
+            var feedback = document.createElement('div');
+            feedback.className = 'fixed top-4 right-4 bg-oasis-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce';
+            feedback.innerHTML = '<i class="fa-solid fa-check mr-2"></i>Copiado al portapapeles';
+            document.body.appendChild(feedback);
+            setTimeout(function() { feedback.remove(); }, 2000);
+        });
+    };
+
+    window.resetCargaMasiva = function() {
+        if (!confirm('¿Deseas realizar otra carga masiva?')) return;
+
+        // Resetear todo
+        removerArchivoCargaMasiva();
+        tipoSeleccionadoCargaMasiva = null;
+        usuariosCreadosCargaMasiva = [];
+        erroresActuales = [];
+
+        // Ocultar paneles
+        document.getElementById('panel-carga-tab')?.classList.add('hidden');
+        document.getElementById('panel-preview-tab')?.classList.add('hidden');
+        document.getElementById('panel-exito-tab')?.classList.add('hidden');
+        document.getElementById('panel-errores-tab')?.classList.add('hidden');
+
+        // Resetear botones de tipo
+        document.querySelectorAll('.tipo-btn-carga').forEach(function(btn) {
+            btn.classList.remove('border-oasis-500', 'bg-oasis-100');
+            btn.classList.add('border-oasis-300');
+        });
+
+        // Scroll al inicio
+        document.getElementById('content-carga-masiva')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        actualizarPasoVisual(0);
+    };
+
+    window.descargarCredencialesCargaMasiva = function() {
+        if (usuariosCreadosCargaMasiva.length === 0) {
+            alert('No hay credenciales para descargar');
+            return;
+        }
+
+        var csv = '\ufeffNombre Completo,Email (Usuario),Contraseña Temporal,Tipo de Usuario,Fecha de Creación\n';
+        var fecha = new Date().toLocaleDateString('es-CO');
+        usuariosCreadosCargaMasiva.forEach(function(usuario) {
+            csv += '"' + usuario.nombre + '","' + usuario.email + '","' + usuario.password_temporal + '","' + (tipoSeleccionadoCargaMasiva || 'N/A') + '","' + fecha + '"\n';
+        });
+
+        var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        var link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'credenciales_' + (tipoSeleccionadoCargaMasiva || 'usuarios') + '_' + new Date().toISOString().slice(0,10) + '.csv';
+        link.click();
+
+        // Mostrar confirmación
+        var feedback = document.createElement('div');
+        feedback.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+        feedback.innerHTML = '<i class="fa-solid fa-check-circle mr-2"></i>Credenciales descargadas correctamente';
+        document.body.appendChild(feedback);
+        setTimeout(function() { feedback.remove(); }, 3000);
     };
 
     // ─── AJAX: Toggle Destacado ────────────────────────────────────────
